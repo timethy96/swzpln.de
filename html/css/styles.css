@@ -1,0 +1,240 @@
+@import url('https://fonts.googleapis.com/css2?family=Source+Code+Pro:wght@900&display=swap');
+ 
+html,body {
+    width: 100%;
+    height: 100%;
+    color: #000;
+    font-weight: 900;
+    font-family: Arial, Helvetica, sans-serif;
+    font-size: 1em;
+    margin: 0;
+    padding: 0;
+}
+
+body::-webkit-scrollbar-track
+{
+    border: 1px solid black;
+    background-color: #FFF;
+}
+
+body::-webkit-scrollbar
+{
+  width: 5px;
+  background-color: #F5F5F5;
+}
+
+body::-webkit-scrollbar-thumb
+{
+  background-color: #000000;
+}
+
+h1 {
+    font-family: 'Source Code Pro', monospace;
+    font-weight: 900;
+    font-size: 7em;
+    line-height: 0.7em;
+    margin: 0;
+    margin-bottom: 20px;
+    padding-top: 30px;
+}
+
+h2 {
+    font-weight: 900;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+a {
+    color: #FFF;
+    font-weight: 600;
+}
+
+.hidden {
+    display: none;
+}
+
+.spacer {
+    height: 100%;
+    width: 100%;
+}
+
+#logoimg {
+    width: 200px;
+    height: auto;
+}
+
+.logo {
+    font-weight: 900;
+}
+
+#main {
+    text-align: center;
+    position: fixed;
+    top: 0;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    z-index: 0;
+}
+
+#map {
+    width: 70%;
+    max-width: 100vh;
+    height: calc(100% - 400px - 5em);
+    max-height: 50vh;
+    display: block;
+    margin: auto;
+    margin-top: 50px;
+    margin-bottom: 20px;
+    filter: grayscale(100%) contrast(1.3);
+}
+
+#buttons {
+    width:70%;
+    max-width: 100vh;
+    display: block;
+    margin: auto;
+    position: relative;
+}
+
+.cButtons {
+    font-size: 14px;
+    display: inline-block;
+    margin: 10px;
+    background: #000;
+    width:25%;
+    color: #FFF;
+    font-weight: 900;
+    padding: 15px 0;
+    border-radius: 5px;
+    text-decoration: none;
+    transition: opacity 0.5s;
+}
+
+#legend {
+    position: relative;
+    width: 100%;
+    height: auto;
+    z-index: 10;
+    background-color: #000;
+    color:#FFF;
+    margin: 0;
+    padding: 5% 0;
+}
+
+#legend h2 {
+    font-weight: 900;
+    margin: 0;
+    font-size: 2em;
+    margin-bottom: 1%;
+    width: 70%;
+    max-width: 100vh;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+#legend p {
+    margin: 0;
+    margin-top: 20px;
+    width: 70%;
+    max-width: 100vh;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+    font-weight: 900;
+}
+
+#scrollArrow {
+    font-weight: 900;
+    font-size: 3em;
+    position: fixed;
+    bottom: 10px;
+    width: 100%;
+    text-align: center;
+    z-index: -1;
+}
+
+#processing {
+    margin-top: 15%;
+}
+
+#sbBorder{
+    width: 50%;
+    height: 5px;
+    border: solid 2px #000;
+    border-radius: 5px;
+    display: block;
+    margin: auto;
+}
+
+#sBar {
+    width: 0%;
+    height:100%;
+    background: #000;
+    border-radius: 5px;
+    transition: width 2s;
+}
+
+#statusPercent {
+    font-weight: 900;
+    font-size: 2em;
+    margin:1% auto;
+}
+
+#statusStep {
+    font-weight: 900;
+    font-size: 0.9em;
+    margin:1% auto;
+}
+
+.greyedOut {
+    pointer-events: none;
+    opacity: 0.2;
+}
+
+#openLegal {
+    display: block;
+    margin: auto;
+    text-align: center;
+    margin-top: 30px;
+}
+
+#legal {
+    color: #FFF;
+    z-index: 20;
+    width: 70%;
+    height: calc(100% - 100px);
+    top:100vh;
+    position: fixed;
+    background: #000;
+    transition: top 0.5s;
+    padding: 100px 15% 0px 15%;
+    bottom: 0;
+    overflow: auto;
+}
+
+#closeLegal {
+    font-size: 50px;
+    position: absolute;
+    top:30px;
+    right:30px;
+    text-decoration: none;
+
+}
+
+#tempsvg {
+    display: none;
+}
+
+#finish {
+    width: 90%;
+    max-width: 100vh;
+    position: relative;
+    margin: 10vh auto;
+
+}
+
+#finish a {
+    color: #000;
+}
