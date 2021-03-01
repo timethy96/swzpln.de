@@ -1,0 +1,11 @@
+version: '3'
+  
+services:  
+    swzpln:
+        container_name: swzpln
+        image: php:apache
+        ports:
+            - 8085:80
+        volumes:
+            - ./html:/var/www/html
+        restart: unless-stopped
