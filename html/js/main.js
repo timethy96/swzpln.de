@@ -59,7 +59,7 @@ function countUp(){
 }
 
 function getOSMdata(latA, lonA, latB, lonB, _callback){
-    var ajaxUrl = overpassApi + `/interpreter?data=way["building"](${latA},${lonA},${latB},${lonB});out;>;out qt;`;
+    var ajaxUrl = overpassApi + `/interpreter?data=(way["building"](${latA},${lonA},${latB},${lonB});relation["building"](${latA},${lonA},${latB},${lonB}););out body;>;out skel qt;`;
     $.ajax({
         url: ajaxUrl,
       })
