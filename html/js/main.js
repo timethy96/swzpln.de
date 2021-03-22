@@ -6,9 +6,11 @@ var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
+var cError = false;
 
 window.onerror = function (msg, url, lineNo, columnNo, error) {
     $("#statusStep").html("Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de");
+    cError = true;
     return false;
   }
 
@@ -100,69 +102,70 @@ $(".cButtons").click(function() {
     var heightMeters = degToMeter(latA, latB, lonA, lonA); //same lon for height!
     var widthMeters = degToMeter(latA, latA, lonA, lonB); //same lat for width!
 
-    setTimeout(function(){
-        $("#sBar").css("width","20%");
-        $("#statusPercent").html("20");
-        $("#statusStep").html("Kartendaten herunterladen... (Dies kann bei großen Ausschnitten ein Weilchen dauern!)");
-    }, 1000);
+    if (!cError){
+        setTimeout(function(){
+            $("#sBar").css("width","20%");
+            $("#statusPercent").html("20");
+            $("#statusStep").html("Kartendaten herunterladen... (Dies kann bei großen Ausschnitten ein Weilchen dauern!)");
+        }, 1000);
+    } 
     
 
     getOSMdata(latA,lonA,latB,lonB, function(osm){
         
-        setTimeout(function(){
-            $("#sBar").css("width","40%");
-            $("#statusPercent").html("40");
-            $("#statusStep").html("OSMXML in GeoJSON konvertieren...");
-        }, 1200);
-        
+        if (!cError){
+            setTimeout(function(){
+                $("#sBar").css("width","40%");
+                $("#statusPercent").html("40");
+                $("#statusStep").html("OSMXML in GeoJSON konvertieren...");
+            }, 1200);
+        }
         
 
         var gjson = osmtogeojson(osm);
         var mgjson = reproject(gjson);
-        if (thisID == "svgButton"){
 
+        if (!cError){
             setTimeout(function(){
                 $("#sBar").css("width","60%");
                 $("#statusPercent").html("60");
                 $("#statusStep").html("GeoJSON in SVG konvertieren...");
             }, 1600);
-            
+        }
+
+        if (thisID == "svgButton"){
 
             var svgArray = geojson2svg({
                 mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
                 viewportSize: {width: widthMeters * 3.7795, height: heightMeters * 3.7795},
             }).convert(mgjson);
 
-            setTimeout(function(){
-                $("#sBar").css("width","80%");
-                $("#statusPercent").html("80");
-                $("#statusStep").html("SVG-Datei erstellen...");
-            }, 1800);
-            
+            if (!cError){
+                setTimeout(function(){
+                    $("#sBar").css("width","80%");
+                    $("#statusPercent").html("80");
+                    $("#statusStep").html("SVG-Datei erstellen...");
+                }, 1800);
+            }
 
             var svg = svgArray.join('');
             var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters}mm" height="${heightMeters}mm" xmlns="http://www.w3.org/2000/svg">` + svg + '</svg>';
             
-
-            setTimeout(function(){
-                $("#sBar").css("width","100%");
-                $("#statusPercent").html("100");
-                $("#statusStep").html("Download starten...");
-                download('swzpln.de.svg', svgFile);
+            if (!cError){
                 setTimeout(function(){
-                    $("#processing").fadeOut();
-                    $("#finish").fadeIn();
+                    $("#sBar").css("width","100%");
+                    $("#statusPercent").html("100");
+                    $("#statusStep").html("Download starten...");
+                    download('swzpln.de.svg', svgFile);
+                    setTimeout(function(){
+                        $("#processing").fadeOut();
+                        $("#finish").fadeIn();
+                    }, 2000);
                 }, 2000);
-            }, 2000);
+            }
             
 
         } else if (thisID == "dwgButton"){
-
-            setTimeout(function(){
-                $("#sBar").css("width","60%");
-                $("#statusPercent").html("60");
-                $("#statusStep").html("GeoJSON in SVG konvertieren...");
-            }, 1600);
 
             var svgPathArray = geojson2svg({
                 mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
@@ -170,11 +173,13 @@ $(".cButtons").click(function() {
                 output: 'path',
             }).convert(mgjson);
 
-            setTimeout(function(){
-                $("#sBar").css("width","80%");
-                $("#statusPercent").html("80");
-                $("#statusStep").html("DXF-Datei erstellen...");
-            }, 1800);
+            if (!cError){
+                setTimeout(function(){
+                    $("#sBar").css("width","80%");
+                    $("#statusPercent").html("80");
+                    $("#statusStep").html("DXF-Datei erstellen...");
+                }, 1800);
+            }
 
             svgPathArrayL = [];
             svgPathArray.forEach(element => {
@@ -185,27 +190,22 @@ $(".cButtons").click(function() {
             var modelDict = makerjs.importer.fromSVGPathData(svgPathArrayL);
             var dxfString = makerjs.exporter.toDXF(modelDict, {"units":"meter","usePOLYLINE":true});
             
-
-            setTimeout(function(){
-                $("#sBar").css("width","100%");
-                $("#statusPercent").html("100");
-                $("#statusStep").html("Download starten...");
-                download('swzpln.de.dxf', dxfString);
+            if (!cError){
                 setTimeout(function(){
-                    $("#processing").fadeOut();
-                    $("#finish").fadeIn();
-                }, 2000);
-            }, 200);
+                    $("#sBar").css("width","100%");
+                    $("#statusPercent").html("100");
+                    $("#statusStep").html("Download starten...");
+                    download('swzpln.de.dxf', dxfString);
+                    setTimeout(function(){
+                        $("#processing").fadeOut();
+                        $("#finish").fadeIn();
+                    }, 2000);
+                }, 200);
+            }
 
         } else if (thisID == "pdfButton"){
             
             const { jsPDF } = window.jspdf
-
-            setTimeout(function(){
-                $("#sBar").css("width","60%");
-                $("#statusPercent").html("60");
-                $("#statusStep").html("GeoJSON in SVG konvertieren...");
-            }, 1600);
             
 
             var svgArray = geojson2svg({
@@ -213,11 +213,13 @@ $(".cButtons").click(function() {
                 viewportSize: {width: widthMeters * 3.7795, height: heightMeters * 3.7795},
             }).convert(mgjson);
 
-            setTimeout(function(){
-                $("#sBar").css("width","80%");
-                $("#statusPercent").html("80");
-                $("#statusStep").html("PDF-Datei erstellen...");
-            }, 1800);
+            if (!cError){
+                setTimeout(function(){
+                    $("#sBar").css("width","80%");
+                    $("#statusPercent").html("80");
+                    $("#statusStep").html("PDF-Datei erstellen...");
+                }, 1800);
+            }
             
 
             var svg = svgArray.join('');
@@ -232,26 +234,27 @@ $(".cButtons").click(function() {
             const pdf = new jsPDF(svgwidth > svgheight ? 'l' : 'p', 'pt', [svgwidth, svgheight]);
             pdf.svg(svgElement, { svgwidth, svgheight }).then(() => {
                 // save the created pdf
-                setTimeout(function(){
-                    $("#sBar").css("width","100%");
-                    $("#statusPercent").html("100");
-                    $("#statusStep").html("Download starten...");
-                    pdf.save('swzpln.de.pdf');
+                if (!cError){
                     setTimeout(function(){
-                        $("#processing").fadeOut(function(){
-                            setTimeout(function(){
-                                $("#finish").fadeIn();
-                            }, 200);
-                        });
-                        var $dllink = $("#dllink");
-                        $dllink.attr('href', 'javascript:');
-                        $dllink.removeAttr('download');
-                        $dllink.click(function(){
-                            pdf.save('swzpln.de.pdf');
-                        });
+                        $("#sBar").css("width","100%");
+                        $("#statusPercent").html("100");
+                        $("#statusStep").html("Download starten...");
+                        pdf.save('swzpln.de.pdf');
+                        setTimeout(function(){
+                            $("#processing").fadeOut(function(){
+                                setTimeout(function(){
+                                    $("#finish").fadeIn();
+                                }, 200);
+                            });
+                            var $dllink = $("#dllink");
+                            $dllink.attr('href', 'javascript:');
+                            $dllink.removeAttr('download');
+                            $dllink.click(function(){
+                                pdf.save('swzpln.de.pdf');
+                            });
+                        }, 2000);
                     }, 2000);
-                }, 2000);
-                
+                }
             })
 
             
