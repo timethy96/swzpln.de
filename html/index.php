@@ -46,7 +46,7 @@ if ($fr) {
     <div id="main">
         <div id="title">
             <h1><img id="logoimg" src="logo.png" alt="SWZ PLN"/></h1>
-            <h2>Schwarzpläne für alle!<br/>(Beta-Version)</h2>
+            <h2>Schwarzpläne für alle!<br/>(Beta2 : Jetzt auch für Safari)</h2>
         </div>
         <div id="map">
         </div>
