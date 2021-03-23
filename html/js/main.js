@@ -57,7 +57,7 @@ $("#backlink").click(function(){
 
 window.onerror = function (msg, url, lineNo, columnNo, error) {
     $("#statusStep").html("Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de");
-    cError = true;
+    cError = "Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de";
     return false;
   }
 
@@ -127,6 +127,10 @@ function setLBar(percent, string){
             $("#statusPercent").html(percent);
             $("#statusStep").html(string);
         },percent*20);
+    } else {
+        $("#sBar").css("width",`0%`);
+            $("#statusPercent").html("XX");
+            $("#statusStep").html("Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de");
     }
 }
 
@@ -209,7 +213,24 @@ $(".cButtons").click(function() {
 
             svgPathArrayL = [];
             svgPathArray.forEach(element => {
-                svgPathArrayL.push(element.replace(/(?<=^M.*) (?=.*Z$)/gm," L"));
+                if (element.charAt(0) == "M" && element.charAt(element.length-1) == "Z"){
+                    eSplit = element.split("M");
+                    if (eSplit.length == 2){
+                        svgPathArrayL.push(element.replaceAll(" "," L"));
+                    } else if (eSplit.length > 2){
+                        eSplit.forEach(splitElem => {
+                            if (splitElem.length > 0){
+                                if (splitElem.charAt(splitElem.length-1) != "Z"){
+                                    splitElem += "Z";
+                                }
+                                svgPathArrayL.push("M" + splitElem.replaceAll(" "," L"));
+                            }
+                        })
+                    }
+                    
+                } else {
+                    svgPathArrayL.push(element);
+                };
             });
             var makerjs = require('makerjs');
             var modelDict = {'models':{}};
@@ -253,7 +274,7 @@ $(".cButtons").click(function() {
                 setTimeout(function(){
                     $("#processing").fadeOut(function(){
                         setTimeout(function(){
-                            $("#finish").fadeIn();
+                            $("#finish").fadeIn(); 
                         }, 200);
                     });
                     var $dllink = $("#dllink");
