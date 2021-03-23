@@ -193,11 +193,17 @@ a {
     opacity: 0.2;
 }
 
-#openLegal {
-    display: block;
+#lFooter{
+    display: flex;
     margin: auto;
+    width: 70%;
     text-align: center;
     margin-top: 30px;
+    justify-content: space-around;
+}
+
+#openLegal {
+    
 }
 
 #legal {
