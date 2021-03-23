@@ -165,7 +165,53 @@ $(".cButtons").click(function() {
     var mlonA = m1[1];
     var mlatB = m2[0];
     var mlonB = m2[1];
-                                
+    var heightMeters = degToMeter(latA, latB, lonA, lonA); //same lon for height!
+    var widthMeters = degToMeter(latA, latA, lonA, lonB); //same lat for width!
+
+    setLBar(20,"Kartendaten herunterladen... (Dies kann bei großen Ausschnitten ein Weilchen dauern!)");
+
+    getOSMdata(latA,lonA,latB,lonB, function(osm){
+        
+        setLBar(40,"OSMXML in GeoJSON konvertieren...")      
+
+        //convert osmxml to geojson for further processing 
+        var gjson = osmtogeojson(osm);
+        var mgjson = reproject(gjson);
+
+        setLBar(60,"GeoJSON in SVG konvertieren...");
+
+        //button chooser
+        if (thisID == "svgButton"){
+
+            var svgArray = geojson2svg({
+                mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
+                viewportSize: {width: widthMeters * 3.7795, height: heightMeters * 3.7795},
+            }).convert(mgjson);
+
+            setLBar(80,"SVG-Datei erstellen...");
+
+            var svg = svgArray.join('');
+            var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters}mm" height="${heightMeters}mm" xmlns="http://www.w3.org/2000/svg">` + svg + '</svg>';
+            
+            setLBar(100,"Download starten...");
+            download('swzpln.de.svg', svgFile, "image/svg+xml");
+            setTimeout(function(){
+                $("#processing").fadeOut();
+                $("#finish").fadeIn();
+            }, 2000);
+            
+
+        } else if (thisID == "dwgButton"){
+
+            var svgPathArray = geojson2svg({
+                mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
+                viewportSize: {width: widthMeters, height: heightMeters},
+                output: 'path',
+            }).convert(mgjson);
+
+            setLBar(80,"DXF-Datei erstellen...");
+
+            svgPathArrayL = [];
             svgPathArray.forEach(element => {
                 if (element.charAt(0) == "M" && element.charAt(element.length-1) == "Z"){
                     eSplit = element.split("M");
