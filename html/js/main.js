@@ -20,9 +20,9 @@ map.on('zoomend',function(){
         $('#svgButton').removeClass('greyedOut');
         $('#pdfButton').removeClass('greyedOut');
     };
-    if (map.getZoom() < 15) {
+    if (map.getZoom() < 11) {
         $('#dwgButton').addClass('greyedOut');
-    } else if (map.getZoom() >= 15) {
+    } else if (map.getZoom() >= 11) {
         $('#dwgButton').removeClass('greyedOut');
     };
 })
