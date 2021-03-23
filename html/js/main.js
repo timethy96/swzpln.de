@@ -220,6 +220,9 @@ $(".cButtons").click(function() {
                     } else if (eSplit.length > 2){
                         eSplit.forEach(splitElem => {
                             if (splitElem.length > 0){
+                                if (splitElem.charAt(splitElem.length-1) == " "){
+                                    splitElem = splitElem.slice(0, -1);
+                                }
                                 if (splitElem.charAt(splitElem.length-1) != "Z"){
                                     splitElem += "Z";
                                 }
