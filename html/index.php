@@ -52,7 +52,7 @@ if ($fr) {
         </div>
         <div id="buttons">
             <a href="javascript:" id="svgButton" class="cButtons">SVG</a>
-            <a href="javascript:" id="dwgButton" class="cButtons greyedOut">DWG/DXF</a>
+            <a href="javascript:" id="dwgButton" class="cButtons">DWG/DXF</a>
             <a href="javascript:" id="pdfButton" class="cButtons">PDF</a>
         </div>
         <div id="processing" class="hidden">
@@ -110,10 +110,6 @@ if ($fr) {
     <div id="tempsvg"></div>
     <script src="js/jquery-3.5.1.min.js"></script>
     <script src="https://unpkg.com/leaflet@1.7.1/dist/leaflet.js" integrity="sha512-XQoYMqMTK8LvdxXYG3nZ448hOEQiglfqkJs1NOQV44cWnUrBc8PkAOcXy20w0vlaXaVUearIOBhiXZ5V3ynxwA==" crossorigin=""></script>
-    <script src='js/osmtogeojson.js'></script>
-    <script src='js/geojson2svg.min.js'></script>
-    <script src='js/reproject.js'></script>
-    <script src='js/browser.maker.js'></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.0.0/jspdf.umd.min.js" integrity="sha512-g77bZKU4ktH2I5nNioWzOMcbd3fN/svB0vQM73Uo5GRn/EGfcSJB0DlR1ithxnFsDaa0HmlOwHYiUFeM1P3RRw==" crossorigin="anonymous"></script>
     <script src="js/svg2pdf.umd.min.js"></script>
     <script src="js/main.js"></script>
