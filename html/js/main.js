@@ -10,7 +10,7 @@ var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 
 var cError = false;
 
-var spWorker = new Worker('js/worker.js');
+var mainWorker = new Worker('js/mainWorker.js');
 
 var msg = "";
 
@@ -162,14 +162,17 @@ $(".cButtons").click(function() {
 
     setLBar(20,"Kartendaten herunterladen... (Dies kann bei großen Ausschnitten ein Weilchen dauern!)");
     
-    spWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi]);
+    mainWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi]);
 
 });
 
 
-spWorker.onmessage = function(e) {
+mainWorker.onmessage = function(e) {
     if (e.data[0] == "setLBar"){
         setLBar(e.data[1],e.data[2]);
+    } else if (e.data[0] == "DLstat") {
+        var megabytes = (e.data[1] / 1048576).toPrecision(3);
+        setLBar(20,`Kartendaten herunterladen... (${megabytes} MB herutergeladen)`);
     } else if (e.data[0] == "download"){
         if (e.data[1] == "svg") {
             download('swzpln.de.svg', e.data[2], "image/svg+xml");
