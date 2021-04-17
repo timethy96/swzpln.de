@@ -17,16 +17,13 @@ var msg = "";
 // --- define Leaflet Map ---
 
 map.on('zoomend',function(){
-    if (map.getZoom() < 11){
+    if (map.getZoom() < 9){
         $('#svgButton').addClass('greyedOut');
         $('#pdfButton').addClass('greyedOut');
-    } else if (map.getZoom() >= 11) {
+        $('#dwgButton').addClass('greyedOut');
+    } else if (map.getZoom() >= 9) {
         $('#svgButton').removeClass('greyedOut');
         $('#pdfButton').removeClass('greyedOut');
-    };
-    if (map.getZoom() < 11) {
-        $('#dwgButton').addClass('greyedOut');
-    } else if (map.getZoom() >= 11) {
         $('#dwgButton').removeClass('greyedOut');
     };
 })
