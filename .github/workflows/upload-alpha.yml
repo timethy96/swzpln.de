@@ -11,6 +11,6 @@ jobs:
       with:
         host: ${{ secrets.HOST }}
         username: ${{ secrets.USERNAME }}
-        password: ${{ secrets.PASSWORD }}
         key: ${{ secrets.KEY }}
-        script: "cd ~/swzpln-alpha/ && git pull"
+        port: ${{ secrets.PORT }}
+        script: "cd ~/swzpln-alpha/ && git pull && docker restart swzpln-alpha"
