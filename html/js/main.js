@@ -174,7 +174,7 @@ mainWorker.onmessage = function(e) {
         setLBar(e.data[1],e.data[2]);
     } else if (e.data[0] == "DLstat") {
         var megabytes = (e.data[1] / 1048576).toPrecision(3);
-        setLBar(20,`Kartendaten herunterladen... (${megabytes} MB herutergeladen)`);
+        setLBar(20,`Kartendaten herunterladen... (${megabytes} MB heruntergeladen)`);
     } else if (e.data[0] == "download"){
         if (e.data[1] == "svg") {
             download('swzpln.de.svg', e.data[2], "image/svg+xml");
