@@ -1,4 +1,4 @@
-importScripts('osmtogeojson.js', 'reproject.js');
+importScripts('subworkers.js', 'osmtogeojson.js', 'reproject.js');
 
 // makes the overpass request
 
