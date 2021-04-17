@@ -10,6 +10,10 @@ var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 
 var cError = false;
 
+var mainWorker = new Worker('js/mainWorker.js');
+
+var msg = "";
+
 // --- define Leaflet Map ---
 
 map.on('zoomend',function(){
@@ -52,10 +56,10 @@ $("#backlink").click(function(){
 
 
 // --- converting functions ---
-
 // throw error on converting
 
-window.onerror = function (msg, url, lineNo, columnNo, error) {
+window.onerror = function (msgi, url, lineNo, columnNo, error) {
+    msg = msgi
     $("#statusStep").html("Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de");
     cError = "Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de";
     return false;
@@ -102,37 +106,25 @@ function countUp(){
     $.ajax({url: "count.php?count=1"});
 }
 
-// makes the overpass request
-
-function getOSMdata(latA, lonA, latB, lonB, _callback){
-    var ajaxUrl = overpassApi + `/interpreter?data=(way["building"](${latA},${lonA},${latB},${lonB});relation["building"](${latA},${lonA},${latB},${lonB}););out body;>;out skel qt;`;
-    $.ajax({
-        url: ajaxUrl,
-      })
-        .fail(function(x, y, error){
-            $("#statusStep").html("Fehler: " + error + "<br/>Bitte wende dich an swzpln@bilhoefer.de");
-        })
-        .done(function( data ) {
-          _callback(data);
-        });
-}
 
 // set the status on the loading bar
 function setLBar(percent, string){
     //ensures, that the error persists
-    if (!cError){
-        // set Timeout for smooth animations
-        setTimeout(function(){
+    // set Timeout for smooth animations
+    setTimeout(function(){
+        if (!cError){
             $("#sBar").css("width",`${percent}%`);
             $("#statusPercent").html(percent);
-            $("#statusStep").html(string);
-        },percent*20);
-    } else {
-        $("#sBar").css("width",`0%`);
+            $("#statusStep").html(string);        
+        } else {
+            $("#sBar").css("width",`0%`);
             $("#statusPercent").html("XX");
             $("#statusStep").html("Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de");
-    }
+        }
+    },percent*20);
 }
+
+
 
 
 // -- main download function --
@@ -152,7 +144,7 @@ $(".cButtons").click(function() {
         }, 200);
     });
     
-    setLBar(0,"Koordinaten berechenen...");
+    setLBar(0,"Koordinaten berechnen...");
 
     //set all the needed vars
     var latB = map.getBounds().getNorth();
@@ -169,101 +161,37 @@ $(".cButtons").click(function() {
     var widthMeters = degToMeter(latA, latA, lonA, lonB); //same lat for width!
 
     setLBar(20,"Kartendaten herunterladen... (Dies kann bei großen Ausschnitten ein Weilchen dauern!)");
+    
+    mainWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi]);
 
-    getOSMdata(latA,lonA,latB,lonB, function(osm){
-        
-        setLBar(40,"OSMXML in GeoJSON konvertieren...")      
+});
 
-        //convert osmxml to geojson for further processing 
-        var gjson = osmtogeojson(osm);
-        var mgjson = reproject(gjson);
 
-        setLBar(60,"GeoJSON in SVG konvertieren...");
-
-        //button chooser
-        if (thisID == "svgButton"){
-
-            var svgArray = geojson2svg({
-                mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
-                viewportSize: {width: widthMeters * 3.7795, height: heightMeters * 3.7795},
-            }).convert(mgjson);
-
-            setLBar(80,"SVG-Datei erstellen...");
-
-            var svg = svgArray.join('');
-            var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters}mm" height="${heightMeters}mm" xmlns="http://www.w3.org/2000/svg">` + svg + '</svg>';
-            
-            setLBar(100,"Download starten...");
-            download('swzpln.de.svg', svgFile, "image/svg+xml");
+mainWorker.onmessage = function(e) {
+    if (e.data[0] == "setLBar"){
+        setLBar(e.data[1],e.data[2]);
+    } else if (e.data[0] == "DLstat") {
+        var megabytes = (e.data[1] / 1048576).toPrecision(3);
+        setLBar(20,`Kartendaten herunterladen... (${megabytes} MB herutergeladen)`);
+    } else if (e.data[0] == "download"){
+        if (e.data[1] == "svg") {
+            download('swzpln.de.svg', e.data[2], "image/svg+xml");
             setTimeout(function(){
                 $("#processing").fadeOut();
                 $("#finish").fadeIn();
             }, 2000);
-            
-
-        } else if (thisID == "dwgButton"){
-
-            var svgPathArray = geojson2svg({
-                mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
-                viewportSize: {width: widthMeters, height: heightMeters},
-                output: 'path',
-            }).convert(mgjson);
-
-            setLBar(80,"DXF-Datei erstellen...");
-
-            svgPathArrayL = [];
-            svgPathArray.forEach(element => {
-                if (element.charAt(0) == "M" && element.charAt(element.length-1) == "Z"){
-                    eSplit = element.split("M");
-                    if (eSplit.length == 2){
-                        svgPathArrayL.push(element.replaceAll(" "," L"));
-                    } else if (eSplit.length > 2){
-                        eSplit.forEach(splitElem => {
-                            if (splitElem.length > 0){
-                                if (splitElem.charAt(splitElem.length-1) == " "){
-                                    splitElem = splitElem.slice(0, -1);
-                                }
-                                if (splitElem.charAt(splitElem.length-1) != "Z"){
-                                    splitElem += "Z";
-                                }
-                                svgPathArrayL.push("M" + splitElem.replaceAll(" "," L"));
-                            }
-                        })
-                    }
-                    
-                } else {
-                    svgPathArrayL.push(element);
-                };
-            });
-            var makerjs = require('makerjs');
-            var modelDict = {'models':{}};
-            var modelDict = makerjs.importer.fromSVGPathData(svgPathArrayL);
-            var dxfString = makerjs.exporter.toDXF(modelDict, {"units":"meter","usePOLYLINE":true});
-            
-            setLBar(100,"Download starten...");
-            download('swzpln.de.dxf', dxfString, "application/dxf");
+        } else if (e.data[1] == "dxf") {
+            download('swzpln.de.dxf', e.data[2], "application/dxf");
             setTimeout(function(){
                 $("#processing").fadeOut();
                 $("#finish").fadeIn();
             }, 2000);
-
-        } else if (thisID == "pdfButton"){
-            
+        } else if (e.data[1] == "pdf") {
             const { jsPDF } = window.jspdf
-            
 
-            var svgArray = geojson2svg({
-                mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
-                viewportSize: {width: widthMeters * 3.7795, height: heightMeters * 3.7795},
-            }).convert(mgjson);
-
-            setLBar(80,"PDF-Datei erstellen...");
-            
-
-            var svg = svgArray.join('');
-            var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters * 3.7795}" height="${heightMeters * 3.7795}" xmlns="http://www.w3.org/2000/svg">` + svg + '</svg>';
-            
-            $("#tempsvg").html(svgFile);
+            $("#tempsvg").html(e.data[2]);
+            var widthMeters = e.data[3];
+            var heightMeters = e.data[4];
 
             const svgElement = document.getElementById('tempsvg').firstElementChild;
 
@@ -288,11 +216,9 @@ $(".cButtons").click(function() {
                     });
                 }, 2000);
             })
-
-            
-            
-        };
-        
-    });
-    
-});
+        }
+    } else if (e.data[0] == "err") {
+        $("#statusStep").html(e.data[1]);
+        cError = e.data[1];
+    }
+}
