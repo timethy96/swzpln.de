@@ -59,10 +59,12 @@ $("#backlink").click(function(){
 // throw error on converting
 
 window.onerror = function (msgi, url, lineNo, columnNo, error) {
-    msg = msgi
-    $("#statusStep").html("Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de");
-    cError = "Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de";
-    return false;
+    if (msgi != "TypeError: undefined is not a function (near '...[thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi]...')"){ // why? because this error happens everytime in safari and I think it has something to to with the way that the polyfill works... just ignore that error and it still works fine!
+        msg = msgi
+        $("#statusStep").html("Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de");
+        cError = "Fehler: " + msg + "<br/>Bitte wende dich an swzpln ø bilhoefer · de";
+        return false;
+    }
   }
 
 // -- helper functions --
