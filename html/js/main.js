@@ -10,7 +10,7 @@ var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 
 var cError = false;
 
-var mainWorker = new Worker('js/mainWorker.js');
+const mainWorker = new Worker('js/mainWorker.js');
 
 var msg = "";
 
