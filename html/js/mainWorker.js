@@ -44,10 +44,16 @@ onmessage = function(e) {
         var gjson = osmtogeojson(osm);
         var mgjson = reproject(gjson);
 
+        var allSteps = Math.ceil(mgjson.features.length / 500);
+        if (allSteps > 8){
+            var allSteps = 8
+        }
+        var oneStep = mgjson.features.length / allSteps;
+
         var gjWorkers = [];
-        for (var i=0; i < mgjson.features.length; i+=500){
+        for (var i=0; i < allSteps; i+=1){
             newDict = {"type":"FeatureCollection", "features":""};
-            newDict.features = mgjson.features.slice(i,i+500);
+            newDict.features = mgjson.features.slice(i,i+oneStep);
             gjWorkers.push(newDict);
         }
 
