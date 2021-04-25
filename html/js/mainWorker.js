@@ -44,10 +44,11 @@ onmessage = function(e) {
         var gjson = osmtogeojson(osm);
         var mgjson = reproject(gjson);
 
-        var allSteps = Math.ceil(mgjson.features.length / 500);
+        /* var allSteps = Math.ceil(mgjson.features.length / 500);
         if (allSteps > 8){
-            var allSteps = 8
-        }
+            var allSteps = 8;
+        } */
+        var allSteps = 1;
         var oneStep = mgjson.features.length / allSteps;
 
         var gjWorkers = [];
@@ -76,6 +77,7 @@ onmessage = function(e) {
                     postMessage(["setLBar", e.data[1], e.data[2]]);
                 } else {
                     resultArray.push(e.data[1]);
+                    console.log("pushing worker data: " + e.data[1]);
                     if (resultArray.length == workersLen){
                         if (e.data[0] == "svg") {
                             postMessage(["setLBar", 80, "SVG-Datei erstellen..."]);
