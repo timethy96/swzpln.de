@@ -42,6 +42,7 @@ if ($fr) {
 </head>
 
 <body>
+    <a href="https://rundgaenge.com" target="_blank" id="rundgaenge">Uni Stuttgart Arch Rundgänge</a>
     <div class="spacer"></div>
     <div id="main">
         <div id="title">
