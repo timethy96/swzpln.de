@@ -1,2 +1,2 @@
 # swzpln.de
-Official repo for urban ground plan generator
+Official repo for nolli plan generator
