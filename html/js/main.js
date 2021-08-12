@@ -1,8 +1,13 @@
 // --- define Variables ---
-
 var overpassApi = "https://overpass.kumi.systems/api/"
 
-var map = L.map('map').setView([48.775,9.187], 12);
+var lastCenter = Cookies.get('lastCenter')
+console.log(lastCenter)
+if(lastCenter) {
+    var map = L.map('map').setView(lastCenter.split(','), 12);
+} else {
+    var map = L.map('map').setView([48.775,9.187], 12);
+}
 
 var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -13,6 +18,11 @@ var cError = false;
 const mainWorker = new Worker('js/mainWorker.js');
 
 var msg = "";
+
+map.on('moveend', (...args) => {
+    center = map.getCenter()
+    window.Cookies.set('lastCenter', [center.lat, center.lng])
+})
 
 // --- define Leaflet Map ---
 
