@@ -8,10 +8,11 @@ const mainWorker = new Worker('js/mainWorker.js');
 var msg = "";
 
 // - init map & load last position -
-var lastPos = JSON.parse(Cookies.get('lastCenter'));
-var lastCenter = [lastPos[0],lastPos[1]];
-var lastZoom = lastPos[2];
-if(lastCenter) {
+var lastPos = Cookies.get('lastCenter');
+if(lastPos) {
+    lastPos = JSON.parse(lastPos);
+    var lastCenter = [lastPos[0],lastPos[1]];
+    var lastZoom = lastPos[2];
     var map = L.map('map').setView(lastCenter, lastZoom);
 } else {
     var map = L.map('map').setView([48.775,9.187], 12);
