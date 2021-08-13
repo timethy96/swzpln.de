@@ -1,13 +1,5 @@
 // --- define Variables ---
-var overpassApi = "https://overpass.kumi.systems/api/"
-
-var lastCenter = Cookies.get('lastCenter')
-console.log(lastCenter)
-if(lastCenter) {
-    var map = L.map('map').setView(lastCenter.split(','), 12);
-} else {
-    var map = L.map('map').setView([48.775,9.187], 12);
-}
+var overpassApi = "https://overpass.kumi.systems/api/";
 
 var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -19,12 +11,17 @@ const mainWorker = new Worker('js/mainWorker.js');
 
 var msg = "";
 
-map.on('moveend', (...args) => {
-    center = map.getCenter()
-    window.Cookies.set('lastCenter', [center.lat, center.lng])
-})
+// - init map & load last position -
+var lastPos = JSON.parse(Cookies.get('lastCenter'));
+var lastCenter = [lastPos[0],lastPos[1]];
+var lastZoom = lastPos[2];
+if(lastCenter) {
+    var map = L.map('map').setView(lastCenter, lastZoom);
+} else {
+    var map = L.map('map').setView([48.775,9.187], 12);
+}
 
-// --- define Leaflet Map ---
+// --- define Leaflet Map functions ---
 
 map.on('zoomend',function(){
     if (map.getZoom() < 9){
@@ -36,7 +33,16 @@ map.on('zoomend',function(){
         $('#pdfButton').removeClass('greyedOut');
         $('#dwgButton').removeClass('greyedOut');
     };
-})
+});
+
+// - save position cookie - 
+var curPos = map.getCenter();
+var curZoom = map.getZoom();
+map.on('moveend',function(){
+    curPos = map.getCenter();
+    curZoom = map.getZoom();
+    window.Cookies.set('lastCenter', JSON.stringify([curPos.lat, curPos.lng, curZoom]), { expires: 30 });
+});
 
 
 // --- functions for the imprint ---
