@@ -268,3 +268,7 @@ a {
     background-color: rgb(255, 185, 153);
     
 }
+
+#search {
+  width: 14rem;
+}
