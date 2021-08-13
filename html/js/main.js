@@ -1,10 +1,6 @@
 // --- define Variables ---
 var overpassApi = "https://overpass.kumi.systems/api/";
 
-var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
-    attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
-}).addTo(map);
-
 var cError = false;
 
 const mainWorker = new Worker('js/mainWorker.js');
@@ -20,6 +16,10 @@ if(lastCenter) {
 } else {
     var map = L.map('map').setView([48.775,9.187], 12);
 }
+
+var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
+    attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
+}).addTo(map);
 
 // --- define Leaflet Map functions ---
 
