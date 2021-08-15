@@ -22,6 +22,23 @@ var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
 
+// Search
+var searchButton = document.querySelector('#start-search')
+var searchInput = document.querySelector('#search')
+searchButton.addEventListener('click', () => {
+  var query = new URLSearchParams;
+  query.append('q', searchInput.value)
+  query.append('format', 'json')
+  fetch('https://nominatim.openstreetmap.org/search?' + query.toString())
+    .then((res) => res.json())
+    .then((json) => {
+      map.fitBounds([
+        [json[0].boundingbox[0], json[0].boundingbox[2]],
+        [json[0].boundingbox[1], json[0].boundingbox[3]],
+      ])
+    })
+})
+
 // --- define Leaflet Map functions ---
 
 map.on('zoomend',function(){
