@@ -50,7 +50,7 @@ if ($fr) {
             <h2>Schwarzpläne für alle!<br/>(<a target="_blank" class="blacklink" href="https://github.com/TheMoMStudio/swzpln.de/releases">Beta3 : jetzt hyperspeed durch web-worker</a>)</h2>
         </div>
         <form id="searchForm">
-          <input type="text" id="searchField" placeholder="Ort suchen...">
+          <input type="text" id="searchField" placeholder="Ort suchen..." autocomplete="off">
         </form>
         <div id="map">
         </div>
