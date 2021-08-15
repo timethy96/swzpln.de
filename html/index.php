@@ -49,10 +49,9 @@ if ($fr) {
             <h1><img id="logoimg" src="logo.png" alt="SWZ PLN"/></h1>
             <h2>Schwarzpläne für alle!<br/>(<a target="_blank" class="blacklink" href="https://github.com/TheMoMStudio/swzpln.de/releases">Beta3 : jetzt hyperspeed durch web-worker</a>)</h2>
         </div>
-        <div class="search">
-          <input type="text" id="search">
-          <button id="start-search">Search</button>
-        </div>
+        <form id="searchForm">
+          <input type="text" id="searchField" placeholder="Ort suchen...">
+        </form>
         <div id="map">
         </div>
         <div id="buttons">

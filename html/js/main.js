@@ -23,21 +23,38 @@ var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
 }).addTo(map);
 
 // Search
-var searchButton = document.querySelector('#start-search')
-var searchInput = document.querySelector('#search')
-searchButton.addEventListener('click', () => {
-  var query = new URLSearchParams;
-  query.append('q', searchInput.value)
-  query.append('format', 'json')
-  fetch('https://nominatim.openstreetmap.org/search?' + query.toString())
-    .then((res) => res.json())
-    .then((json) => {
-      map.fitBounds([
-        [json[0].boundingbox[0], json[0].boundingbox[2]],
-        [json[0].boundingbox[1], json[0].boundingbox[3]],
-      ])
-    })
-})
+var searchInput = $('#searchField');
+$('#searchForm').on('submit', function(e) {
+    e.preventDefault();
+    var query = new URLSearchParams;
+    query.append('q', searchInput.val());
+    query.append('format', 'json');
+    searchInput.val('');
+    fetch('https://nominatim.openstreetmap.org/search?' + query.toString())
+        .then((res) => res.json())
+        .then((json) => {
+        map.fitBounds([
+            [json[0].boundingbox[0], json[0].boundingbox[2]],
+            [json[0].boundingbox[1], json[0].boundingbox[3]],
+        ]);
+    });
+});
+/*searchInput.keypress(function(e) {
+    // Enter pressed?
+    if(e.which == 10 || e.which == 13) {
+        var query = new URLSearchParams;
+        query.append('q', searchInput.value);
+        query.append('format', 'json');
+        fetch('https://nominatim.openstreetmap.org/search?' + query.toString())
+            .then((res) => res.json())
+            .then((json) => {
+            map.fitBounds([
+                [json[0].boundingbox[0], json[0].boundingbox[2]],
+                [json[0].boundingbox[1], json[0].boundingbox[3]],
+            ]);
+        })
+    }
+});*/
 
 // --- define Leaflet Map functions ---
 
@@ -59,7 +76,7 @@ var curZoom = map.getZoom();
 map.on('moveend',function(){
     curPos = map.getCenter();
     curZoom = map.getZoom();
-    window.Cookies.set('lastCenter', JSON.stringify([curPos.lat, curPos.lng, curZoom]), { expires: 30 });
+    window.Cookies.set('lastCenter', JSON.stringify([curPos.lat, curPos.lng, curZoom]), { expires: 30 , sameSite:'strict' });
 });
 
 
