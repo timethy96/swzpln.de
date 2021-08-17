@@ -47,7 +47,7 @@ if ($fr) {
     <div id="main">
         <div id="title">
             <h1><img id="logoimg" src="logo.png" alt="SWZ PLN"/></h1>
-            <h2>Schwarzpläne für alle!<br/>(<a target="_blank" class="blacklink" href="https://github.com/TheMoMStudio/swzpln.de/releases">Beta3 : jetzt hyperspeed durch web-worker</a>)</h2>
+            <h2>Schwarzpläne für alle!<br/>(<a target="_blank" class="blacklink" href="https://github.com/TheMoMStudio/swzpln.de/releases">Beta4 : Wo ist Walter?</a>)</h2>
         </div>
         <form id="searchForm">
           <input type="text" id="searchField" placeholder="Ort suchen..." autocomplete="off">
