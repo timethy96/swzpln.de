@@ -72,7 +72,7 @@ if ($fr) {
             <a id="backlink" href="javascript:">> Weiteren Schwarzplan erstellen <</a>
             <br/>
             <br/>
-            <p>Wenn ihr uns bei der Instandhaltung und Entwicklung dieses Angebots unterstützen wollt, freuen wir uns natürlich sehr über eine <a href="https://paypal.me/timothy96" target="_blank">Spende</a>.</p>
+            <p>Wenn ihr uns bei der Instandhaltung und Entwicklung dieses Angebots, sowie bei den monatlich anfallenden Serverkosten unterstützen wollt, freuen wir uns natürlich sehr über eine <a href="https://paypal.me/timothy96" target="_blank">Spende</a>.</p>
             <p>Bereits über <?php echo $count ?> generierte Schwarzpläne!</p>
             <p>&copy; <?php echo date("Y"); ?> <span class="logo">SWZPLN</span> erstellt in Stuttgart von <a target="_blank" href="https://timo.bilhoefer.de">Timo Bilhöfer</a>, <a target="_blank" href="https://themom.studio">The MoM Studio</a>.
         </div>
@@ -82,7 +82,7 @@ if ($fr) {
         <h2>SCHWARZPLAN GENERIEREN</h2>
         <p>Die Karte auf den gewünschten Ausschnitt zentrieren, das gewünschte Dateiformat auswählen und schon wird der Schwarzplan generiert und automatisch heruntergeladen.<br/>SVG und PDF-Dateien sind im Maßstab 1:1000 (eine Einstellungsmöglichkeit ist in Planung), DWG/DXF-Dateien sind in Meter definiert (1 Unit = 1 Meter).</p>
         <p>Die kostenlose und freie Bereitstellung von Informationen, Know-How und Inhalten ist uns ein grundsätzliches Anliegen! Wenn ihr uns bei der Instandhaltung und Entwicklung dieses Angebots unterstützen wollt, freuen wir uns natürlich sehr über eine <a href="https://paypal.me/timothy96" target="_blank">Spende</a>.</p>
-        <p>Übrigens: Der Schwarzplan wird über JavaScript lokal auf deinem Computer erstellt, es werden keine Daten an SWZPLN geschickt. Lediglich die Koordinaten des Ausschnitts werden an die  OpenStreetMaps Overpass-API versendet, die die nötigen  Karteninformationen bereitstellt.</p>
+        <p>Übrigens: Der Schwarzplan wird über JavaScript lokal auf deinem Computer erstellt, es werden keine Daten an SWZPLN geschickt. Lediglich die Koordinaten des Ausschnitts werden an die OpenStreetMaps Overpass-API versendet, die die nötigen  Karteninformationen bereitstellt. Bei Nutzung der Suchfunktion wird der Suchbegriff an die Nominatim API übermittelt.</p>
         <p>Bereits über <?php echo $count ?> generierte Schwarzpläne!</p>
         <p>&copy; <?php echo date("Y"); ?> <span class="logo">SWZPLN</span> erstellt in Stuttgart von <a target="_blank" href="https://timo.bilhoefer.de">Timo Bilhöfer</a>, <a target="_blank" href="https://themom.studio">The MoM Studio</a>.</p>
         <p>Diese Webseite ist Quelloffen und unter der <a href="https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE" target="_blank">AGPL-3 Lizenz</a> veröffentlicht.</p>
@@ -102,6 +102,7 @@ if ($fr) {
         Die Webseite und ihr Quellcode sind unter der freien <a href="https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE" target="_blank">GNU Affero General Public License v3.0</a> quelloffen lizenziert. Die Downloads (Schwarzpläne) werden soweit möglich lizenzlos bereitgestellt (<a target="_blank" href="https://creativecommons.org/publicdomain/zero/1.0/">CC0</a>). Die Rechte an den Kartendaten liegen bei den <a target="_blank" href="https://osm.org/copyright">OpenStreetMap</a>-Mitwirkenden. Soweit die Inhalte auf dieser Seite nicht vom Betreiber erstellt wurden, werden die Urheberrechte Dritter beachtet. Insbesondere werden Inhalte Dritter als solche gekennzeichnet. Sollten Sie trotzdem auf eine Urheberrechtsverletzung aufmerksam werden, bitten wir um einen entsprechenden Hinweis. Bei Bekanntwerden von Rechtsverletzungen werden wir derartige Inhalte umgehend entfernen.<br><br><strong>Datenschutz</strong><br><br>
         Die Nutzung unserer Webseite ist ohne Angabe personenbezogener Daten möglich. Ohne wenn und aber! <br>
         Wir weisen darauf hin, dass die Datenübertragung im Internet (z.B. bei der Kommunikation per E-Mail) Sicherheitslücken aufweisen kann. Ein lückenloser Schutz der Daten vor dem Zugriff durch Dritte ist nicht möglich. <br>
+        Zur Bereitstellung der Kartendaten, werden Koordinaten des gewählten Ausschnitts an die Overpass API von <a target="_blank" href="https://overpass.kumi.systems/">kumi.systems</a> übermittelt. Bei Nutzung der Suchfunktion wird der Suchbegriff an die <a href="https://nominatim.openstreetmaps.org/ui/about.html" target="_blank">Nominatim API</a> übermittelt.
         Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird hiermit ausdrücklich widersprochen. Die Betreiber der Seiten behalten sich ausdrücklich rechtliche Schritte im Falle der unverlangten Zusendung von Werbeinformationen, etwa durch Spam-Mails, vor.<br>
         </p><br> 
         Website Impressum teilweise von <a href="https://www.impressum-generator.de">impressum-generator.de</a>

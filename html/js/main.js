@@ -14,6 +14,15 @@ if(lastPos) {
     var lastCenter = [lastPos[0],lastPos[1]];
     var lastZoom = lastPos[2];
     var map = L.map('map').setView(lastCenter, lastZoom);
+    if (lastZoom < 10){
+        $('#svgButton').addClass('greyedOut');
+        $('#pdfButton').addClass('greyedOut');
+        $('#dwgButton').addClass('greyedOut');
+    } else if (lastZoom >= 10) {
+        $('#svgButton').removeClass('greyedOut');
+        $('#pdfButton').removeClass('greyedOut');
+        $('#dwgButton').removeClass('greyedOut');
+    };
 } else {
     var map = L.map('map').setView([48.775,9.187], 12);
 }
@@ -21,6 +30,16 @@ if(lastPos) {
 var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
 }).addTo(map);
+
+// - save position cookie - 
+function savePosCookie(){
+    var curPos = map.getCenter();
+    var curZoom = map.getZoom();
+    window.Cookies.set('lastCenter', JSON.stringify([curPos.lat, curPos.lng, curZoom]), { sameSite:'strict' });
+}
+map.on('moveend',savePosCookie);
+map.on('zoomend',savePosCookie);
+
 
 // Search
 var searchInput = $('#searchField');
@@ -30,54 +49,46 @@ $('#searchForm').on('submit', function(e) {
     query.append('q', searchInput.val());
     query.append('format', 'json');
     searchInput.val('');
+    searchInput.attr('placeholder','Ort suchen...');
+    $('#map').focus();
     fetch('https://nominatim.openstreetmap.org/search?' + query.toString())
         .then((res) => res.json())
         .then((json) => {
-        map.fitBounds([
-            [json[0].boundingbox[0], json[0].boundingbox[2]],
-            [json[0].boundingbox[1], json[0].boundingbox[3]],
-        ]);
-    });
-});
-/*searchInput.keypress(function(e) {
-    // Enter pressed?
-    if(e.which == 10 || e.which == 13) {
-        var query = new URLSearchParams;
-        query.append('q', searchInput.value);
-        query.append('format', 'json');
-        fetch('https://nominatim.openstreetmap.org/search?' + query.toString())
-            .then((res) => res.json())
-            .then((json) => {
+        if (json[0]){
             map.fitBounds([
                 [json[0].boundingbox[0], json[0].boundingbox[2]],
                 [json[0].boundingbox[1], json[0].boundingbox[3]],
             ]);
-        })
-    }
-});*/
-
+            if (map.getZoom() < 10){
+                $('#svgButton').addClass('greyedOut');
+                $('#pdfButton').addClass('greyedOut');
+                $('#dwgButton').addClass('greyedOut');
+            } else if (map.getZoom() >= 10) {
+                $('#svgButton').removeClass('greyedOut');
+                $('#pdfButton').removeClass('greyedOut');
+                $('#dwgButton').removeClass('greyedOut');
+            };
+            savePosCookie();
+        } else {
+            searchInput.attr('placeholder','Ort nicht gefunden!');
+        }
+        
+    });
+});
 // --- define Leaflet Map functions ---
 
 map.on('zoomend',function(){
-    if (map.getZoom() < 9){
+    if (map.getZoom() < 10){
         $('#svgButton').addClass('greyedOut');
         $('#pdfButton').addClass('greyedOut');
         $('#dwgButton').addClass('greyedOut');
-    } else if (map.getZoom() >= 9) {
+    } else if (map.getZoom() >= 10) {
         $('#svgButton').removeClass('greyedOut');
         $('#pdfButton').removeClass('greyedOut');
         $('#dwgButton').removeClass('greyedOut');
     };
 });
 
-// - save position cookie - 
-var curPos = map.getCenter();
-var curZoom = map.getZoom();
-map.on('moveend',function(){
-    curPos = map.getCenter();
-    curZoom = map.getZoom();
-    window.Cookies.set('lastCenter', JSON.stringify([curPos.lat, curPos.lng, curZoom]), { expires: 30 , sameSite:'strict' });
-});
 
 
 // --- functions for the imprint ---
@@ -97,6 +108,7 @@ $("#backlink").click(function(){
         setTimeout(function(){
             $("#map").fadeIn();
             $(".cButtons").fadeIn();
+            $("#searchForm").fadeIn();
         }, 200);
     });
 })
@@ -188,6 +200,7 @@ $(".cButtons").click(function() {
 
     //show the loading bar
     $("#map").fadeOut();
+    $("#searchForm").fadeOut();
     $(".cButtons").fadeOut(function(){
         setTimeout(function(){
             $("#processing").fadeIn();
