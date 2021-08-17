@@ -40,7 +40,7 @@ h1 {
 
 h2 {
     font-weight: 900;
-    font-size: 16px;
+    font-size: 14px;
     margin-top: 10px;
 }
 
@@ -59,7 +59,7 @@ a {
 }
 
 #logoimg {
-    width: 200px;
+    width: 170px;
     height: auto;
 }
 
@@ -296,7 +296,7 @@ a {
 
 #searchForm {
     margin:auto;
-    margin-top: 50px;
+    margin-top: 30px;
     margin-bottom: 10px;
     width:70%;
     max-width: 100vh;
@@ -305,8 +305,9 @@ a {
 
 #searchField {
     transition: 0.5s;
-    width:calc(100% - 8px);
+    width:calc(100% - 10px);
     border-radius: 0;
+    border: 1px solid #000;
     padding:4px;
     position: relative;
     left: 0px;
@@ -314,10 +315,8 @@ a {
     font-weight: 900;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 14px;
-    color: #FFF;
-    border:none;
-    background: #000;
-    text-transform:uppercase;
+    color: #000;
+    background: #FFF;
 }
 
 #searchField:focus{
