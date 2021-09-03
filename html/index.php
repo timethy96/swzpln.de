@@ -72,7 +72,7 @@ if ($fr) {
             <a id="backlink" href="javascript:">> Weiteren Schwarzplan erstellen <</a>
             <br/>
             <br/>
-            <p>Wenn ihr uns bei der Instandhaltung und Entwicklung dieses Angebots, sowie bei den monatlich anfallenden Serverkosten unterstützen wollt, freuen wir uns natürlich sehr über eine <a href="https://paypal.me/timothy96" target="_blank">Spende</a>.</p>
+            <p>Wenn ihr uns bei der Instandhaltung und Entwicklung dieses Angebots, sowie bei den monatlich anfallenden Serverkosten unterstützen wollt, freuen wir uns natürlich sehr über eine Spende. <script src="https://liberapay.com/timethy96/widgets/button.js"></script><noscript><a href="https://liberapay.com/timethy96/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript></p>
             <p>Bereits über <?php echo $count ?> generierte Schwarzpläne!</p>
             <p>&copy; <?php echo date("Y"); ?> <span class="logo">SWZPLN</span> erstellt in Stuttgart von <a target="_blank" href="https://timo.bilhoefer.de">Timo Bilhöfer</a>, <a target="_blank" href="https://themom.studio">The MoM Studio</a>.
         </div>
@@ -81,7 +81,7 @@ if ($fr) {
     <div id="legend">
         <h2>SCHWARZPLAN GENERIEREN</h2>
         <p>Die Karte auf den gewünschten Ausschnitt zentrieren, das gewünschte Dateiformat auswählen und schon wird der Schwarzplan generiert und automatisch heruntergeladen.<br/>SVG und PDF-Dateien sind im Maßstab 1:1000 (eine Einstellungsmöglichkeit ist in Planung), DWG/DXF-Dateien sind in Meter definiert (1 Unit = 1 Meter).</p>
-        <p>Die kostenlose und freie Bereitstellung von Informationen, Know-How und Inhalten ist uns ein grundsätzliches Anliegen! Wenn ihr uns bei der Instandhaltung und Entwicklung dieses Angebots unterstützen wollt, freuen wir uns natürlich sehr über eine <a href="https://paypal.me/timothy96" target="_blank">Spende</a>.</p>
+        <p>Die kostenlose und freie Bereitstellung von Informationen, Know-How und Inhalten ist uns ein grundsätzliches Anliegen! Wenn ihr uns bei der Instandhaltung und Entwicklung dieses Angebots, sowie bei den monatlich anfallenden Serverkosten unterstützen wollt, freuen wir uns natürlich sehr über eine Spende. <script src="https://liberapay.com/timethy96/widgets/button.js"></script><noscript><a href="https://liberapay.com/timethy96/donate"><img alt="Donate using Liberapay" src="https://liberapay.com/assets/widgets/donate.svg"></a></noscript></p>
         <p>Übrigens: Der Schwarzplan wird über JavaScript lokal auf deinem Computer erstellt, es werden keine Daten an SWZPLN geschickt. Lediglich die Koordinaten des Ausschnitts werden an die OpenStreetMaps Overpass-API versendet, die die nötigen  Karteninformationen bereitstellt. Bei Nutzung der Suchfunktion wird der Suchbegriff an die Nominatim API übermittelt.</p>
         <p>Bereits über <?php echo $count ?> generierte Schwarzpläne!</p>
         <p>&copy; <?php echo date("Y"); ?> <span class="logo">SWZPLN</span> erstellt in Stuttgart von <a target="_blank" href="https://timo.bilhoefer.de">Timo Bilhöfer</a>, <a target="_blank" href="https://themom.studio">The MoM Studio</a>.</p>
