@@ -58,6 +58,11 @@ if ($fr) {
             <a href="javascript:" id="svgButton" class="cButtons">SVG</a>
             <a href="javascript:" id="dwgButton" class="cButtons">DWG/DXF</a>
             <a href="javascript:" id="pdfButton" class="cButtons">PDF</a>
+            <div id="scaleChooser" class="hidden">
+                <a href="javascript:" id="scaleButton1" class="scButtons">error</a>
+                <a href="javascript:" id="scaleButton2" class="scButtons">error</a>
+                <a href="javascript:" id="scaleButton3" class="scButtons">error</a>
+            </div>
         </div>
         <div id="processing" class="hidden">
             <div id="sbBorder">

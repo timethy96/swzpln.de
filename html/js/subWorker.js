@@ -2,12 +2,12 @@ importScripts('geojson2svg.min.js');
 
 onmessage = function(e) {
 
-    var [gjArray, mlonA, mlatA, mlonB, mlatB, widthMeters, heightMeters, thisID] = e.data;
+    var [gjArray, mlonA, mlatA, mlonB, mlatB, widthMeters, heightMeters, thisID, thisScale] = e.data;
 
     if (thisID == "svgButton" || thisID == "pdfButton"){
         var svgArray = geojson2svg({
             mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
-            viewportSize: {width: widthMeters * 3.7795, height: heightMeters * 3.7795},
+            viewportSize: {width: widthMeters * 3.7795 * 1000 / thisScale, height: heightMeters * 3.7795 * 1000 / thisScale},
         }).convert(gjArray);
         var svg = svgArray.join('');
         if (thisID == "svgButton") {

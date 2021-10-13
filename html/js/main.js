@@ -187,16 +187,69 @@ function setLBar(percent, string){
 }
 
 
+//get closest in array (needed in scale funtion)
+function closest(needle, haystack) {
+    return haystack.reduce((a, b) => {
+        let aDiff = Math.abs(a - needle);
+        let bDiff = Math.abs(b - needle);
+
+        if (aDiff == bDiff) {
+            return a > b ? a : b;
+        } else {
+            return bDiff < aDiff ? b : a;
+        }
+    });
+}
+
+// calculate 3 reasonable Scale options based on zoom-level
+function setScales(fileType) {
+    const scalesArray = [1,5,20,50,100,200,500,1000,5000,10000,20000,50000]
+    const lonA = map.getBounds().getWest();
+    const latA = map.getBounds().getSouth();
+    const lonB = map.getBounds().getEast();
+    const widthMeters = degToMeter(latA, latA, lonA, lonB);
+    
+    var scale = new Array
+    scale[0] = closest(widthMeters,scalesArray)
+    const scale2i = scalesArray.indexOf(scale[0])
+    scale[1] = scalesArray[scale2i + 1]
+    scale[2] = scalesArray[scale2i + 2]
+
+    $('.scButtons').each(function (i){
+        $(this).html('1:'+scale[i])
+        $(this).attr("data-scale",scale[i])
+        $(this).attr("data-type",fileType)
+    });
+}
 
 
 // -- main download function --
 
-$(".cButtons").click(function() {
+$(".cButtons").click(function(){
+    const thisID = this.id
+    if (thisID == "svgButton" || thisID == "pdfButton"){
+        setScales(thisID)
+        $(".cButtons").addClass("closed")
+        setTimeout(function(){
+            $(".cButtons").hide()
+            $("#scaleChooser").removeClass("hidden")
+            $("#scaleChooser").addClass("opened")
+        },300)
+    } else if (thisID == "dwgButton") {
+        main(thisID);
+    }
+});
+
+$(".scButtons").click(function(){
+    const fileType = $(this).attr("data-type")
+    const thisScale = $(this).attr("data-scale")
+    main(fileType, thisScale)
+});
+    
+function main(thisID, thisScale = 1000) {
     
     // trigger counter
     countUp();
-
-    var thisID = this.id;
 
     //show the loading bar
     $("#map").fadeOut();
@@ -225,9 +278,9 @@ $(".cButtons").click(function() {
 
     setLBar(20,"Kartendaten herunterladen... (Dies kann bei großen Ausschnitten ein Weilchen dauern!)");
     
-    mainWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi]);
+    mainWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi,thisScale]);
 
-});
+};
 
 
 mainWorker.onmessage = function(e) {
@@ -258,8 +311,8 @@ mainWorker.onmessage = function(e) {
 
             const svgElement = document.getElementById('tempsvg').firstElementChild;
 
-            const svgwidth = widthMeters * 3.7795;
-            const svgheight = heightMeters * 3.7795;
+            const svgwidth = widthMeters * 3.7795 * 1000 / e.data[5];
+            const svgheight = heightMeters * 3.7795 * 1000 / e.data[5];
             const pdf = new jsPDF(svgwidth > svgheight ? 'l' : 'p', 'pt', [svgwidth, svgheight]);
             pdf.svg(svgElement, { svgwidth, svgheight }).then(() => {
                 // save the created pdf
