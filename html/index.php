@@ -109,6 +109,7 @@ if ($fr) {
  
         <p>Kartendaten: &copy; <?php echo date("Y"); ?> <a target="_blank" href="https://osm.org/copyright">OpenStreetMap</a> contributors</p>
         <p>Overpass-API bereitgestellt von <a target="_blank" href="https://overpass.kumi.systems/">kumi.systems</a></p>
+        <p>PayPal-Button von <a target="_blank" href="https://www.pngall.com/?p=6289">pngall.com</a></p>
         <br/><br/><br/><br/>
 
     </div>
