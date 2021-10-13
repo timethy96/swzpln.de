@@ -13,4 +13,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: "cd ~/swzpln-alpha/ && git pull && docker restart swzpln-alpha"
+        script: "cd ~/server/swzpln-alpha/ && git pull && docker restart swzpln-alpha"
