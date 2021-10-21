@@ -4,11 +4,7 @@ $lang = 'de';
 
 $count = 0;
 
-$fr = fopen('count.txt', 'r');
-if ($fr) {
-    $count = intval(fgets($fr));
-    fclose($fr);
-}
+$count = require_once('count.php');
 
 ?>
 <!DOCTYPE html>
