@@ -119,6 +119,7 @@ a {
     transform-origin: center;
     color: #000;
     transition: transform 0.6s;
+    cursor: pointer;
 }
 
 #options.opened #openOptions {
