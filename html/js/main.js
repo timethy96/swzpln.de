@@ -186,6 +186,18 @@ function setLBar(percent, string){
     },percent*20);
 }
 
+//check which data is requested
+
+function getReqData() {
+    var dataArray = [];
+    $.each( $('.layerCheckbox') , function(){
+        if ($(this).is(':checked')){
+            dataArray.push($(this).attr('value'));
+        }
+    });
+    return dataArray;
+}
+
 
 
 
@@ -224,8 +236,11 @@ $(".cButtons").click(function() {
     var widthMeters = degToMeter(latA, latA, lonA, lonB); //same lat for width!
 
     setLBar(20,"Kartendaten herunterladen... (Dies kann bei großen Ausschnitten ein Weilchen dauern!)");
+
+    var dataArray = getReqData();
+    console.log(dataArray)
     
-    mainWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi]);
+    mainWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi,dataArray]);
 
 });
 
@@ -285,3 +300,11 @@ mainWorker.onmessage = function(e) {
         cError = e.data[1];
     }
 }
+
+//options open & close
+
+$("#openOptions").click(function() {
+    $('#options').toggleClass('opened');
+    $('#map').toggleClass('withOptions');
+    //$('#map').css({"width":"35%", "margin-left":"15%"})
+})
