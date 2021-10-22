@@ -2,12 +2,32 @@ importScripts('geojson2svg.min.js');
 
 onmessage = function(e) {
 
-    var [gjArray, mlonA, mlatA, mlonB, mlatB, widthMeters, heightMeters, thisID] = e.data;
+    var [gjArray, mlonA, mlatA, mlonB, mlatB, widthMeters, heightMeters, thisID, dataType] = e.data;
+
+    var color = "#000000";
+
+    switch (dataType) {
+        case "buildings":
+            color = "#000000"
+            break;
+        
+        case "green":
+            color = "#00FF00"
+            break;
+    
+        case "water":
+            color = "#0000FF"
+            break;
+
+        default:
+            break;
+    }
 
     if (thisID == "svgButton" || thisID == "pdfButton"){
         var svgArray = geojson2svg({
             mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
             viewportSize: {width: widthMeters * 3.7795, height: heightMeters * 3.7795},
+            attributes: {"class": dataType, "fill": color},
         }).convert(gjArray);
         var svg = svgArray.join('');
         if (thisID == "svgButton") {

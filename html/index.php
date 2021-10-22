@@ -48,7 +48,26 @@ $count = require_once('count.php');
         <form id="searchForm" data-ajax="false">
           <input type="text" id="searchField" placeholder="Ort suchen..." autocomplete="off">
         </form>
+        <div id="mapCont">           
+            <div id="options">
+                <div id="openOptions">&#9660; weitere Einstellungen &#9660;</div>
+                <div id="mainOptions">
+                    <h3>Layer</h3>
+                    <ul>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="buildings" id="oBuildings" checked disabled>Gebäude</input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="green" id="oGreen" checked="false">Grünflächen</input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="water" id="oWater" checked="false">Wasserflächen</input>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         <div id="map">
+        </div>
         </div>
         <div id="buttons">
             <a href="javascript:" id="svgButton" class="cButtons">SVG</a>
