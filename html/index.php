@@ -58,10 +58,19 @@ $count = require_once('count.php');
                             <input type="checkbox" class="layerCheckbox" value="buildings" id="oBuildings" checked disabled>Gebäude</input>
                         </li>
                         <li>
-                            <input type="checkbox" class="layerCheckbox" value="green" id="oGreen" checked="false">Grünflächen</input>
+                            <input type="checkbox" class="layerCheckbox" value="green" id="oGreen" >Grünflächen</input>
                         </li>
                         <li>
-                            <input type="checkbox" class="layerCheckbox" value="water" id="oWater" checked="false">Wasserflächen</input>
+                            <input type="checkbox" class="layerCheckbox" value="water" id="oWater" >Wasserflächen</input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="forest" id="oForest" >Waldflächen</input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="farmland" id="oFarmland" >Landwirtschaft</input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="highways" id="oHighways" >Straßen</input>
                         </li>
                     </ul>
                 </div>

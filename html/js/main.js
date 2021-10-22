@@ -106,7 +106,7 @@ $("#backlink").click(function(){
     $("#processing").fadeOut();
     $("#finish").fadeOut(function(){
         setTimeout(function(){
-            $("#map").fadeIn();
+            $("#mapCont").fadeIn();
             $(".cButtons").fadeIn();
             $("#searchForm").fadeIn();
         }, 200);
@@ -205,13 +205,16 @@ function getReqData() {
 
 $(".cButtons").click(function() {
     
+    $('#options').removeClass('opened');
+    $('#map').removeClass('withOptions');
+
     // trigger counter
     countUp();
 
     var thisID = this.id;
 
     //show the loading bar
-    $("#map").fadeOut();
+    $("#mapCont").fadeOut();
     $("#searchForm").fadeOut();
     $(".cButtons").fadeOut(function(){
         setTimeout(function(){
@@ -306,5 +309,4 @@ mainWorker.onmessage = function(e) {
 $("#openOptions").click(function() {
     $('#options').toggleClass('opened');
     $('#map').toggleClass('withOptions');
-    //$('#map').css({"width":"35%", "margin-left":"15%"})
 })
