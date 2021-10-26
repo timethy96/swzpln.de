@@ -17,7 +17,7 @@ function clean($str){
 $intvals = 3600;
 
 if (isset($_REQUEST["intval"])){
-    $intvals = clean($_REQUEST["intval"]);
+    $intvals = clean($_REQUEST["intval"]) / 1000;
 };
 
 
