@@ -27,21 +27,6 @@ $db = new countDB();
 if(!$db) {
     echo $db->lastErrorMsg();
 } else {
-    /*$sql = "SELECT ROWID,TS FROM SWZPLN;";
-    $sql = "SELECT 
-        UNIX_TIMESTAMP(DATE_ADD(the_date, INTERVAL the_hour HOUR)) as time_sec, 
-        the_sum as value,
-        'hourly' as metric
-    from (
-        select
-        DATE(`TS`) as the_date,
-        HOUR(`TS`) as the_hour,
-        SUM(`ROWID`) AS the_sum
-        FROM SWZPLN
-        WHERE $__timeFilter(`TS`)
-        GROUP BY 1,2 
-        ORDER BY `TS` ASC
-    ) x";*/
     $sql = "SELECT
         TS, 
         count(ROWID) as val
