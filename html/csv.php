@@ -21,7 +21,7 @@ if (isset($_REQUEST["intval"])){
 };
 
 
-echo "ID;TS;\n";
+echo "TS;VALUE;\n";
 
 $db = new countDB();
 if(!$db) {
