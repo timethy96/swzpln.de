@@ -92,8 +92,13 @@ const style = `
     }
     path[highway] {
         fill:none;
-        stroke: grey;
+        stroke: darkgrey;
         stroke-width: 2px;
+    }
+    path[railway] {
+        fill:none;
+        stroke: grey;
+        stroke-width: 1px;
     }
 </style>
 `
