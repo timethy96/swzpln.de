@@ -1,5 +1,8 @@
 name: remote ssh command
-on: [push]
+on:
+  push:
+    branches:
+      - alpha
 jobs:
 
   build:
@@ -13,4 +16,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: "cd ~/server/swzpln-alpha/ && git pull && docker restart swzpln-alpha"
+        script: "cd ~/server/swzpln-alpha/ && git checkout alpha && git pull && docker restart swzpln-alpha"
