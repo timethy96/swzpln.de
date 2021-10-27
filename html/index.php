@@ -48,7 +48,41 @@ $count = require_once('count.php');
         <form id="searchForm" data-ajax="false">
           <input type="text" id="searchField" placeholder="Ort suchen..." autocomplete="off">
         </form>
+        <div id="mapCont">           
+            <div id="options">
+                <div id="openOptions">&#9660; weitere Einstellungen &#9660;</div>
+                <div id="mainOptions">
+                    <h3>Layer</h3>
+                    <ul>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="buildings" id="oBuildings" checked disabled><label for="oBuildings">Gebäude</label></input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="green" id="oGreen" ><label for="oGreen">Grünflächen</label></input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="water" id="oWater" ><label for="oWater">Wasserflächen</label></input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="forest" id="oForest" ><label for="oForest">Waldflächen</label></input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="farmland" id="oFarmland" ><label for="oFarmland">Landwirtschaft</label></input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="highways" id="oHighways" ><label for="oHighways">Straßen</label></input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="railway" id="oRailway" ><label for="oRailway">Schienen</label></input>
+                        </li>
+                        <li>
+                            <input type="checkbox" class="layerCheckbox" value="contours" id="oContours" disabled><label for="oContours">Höhenlinien (in Arbeit)</label></input>
+                        </li>
+                    </ul>
+                </div>
+            </div>
         <div id="map">
+        </div>
         </div>
         <div id="buttons">
             <a href="javascript:" id="svgButton" class="cButtons">SVG</a>
