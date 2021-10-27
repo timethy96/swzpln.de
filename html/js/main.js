@@ -26,6 +26,16 @@ if(lastPos) {
 } else {
     var map = L.map('map').setView([48.775,9.187], 12);
 }
+var options = Cookies.get('options');
+if(options) {
+    options = JSON.parse(options);
+    $.each( $('.layerCheckbox') , function(){
+        if (options.includes($(this).attr('value'))){
+            $(this).attr("checked", true);
+        };
+    });
+};
+
 
 var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -313,5 +323,9 @@ $("#openOptions").click(function() {
         $('#openOptions').html("&#9650; weitere Einstellungen &#9650;")
     } else {
         $('#openOptions').html("&#9660; weitere Einstellungen &#9660;")
-    }
+    };
 })
+
+$(".layerCheckbox").click(function() {
+    window.Cookies.set('options', JSON.stringify(getReqData()), { sameSite:'strict' });
+});
