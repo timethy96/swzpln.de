@@ -1,5 +1,27 @@
 importScripts('geojson2svg.min.js');
 
+function getDataType(obj){
+    if (obj.properties.leisure == "park" || ["allotments","meadow","orchard","vineyard","cemetery","grass","plant_nursery","recreation_ground","village_green"].includes(obj.properties.landuse) || obj.properties.surface == "grass") {
+        //return "green";
+        return "green";
+    } else if (obj.properties.building) {
+        //return "black";
+        return "building";
+    } else if (obj.properties.natural == "water") {
+        //return "blue";
+        return "water";
+    } else if (obj.properties.natural == "wood" || obj.properties.landuse == "forest") {
+        //return "olive";
+        return "forest";
+    } else if (obj.properties.landuse == "farmland") {
+        //return "maroon";
+        return "farmland";
+    } else if (obj.properties.highway) {
+        //return "gray";
+        return "highway";
+    }
+}
+
 onmessage = function(e) {
 
     var [gjArray, mlonA, mlatA, mlonB, mlatB, widthMeters, heightMeters, thisID] = e.data;
@@ -47,6 +69,7 @@ onmessage = function(e) {
         
 
     } else if (thisID == "dwgButton"){
+
         var svgPathArray = geojson2svg({
             mapExtent: {left: mlonA, bottom: mlatA, right: mlonB, top: mlatB},
             viewportSize: {width: widthMeters, height: heightMeters},
@@ -54,8 +77,12 @@ onmessage = function(e) {
         }).convert(gjArray);
 
         postMessage(["setLBar", 80, "DXF-Datei erstellen..."]);
-        var svgPathArrayL = [];
-        svgPathArray.forEach(element => {
+        var svgPathArrayOutput = [];
+        //var svgPathArrayL = [];
+        svgPathArray.forEach(function(element, index) {
+            var layer = getDataType(gjArray.features[index]);
+            console.log(layer);
+            var svgPathArrayL = [];
             if (element.charAt(0) == "M" && element.charAt(element.length-1) == "Z"){
                 eSplit = element.split("M");
                 if (eSplit.length == 2){
@@ -77,14 +104,30 @@ onmessage = function(e) {
             } else {
                 svgPathArrayL.push(element);
             };
+            if (svgPathArrayOutput[layer]){
+                svgPathArrayOutput[layer].push(svgPathArrayL);
+            } else {
+                svgPathArrayOutput[layer] = svgPathArrayL;
+            }
         });
         
         postMessage(["setLBar", 90, "DXF-Datei erstellen..."]);
         importScripts('browser.maker.js');
         var makerjs = require('makerjs');
         var modelDict = {'models':{}};
-        var modelDict = makerjs.importer.fromSVGPathData(svgPathArrayL);
+        Object.entries(svgPathArrayOutput).forEach(entry => {
+            const [key, layer] = entry;
+            if (modelDict.models[key]){
+                modelDict.models[key].push(makerjs.importer.fromSVGPathData(layer));
+            } else {
+                modelDict.models[key] = makerjs.importer.fromSVGPathData(layer);
+            }
+            
+            modelDict.models[key].layer = key;
+        })
+        console.log(modelDict);
         postMessage(["dxf", modelDict]);
+        
     }
 
 }

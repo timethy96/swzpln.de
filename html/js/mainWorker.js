@@ -41,6 +41,10 @@ async function getOSMdata(overpassApi, latA, lonA, latB, lonB, dataArray, _callb
             case "highways":
                 ajaxUrl += 'nwr["highway"];';
                 break;
+
+            case "railway":
+                ajaxUrl += 'nwr["railway"];';
+                break;
         
             default:
                 break;
