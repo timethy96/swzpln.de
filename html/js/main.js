@@ -309,4 +309,9 @@ mainWorker.onmessage = function(e) {
 $("#openOptions").click(function() {
     $('#options').toggleClass('opened');
     $('#map').toggleClass('withOptions');
+    if ($('#options').hasClass('opened')) {
+        $('#openOptions').html("&#9650; weitere Einstellungen &#9650;")
+    } else {
+        $('#openOptions').html("&#9660; weitere Einstellungen &#9660;")
+    }
 })

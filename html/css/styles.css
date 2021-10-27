@@ -103,7 +103,7 @@ a {
     height: calc(100vh - 400px - 5em);
     max-height: 50vh;
     min-height: 150px;
-
+    margin-bottom: 20px;
 }
 
 #options {
@@ -115,15 +115,28 @@ a {
 }
 
 #openOptions{
-    transform: rotate(90deg) translate(25%, -36vw);
-    transform-origin: center;
+    transform: rotate(90deg) translate(calc(calc(100vh - 400px - 5em) * 0.75), -15px);
+    transform-origin: right;
     color: #000;
-    transition: transform 0.6s;
     cursor: pointer;
+    position: relative;
+    animation: optionsRight 0.5s ease;
+    text-align: right;
+    z-index: 1;
 }
 
+@keyframes optionsLeft {
+    from {right: 0;}
+    to {right: 50%;}
+}
+@keyframes optionsRight {
+    from {right: 50%;}
+    to {right: 0;}
+  }
+
 #options.opened #openOptions {
-    transform: rotate(90deg) translate(25%, -1vw);
+    right:50%;
+    animation: optionsLeft 0.5s ease;
 }
 
 #mainOptions {
@@ -131,8 +144,31 @@ a {
     width:50%;
     margin-left: 50%;
     text-align: left;
-    padding: 5%;
+    padding: 0 10%;
     z-index: 0;
+    opacity: 0;
+    animation: optionsHide 1s linear;
+}
+
+#options.opened #mainOptions {
+    opacity: 1;
+    animation: optionsShow 0.1s linear;
+}
+
+@keyframes optionsHide {
+    0% {opacity: 1;}
+    50% {opacity: 1;}
+    51% {opacity: 0;}
+}
+
+@keyframes optionsShow {
+    From {opacity: 0;}
+    To {opacity: 1;}
+}
+
+#mainOptions ul {
+    list-style: none;
+    padding: 0;
 }
 
 
