@@ -19,6 +19,9 @@ function getDataType(obj){
     } else if (obj.properties.highway) {
         //return "gray";
         return "highway";
+    } else if (obj.properties.railway) {
+        //return "gray";
+        return "railway";
     }
 }
 
@@ -56,6 +59,13 @@ onmessage = function(e) {
                 type: 'dynamic',
               },{
                 property: 'properties.highway',
+                type: 'dynamic',
+                key: 'class',
+              },{
+                property: 'properties.railway',
+                type: 'dynamic',
+              },{
+                property: 'properties.railway',
                 type: 'dynamic',
                 key: 'class',
               },],
