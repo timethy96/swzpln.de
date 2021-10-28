@@ -108,6 +108,11 @@ const style = `
         stroke: grey;
         stroke-width: 1px;
     }
+    path[building] {
+        fill: #000;
+        stroke: none;
+        stroke-width: 0;
+    }
 </style>
 `
 
