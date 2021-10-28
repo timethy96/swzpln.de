@@ -39,6 +39,9 @@ onmessage = function(e) {
                 value: 'building',
                 type: 'static'
               },{
+                property: 'properties.building',
+                type: 'dynamic',
+              },{
                 property: 'properties.leisure',
                 type: 'dynamic',
                 key: 'class'
