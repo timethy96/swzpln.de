@@ -115,14 +115,17 @@ a {
 }
 
 #openOptions{
-    transform: rotate(90deg) translate(calc(calc(100vh - 400px - 5em) * 0.75), -15px);
+    transform: rotate(90deg) translate(calc(100vh - 400px - 5em), -15px);
     transform-origin: right;
     color: #000;
     cursor: pointer;
     position: relative;
     animation: optionsRight 0.5s ease;
-    text-align: right;
+    text-align: center;
     z-index: 1;
+    margin-left: auto;
+    max-width: calc(100vh - 400px - 5em);
+    white-space: nowrap;
 }
 
 @keyframes optionsLeft {
