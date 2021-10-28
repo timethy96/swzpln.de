@@ -43,7 +43,15 @@ async function getOSMdata(overpassApi, latA, lonA, latB, lonB, dataArray, _callb
                 break;
 
             case "railway":
-                ajaxUrl += 'nwr["railway"];';
+                ajaxUrl += 'nwr["railway"="tram"];';
+                ajaxUrl += 'nwr["railway"="subway"];';
+                ajaxUrl += 'nwr["railway"="rail"];';
+                ajaxUrl += 'nwr["railway"="preserved"];';
+                ajaxUrl += 'nwr["railway"="narrow_gauge"];';
+                ajaxUrl += 'nwr["railway"="monorail"];';
+                ajaxUrl += 'nwr["railway"="miniature"];';
+                ajaxUrl += 'nwr["railway"="light_rail"];';
+                ajaxUrl += 'nwr["railway"="funicular"];';
                 break;
         
             default:
@@ -108,7 +116,7 @@ const style = `
 
 
 onmessage = function(e) {
-    
+
     if (! e.data._from) {
         const [thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi, dataArray] = e.data;
 
