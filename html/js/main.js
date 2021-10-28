@@ -111,7 +111,7 @@ $("#closeLegal").click(function(){
     $("#legal").css("top","100vh");
 });
 
-$("#backlink").click(function(){
+$(".backlinks").click(function(){
     $("#dllink").off("click");
     $("#processing").fadeOut();
     $("#finish").fadeOut(function(){

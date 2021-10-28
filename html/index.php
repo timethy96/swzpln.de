@@ -42,7 +42,7 @@ $count = require_once('count.php');
     <div class="spacer"></div>
     <div id="main">
         <div id="title">
-            <h1><img id="logoimg" src="logo.png" alt="SWZ PLN"/></h1>
+            <a class="backlinks" href="javascript:"><h1><img id="logoimg" src="logo.png" alt="SWZ PLN"/></h1></a>
             <h2>Schwarzpläne für alle!<br/>(<a target="_blank" class="blacklink" href="https://github.com/TheMoMStudio/swzpln.de/releases">Beta5 : Stadt, Land, Fluss</a>)</h2>
         </div>
         <form id="searchForm" data-ajax="false">
@@ -99,7 +99,7 @@ $count = require_once('count.php');
         <div id="finish" class="hidden">
             <p>Download wird in wenigen Sekunden gestartet. Falls nicht, bitte <a id="dllink" href="javascript:">Download starten</a> klicken!</p>
             <br/>
-            <a id="backlink" href="javascript:">> Weiteren Schwarzplan erstellen <</a>
+            <a class="backlinks" href="javascript:">> Weiteren Schwarzplan erstellen <</a>
             <br/>
             <br/>
             <p>Wenn ihr uns bei der Instandhaltung und Entwicklung dieses Angebots, sowie bei den monatlich anfallenden Serverkosten unterstützen wollt, freuen wir uns natürlich sehr über eine Spende. <form action="https://www.paypal.com/donate" method="post" target="_top" style="width:86px;width:fit-content;margin:5px auto;display:block;"><input type="hidden" name="hosted_button_id" value="P3L3M55U4WBT8" /><input type="image" src="/img/paypal-large.png" width="100px" border="0" name="submit" title="PayPal - The safer, easier way to pay online!" alt="Donate with PayPal button" /></form></p>
