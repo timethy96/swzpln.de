@@ -50,7 +50,7 @@ $count = require_once('count.php');
         </form>
         <div id="mapCont">           
             <div id="options">
-                <div id="openOptions">&#9660; weitere Einstellungen &#9660;</div>
+                <div id="openOptions">&#9660; weitere Ebenen &#9660;</div>
                 <div id="mainOptions">
                     <h3>Layer</h3>
                     <ul>
