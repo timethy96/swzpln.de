@@ -169,7 +169,7 @@ $count = require_once('count.php');
     <script type="application/javascript" src="https://cdn.jsdelivr.net/npm/js-cookie@3.0.0/dist/js.cookie.min.js"></script>
     <script src="js/svg2pdf.umd.min.js"></script>
     <script src="js/subworkers.js"></script>
-    <script src="js/main.js"></script>
+    <script src="js/main.js?v=<?php echo filemtime('js/main.js') ?>"></script>
 </body>
 </html>
 
