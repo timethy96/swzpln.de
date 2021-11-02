@@ -58,6 +58,13 @@ a {
     width: 100%;
 }
 
+.green {
+    color:green;
+}
+.blue {
+    color:blue;
+}
+
 #logoimg {
     width: 170px;
     height: auto;

@@ -43,7 +43,7 @@ $count = require_once('count.php');
     <div id="main">
         <div id="title">
             <a class="backlinks" href="javascript:"><h1><img id="logoimg" src="logo.png" alt="SWZ PLN"/></h1></a>
-            <h2>Schwarzpläne für alle!<br/>(<a target="_blank" class="blacklink" href="https://github.com/TheMoMStudio/swzpln.de/releases">Beta5 : Stadt, Land, Fluss</a>)</h2>
+            <h2>Schwarzpläne für alle!<br/>(<a target="_blank" class="blacklink" href="https://github.com/TheMoMStudio/swzpln.de/releases">Beta5 : Stadt, <span class="green">Land</span>, <span class="blue">Fluss</span></a>)</h2>
         </div>
         <form id="searchForm" data-ajax="false">
           <input type="text" id="searchField" placeholder="Ort suchen..." autocomplete="off">
