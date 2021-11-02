@@ -70,10 +70,10 @@ $count = require_once('count.php');
                             <input type="checkbox" class="layerCheckbox" value="farmland" id="oFarmland" ><label for="oFarmland">Landwirtschaft</label></input>
                         </li>
                         <li>
-                            <input type="checkbox" class="layerCheckbox" value="highways" id="oHighways" ><label for="oHighways">Straßen</label></input>
+                            <input type="checkbox" class="layerCheckbox" value="highways" id="oHighways" disabled><label for="oHighways">Straßen (in Arbeit)</label></input>
                         </li>
                         <li>
-                            <input type="checkbox" class="layerCheckbox" value="railway" id="oRailway" ><label for="oRailway">Schienen</label></input>
+                            <input type="checkbox" class="layerCheckbox" value="railway" id="oRailway" disabled><label for="oRailway">Schienen (in Arbeit)</label></input>
                         </li>
                         <li>
                             <input type="checkbox" class="layerCheckbox" value="contours" id="oContours" disabled><label for="oContours">Höhenlinien (in Arbeit)</label></input>

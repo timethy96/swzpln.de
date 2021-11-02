@@ -133,8 +133,6 @@ onmessage = function(e) {
             const gjson = osmtogeojson(osm);
             const mgjson = reproject(gjson);
 
-            console.log(mgjson);
-
             var workersLen = Math.ceil(mgjson.features.length / 1000);
             if (workersLen > 8){
                 var workersLen = 8;
