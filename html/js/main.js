@@ -26,6 +26,16 @@ if(lastPos) {
 } else {
     var map = L.map('map').setView([48.775,9.187], 12);
 }
+var options = Cookies.get('options');
+if(options) {
+    options = JSON.parse(options);
+    $.each( $('.layerCheckbox') , function(){
+        if (options.includes($(this).attr('value'))){
+            $(this).attr("checked", true);
+        };
+    });
+};
+
 
 var tiles = L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {
     attribution: '&copy; <a href="https://osm.org/copyright">OpenStreetMap</a> contributors',
@@ -101,12 +111,12 @@ $("#closeLegal").click(function(){
     $("#legal").css("top","100vh");
 });
 
-$("#backlink").click(function(){
+$(".backlinks").click(function(){
     $("#dllink").off("click");
     $("#processing").fadeOut();
     $("#finish").fadeOut(function(){
         setTimeout(function(){
-            $("#map").fadeIn();
+            $("#mapCont").fadeIn();
             $(".cButtons").fadeIn();
             $("#searchForm").fadeIn();
         }, 200);
@@ -186,6 +196,18 @@ function setLBar(percent, string){
     },percent*20);
 }
 
+//check which data is requested
+
+function getReqData() {
+    var dataArray = [];
+    $.each( $('.layerCheckbox') , function(){
+        if ($(this).is(':checked')){
+            dataArray.push($(this).attr('value'));
+        }
+    });
+    return dataArray;
+}
+
 
 
 
@@ -193,13 +215,16 @@ function setLBar(percent, string){
 
 $(".cButtons").click(function() {
     
+    $('#options').removeClass('opened');
+    $('#map').removeClass('withOptions');
+
     // trigger counter
     countUp();
 
     var thisID = this.id;
 
     //show the loading bar
-    $("#map").fadeOut();
+    $("#mapCont").fadeOut();
     $("#searchForm").fadeOut();
     $(".cButtons").fadeOut(function(){
         setTimeout(function(){
@@ -224,8 +249,9 @@ $(".cButtons").click(function() {
     var widthMeters = degToMeter(latA, latA, lonA, lonB); //same lat for width!
 
     setLBar(20,"Kartendaten herunterladen... (Dies kann bei großen Ausschnitten ein Weilchen dauern!)");
-    
-    mainWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi]);
+
+    var dataArray = getReqData();
+    mainWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi,dataArray]);
 
 });
 
@@ -285,3 +311,19 @@ mainWorker.onmessage = function(e) {
         cError = e.data[1];
     }
 }
+
+//options open & close
+
+$("#openOptions").click(function() {
+    $('#options').toggleClass('opened');
+    $('#map').toggleClass('withOptions');
+    if ($('#options').hasClass('opened')) {
+        $('#openOptions').html("&#9650; weitere Ebenen &#9650;")
+    } else {
+        $('#openOptions').html("&#9660; weitere Ebenen &#9660;")
+    };
+})
+
+$(".layerCheckbox").click(function() {
+    window.Cookies.set('options', JSON.stringify(getReqData()), { sameSite:'strict' });
+});
