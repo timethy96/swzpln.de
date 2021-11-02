@@ -94,9 +94,8 @@ onmessage = function(e) {
         //var svgPathArrayL = [];
         svgPathArray.forEach(function(element, index) {
             var layer = getDataType(gjArray.features[index]);
-            console.log(layer);
             var svgPathArrayL = [];
-            if (element.charAt(0) == "M" && element.charAt(element.length-1) == "Z"){
+            if ((element.charAt(0) == "M" && element.charAt(element.length-1) == "Z") || ["highway","railway"].includes(layer)){
                 eSplit = element.split("M");
                 if (eSplit.length == 2){
                     svgPathArrayL.push(element.replaceAll(" "," L"));
@@ -106,7 +105,7 @@ onmessage = function(e) {
                             if (splitElem.charAt(splitElem.length-1) == " "){
                                 splitElem = splitElem.slice(0, -1);
                             }
-                            if (splitElem.charAt(splitElem.length-1) != "Z"){
+                            if (splitElem.charAt(splitElem.length-1) != "Z" && ! ["highway","railway"].includes(layer)){
                                 splitElem += "Z";
                             }
                             svgPathArrayL.push("M" + splitElem.replaceAll(" "," L"));
@@ -116,6 +115,8 @@ onmessage = function(e) {
                 
             } else {
                 svgPathArrayL.push(element);
+                console.log(layer);
+                console.log(element);
             };
             if (svgPathArrayOutput[layer]){
                 svgPathArrayOutput[layer].push(svgPathArrayL);
@@ -138,7 +139,6 @@ onmessage = function(e) {
             
             modelDict.models[key].layer = key;
         })
-        console.log(modelDict);
         postMessage(["dxf", modelDict]);
         
     }

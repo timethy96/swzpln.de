@@ -251,8 +251,6 @@ $(".cButtons").click(function() {
     setLBar(20,"Kartendaten herunterladen... (Dies kann bei großen Ausschnitten ein Weilchen dauern!)");
 
     var dataArray = getReqData();
-    console.log(dataArray)
-    
     mainWorker.postMessage([thisID,latA,lonA,latB,lonB,mlatA,mlonA,mlatB,mlonB,heightMeters,widthMeters,overpassApi,dataArray]);
 
 });
