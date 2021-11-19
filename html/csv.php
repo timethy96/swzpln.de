@@ -27,15 +27,26 @@ $db = new countDB();
 if(!$db) {
     echo $db->lastErrorMsg();
 } else {
-    $sql = "SELECT
-        TS, 
-        count(ROWID) as val
-    FROM SWZPLN
-    GROUP BY cast(cast(TS/($intvals) as signed)*$intvals as signed);";
-    $ret = $db->query($sql);
-    while($row = $ret->fetchArray(SQLITE3_ASSOC) ) {
-        echo $row['TS'] . ";" . $row['val'] . ";\n";
-    }
+    if (isset($_REQUEST["intval"])){
+        $sql = "SELECT
+            TS, 
+            count(ROWID) as val
+        FROM SWZPLN
+        GROUP BY cast(cast(TS/($intvals) as signed)*$intvals as signed);";
+        $ret = $db->query($sql);
+        while($row = $ret->fetchArray(SQLITE3_ASSOC) ) {
+            echo $row['TS'] . ";" . $row['val'] . ";\n";
+        };
+    } else {
+        $sql = "SELECT
+            TS, 
+            ROWID as val
+        FROM SWZPLN;";
+        $ret = $db->query($sql);
+        while($row = $ret->fetchArray(SQLITE3_ASSOC) ) {
+            echo $row['TS'] . ";" . $row['val'] . ";\n";
+        };
+    };
 
 }
 
