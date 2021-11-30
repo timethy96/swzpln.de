@@ -122,6 +122,7 @@ $(".backlinks").click(function(){
             $("#mapCont").fadeIn();
             $(".cButtons").fadeIn();
             $("#searchForm").fadeIn();
+            tiles.redraw();
         }, 200);
     });
 })
@@ -312,18 +313,6 @@ mainWorker.onmessage = function(e) {
         cError = e.data[1];
     }
 }
-
-//options open & close
-
-$("#openOptions").click(function() {
-    $('#options').toggleClass('opened');
-    $('#map').toggleClass('withOptions');
-    if ($('#options').hasClass('opened')) {
-        $('#openOptions').html("&#9650; weitere Ebenen &#9650;")
-    } else {
-        $('#openOptions').html("&#9660; weitere Ebenen &#9660;")
-    };
-})
 
 $(".layerCheckbox").click(function() {
     window.Cookies.set('options', JSON.stringify(getReqData()), { sameSite:'strict' });

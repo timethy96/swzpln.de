@@ -43,46 +43,42 @@ $count = require_once('count.php');
     <div id="main">
         <div id="title">
             <a class="backlinks" href="javascript:"><h1><img id="logoimg" src="logo.png" alt="SWZ PLN"/></h1></a>
-            <h2>Schwarzpläne für alle!<br/>(<a target="_blank" class="blacklink" href="https://github.com/TheMoMStudio/swzpln.de/releases">Beta5 : Stadt, <span class="green">Land</span>, <span class="blue">Fluss</span></a>)</h2>
+            <h2>Schwarzpläne für alle!<br/>(<a target="_blank" class="blacklink" href="https://github.com/TheMoMStudio/swzpln.de/releases">Beta5.1 : Stadt, <span class="green">Land</span>, <span class="blue">Fluss</span></a>)</h2>
         </div>
         <form id="searchForm" data-ajax="false">
           <input type="text" id="searchField" placeholder="Ort suchen..." autocomplete="off">
         </form>
         <div id="mapCont">           
             <div id="options">
-                <div id="openOptions">&#9660; weitere Ebenen &#9660;</div>
-                <div id="mainOptions">
-                    <h3>Layer</h3>
-                    <ul>
-                        <li>
-                            <input type="checkbox" class="layerCheckbox" value="buildings" id="oBuildings" checked disabled><label for="oBuildings">Gebäude</label></input>
-                        </li>
-                        <li>
-                            <input type="checkbox" class="layerCheckbox" value="green" id="oGreen" ><label for="oGreen">Grünflächen</label></input>
-                        </li>
-                        <li>
-                            <input type="checkbox" class="layerCheckbox" value="water" id="oWater" ><label for="oWater">Wasserflächen</label></input>
-                        </li>
-                        <li>
-                            <input type="checkbox" class="layerCheckbox" value="forest" id="oForest" ><label for="oForest">Waldflächen</label></input>
-                        </li>
-                        <li>
-                            <input type="checkbox" class="layerCheckbox" value="farmland" id="oFarmland" ><label for="oFarmland">Landwirtschaft</label></input>
-                        </li>
-                        <li>
-                            <input type="checkbox" class="layerCheckbox" value="highways" id="oHighways" disabled><label for="oHighways">Straßen (in Arbeit)</label></input>
-                        </li>
-                        <li>
-                            <input type="checkbox" class="layerCheckbox" value="railway" id="oRailway" disabled><label for="oRailway">Schienen (in Arbeit)</label></input>
-                        </li>
-                        <li>
-                            <input type="checkbox" class="layerCheckbox" value="contours" id="oContours" disabled><label for="oContours">Höhenlinien (in Arbeit)</label></input>
-                        </li>
-                    </ul>
-                </div>
+                <ul>
+                    <li>
+                        <input type="checkbox" class="layerCheckbox" value="buildings" id="oBuildings" checked disabled /><label for="oBuildings" class="layerLabel" id="lBuildings"><span class="tooltiptext">Gebäude</span></label>
+                    </li>
+                    <li>
+                        <input type="checkbox" class="layerCheckbox" value="green" id="oGreen" /><label for="oGreen" class="layerLabel" id="lGreen"><span class="tooltiptext">Grünflächen</span></label>
+                    </li>
+                    <li>
+                        <input type="checkbox" class="layerCheckbox" value="water" id="oWater" /><label for="oWater" class="layerLabel" id="lWater"><span class="tooltiptext">Wasserflächen</span></label>
+                    </li>
+                    <li>
+                        <input type="checkbox" class="layerCheckbox" value="forest" id="oForest" /><label for="oForest" class="layerLabel" id="lForest"><span class="tooltiptext">Waldflächen</span></label>
+                    </li>
+                    <li>
+                        <input type="checkbox" class="layerCheckbox" value="farmland" id="oFarmland" /><label for="oFarmland" class="layerLabel" id="lFarmland"><span class="tooltiptext">Landwirtschaft</span></label>
+                    </li>
+                    <li>
+                        <input type="checkbox" class="layerCheckbox" value="highways" id="oHighways" disabled /><label for="oHighways" class="layerLabel" id="lHighways"><span class="tooltiptext">Straßen<br />(in Arbeit)</span></label>
+                    </li>
+                    <li>
+                        <input type="checkbox" class="layerCheckbox" value="railway" id="oRailway" disabled /><label for="oRailway" class="layerLabel" id="lRailway"><span class="tooltiptext">Schienen<br />(in Arbeit)</span></label>
+                    </li>
+                    <li>
+                        <input type="checkbox" class="layerCheckbox" value="contours" id="oContours" disabled /><label for="oContours" class="layerLabel" id="lContours"><span class="tooltiptext">Höhenlinien<br />(in Arbeit)</span></label>
+                    </li>
+                </ul>
             </div>
-        <div id="map">
-        </div>
+            <div id="map">
+            </div>
         </div>
         <div id="buttons">
             <a href="javascript:" id="svgButton" class="cButtons">SVG</a>
@@ -159,6 +155,13 @@ $count = require_once('count.php');
         <p>Kartendaten: &copy; <?php echo date("Y"); ?> <a target="_blank" href="https://osm.org/copyright">OpenStreetMap</a> contributors</p>
         <p>Overpass-API bereitgestellt von <a target="_blank" href="https://overpass.kumi.systems/">kumi.systems</a></p>
         <p>PayPal-Button von <a target="_blank" href="https://www.pngall.com/?p=6289">pngall.com</a></p>
+        <p>House by Rahman Haryanto from the Noun Project</p>
+        <p>grass by Zulfa Mahendra from the Noun Project</p>
+        <p>wave by Ahmad Arzaha from the Noun Project</p>
+        <p>Tree by Saideep Karipalli from the Noun Project</p>
+        <p>Wheat by Bohdan Burmich from the Noun Project</p>
+        <p>Highway by StringLabs from the Noun Project</p>
+        <p>railway by KP Arts from the Noun Project</p>
         <br/><br/><br/><br/>
 
     </div>

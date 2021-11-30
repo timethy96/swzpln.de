@@ -1,0 +1,133 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Created with Inkscape (http://www.inkscape.org/) -->
+
+<svg
+   width="64"
+   height="32"
+   viewBox="0 0 64 32"
+   version="1.1"
+   id="svg5"
+   inkscape:version="1.1.1 (3bf5ae0d25, 2021-09-20, custom)"
+   sodipodi:docname="B-building.svg"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <sodipodi:namedview
+     id="namedview7"
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1.0"
+     inkscape:pageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:document-units="px"
+     showgrid="false"
+     showguides="true"
+     inkscape:guide-bbox="true"
+     width="64px"
+     inkscape:zoom="5.6568542"
+     inkscape:cx="21.124815"
+     inkscape:cy="6.5407377"
+     inkscape:window-width="1920"
+     inkscape:window-height="1020"
+     inkscape:window-x="0"
+     inkscape:window-y="28"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="g826">
+    <sodipodi:guide
+       position="16,380.91113"
+       orientation="-1,0"
+       id="guide1004"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="25.146106,7.6826266"
+       orientation="0,1"
+       id="guide1006"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="32,16"
+       orientation="-1,0"
+       id="guide1394"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="48,23.514719"
+       orientation="-1,0"
+       id="guide1396"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="64,53.92031"
+       orientation="-1,0"
+       id="guide2103"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="-16.970563,32"
+       orientation="0,1"
+       id="guide2105"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="-18.031223,0"
+       orientation="0,1"
+       id="guide2107"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+    <sodipodi:guide
+       position="0,50.208"
+       orientation="-1,0"
+       id="guide2109"
+       inkscape:label=""
+       inkscape:locked="false"
+       inkscape:color="rgb(0,0,255)" />
+  </sodipodi:namedview>
+  <defs
+     id="defs2" />
+  <g
+     inkscape:label="Layer 1"
+     inkscape:groupmode="layer"
+     id="layer1">
+    <g
+       id="g842"
+       transform="matrix(0.70354664,0,0,0.70354664,-0.53208275,-1.1725461)">
+      <g
+         data-name="Maps, House"
+         id="g826"
+         transform="translate(-0.5017956,0.23060367)">
+        <rect
+           style="fill:#cccccc;fill-opacity:1;stroke:none;stroke-width:5.45109"
+           id="rect1048"
+           width="45.483837"
+           height="45.483833"
+           x="1.258082"
+           y="1.436018" />
+        <path
+           d="M 37.62,17.57 24.54,9.16 a 1,1 0 0 0 -1.08,0 L 10.38,17.57 A 3,3 0 0 0 9,20.09 V 36 a 3,3 0 0 0 3,3 h 24 a 3,3 0 0 0 3,-3 V 20.09 A 3,3 0 0 0 37.62,17.57 Z M 37,36 a 1,1 0 0 1 -1,1 H 12 A 1,1 0 0 1 11,36 V 20.09 a 1,1 0 0 1 0.46,-0.84 L 24,11.19 36.54,19.25 A 1,1 0 0 1 37,20.09 Z"
+           id="path824"
+           style="fill:#ffffff" />
+        <rect
+           style="fill:#010101;fill-opacity:1;stroke:none;stroke-width:5.4511"
+           id="rect1048-3"
+           width="45.483837"
+           height="45.483833"
+           x="46.741917"
+           y="1.436018" />
+        <path
+           d="M 83.103837,17.569997 70.023836,9.1599969 a 1,1 0 0 0 -1.08,0 L 55.86384,17.569997 a 3,3 0 0 0 -1.38,2.519999 v 15.91 a 3,3 0 0 0 3,3 h 23.999997 a 3,3 0 0 0 3,-3 v -15.91 a 3,3 0 0 0 -1.38,-2.519999 z m -0.62,18.429999 a 1,1 0 0 1 -1,1 H 57.48384 a 1,1 0 0 1 -1,-1 v -15.91 a 1,1 0 0 1 0.46,-0.84 l 12.539996,-8.059999 12.540001,8.059999 a 1,1 0 0 1 0.46,0.84 z"
+           id="path824-6"
+           style="fill:#ffffff" />
+      </g>
+    </g>
+  </g>
+</svg>
