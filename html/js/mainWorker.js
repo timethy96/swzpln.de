@@ -87,16 +87,16 @@ async function getOSMdata(overpassApi, latA, lonA, latB, lonB, dataArray, _callb
 const style = `
 <style>
     .water {
-        fill: #42698c;
+        fill: #6f7c91;
     }
     .park, .grass, .allotments, .meadow, .orchard, .vineyard, .cemetery, .grass, .plant_nursery, .recreation_ground, .village_green {
-        fill: #61993b;
+        fill: #6f916f;
     }
     .wood, .forest {
-        fill: #194d25;
+        fill: #536c5d;
     }
     .farmland {
-        fill: #cdba88;
+        fill: #d1c6aa;
     }
     path[highway] {
         fill:none;
