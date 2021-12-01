@@ -10,8 +10,8 @@ services:
             - ./html:/var/www/html
         restart: unless-stopped
         environment:
-            VIRTUAL_HOST: swzpln.de
-            LETSENCRYPT_HOST: swzpln.de
+            VIRTUAL_HOST: swzpln.de,www.swzpln.de
+            LETSENCRYPT_HOST: swzpln.de,www.swzpln.de
 
 networks:
   default:
