@@ -135,6 +135,7 @@ a {
     display: block;
     margin-bottom: 5px;
     position: relative;
+    cursor: pointer;
 }
 .layerCheckbox:checked + .layerLabel {
     background-position: right center;
