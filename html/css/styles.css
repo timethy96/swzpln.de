@@ -322,6 +322,10 @@ a {
     overflow: auto;
 }
 
+#legal a {
+    text-decoration: none;
+}
+
 #closeLegal {
     font-size: 50px;
     position: absolute;
