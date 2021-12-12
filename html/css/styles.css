@@ -249,7 +249,7 @@ a {
 }
 
 #processing {
-    margin-top: 15%;
+    margin-top: 3vh;
 }
 
 
@@ -318,7 +318,7 @@ a {
     width: 90%;
     max-width: 100vh;
     position: relative;
-    margin: 10vh auto;
+    margin: 3vh auto;
 
 }
 
@@ -388,3 +388,13 @@ a {
     color: transparent;
 }
 
+#ad {
+    display: none;
+    background: #eeeeee;
+    width: 728px;
+    height: 90px;
+    margin: 3vh auto;
+    padding: 0;
+    overflow: hidden;
+    
+}

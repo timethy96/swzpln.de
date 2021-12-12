@@ -89,6 +89,25 @@ $count = require_once('count.php');
             <a href="javascript:" id="dwgButton" class="cButtons">DWG/DXF</a>
             <a href="javascript:" id="pdfButton" class="cButtons">PDF</a>
         </div>
+        <div id="ad">
+            <iframe
+                src="https://viewm.moonicorn.network/#%7B%22options%22%3A%7B%22publisherAddr%22%3A%220x5815c302e2b9d25D3C0E14EFa0503a004d8DdA12%22%2C%22whitelistedTokens%22%3A%5B%220x6B175474E89094C44Da98b954EedeAC495271d0F%22%5D%2C%22whitelistedType%22%3A%22legacy_728x90%22%2C%22randomize%22%3Atrue%2C%22targeting%22%3A%5B%5D%2C%22width%22%3A%22728%22%2C%22height%22%3A%2290%22%2C%22minPerImpression%22%3A%220%22%2C%22fallbackUnit%22%3Anull%2C%22marketSlot%22%3A%22QmS5nuEpHdHKDJa9X4iJhk7hEzeKWX8n8m7J12vWMZRrAZ%22%7D%7D"
+                width="728"
+                height="90"
+                scrolling="no"
+                frameborder="0"
+                style="border: 0;"
+                onload="window.addEventListener('message', function(ev) { 
+                    if (ev.data.hasOwnProperty('adexHeight') && ('https://viewm.moonicorn.network' === ev.origin)) {
+                        for (let f of document.getElementsByTagName('iframe')) {	
+                            if (f.contentWindow === ev.source) {
+                                f.height = ev.data.adexHeight;
+                            }
+                        }	
+                    }
+                }, false)"
+            ></iframe>
+        </div>
         <div id="processing" class="hidden">
             <div id="sbBorder">
                 <div id="sBar"></div>
