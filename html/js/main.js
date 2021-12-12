@@ -111,9 +111,12 @@ $("#closeLegal").click(function(){
     $("#legal").css("top","100vh");
 });
 
+// -- backlinks --
+
 $(".backlinks").click(function(){
     $("#dllink").off("click");
     $("#processing").fadeOut();
+    $("#ad").fadeOut();
     $("#finish").fadeOut(function(){
         setTimeout(function(){
             $("#mapCont").fadeIn();
@@ -214,9 +217,6 @@ function getReqData() {
 // -- main download function --
 
 $(".cButtons").click(function() {
-    
-    $('#options').removeClass('opened');
-    $('#map').removeClass('withOptions');
 
     // trigger counter
     countUp();
@@ -229,6 +229,7 @@ $(".cButtons").click(function() {
     $(".cButtons").fadeOut(function(){
         setTimeout(function(){
             $("#processing").fadeIn();
+            $("#ad").fadeIn();
         }, 200);
     });
     
