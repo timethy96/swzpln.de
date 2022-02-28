@@ -116,6 +116,13 @@ const style = `
 </style>
 `
 
+//define svg osm-attribution text
+const osmattrtxt = `
+<text>
+Kartendaten: © OpenStreetMap.org contributors, opendatacommons.org
+</text>
+`
+
 
 // -- main download function --
 
@@ -163,7 +170,7 @@ onmessage = function(e) {
                             if (f.data[0] == "svg") {
                                 postMessage(["setLBar", 80, "SVG-Datei erstellen..."]);
                                 var svg = resultArray.join("");
-                                var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters}mm" height="${heightMeters}mm" xmlns="http://www.w3.org/2000/svg">` + style + svg + '</svg>';
+                                var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters}mm" height="${heightMeters}mm" xmlns="http://www.w3.org/2000/svg">` + style + svg + osmattrtxt + '</svg>';
                                 postMessage(["setLBar", 100, "Download starten..."]);
                                 postMessage(["download", "svg", svgFile]);
                             } else if (f.data[0] == "dxf") {
@@ -181,7 +188,7 @@ onmessage = function(e) {
                                 postMessage(["download", "dxf", dxfString]);
                             } else if (f.data[0] == "pdf") {
                                 var svg = resultArray.join('');
-                                var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters * 3.7795}" height="${heightMeters * 3.7795}" xmlns="http://www.w3.org/2000/svg">` + style + svg + '</svg>';
+                                var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters * 3.7795}" height="${heightMeters * 3.7795}" xmlns="http://www.w3.org/2000/svg">` + style + svg + osmattrtxt + '</svg>';
                                 postMessage(["download", "pdf", svgFile, widthMeters, heightMeters]);
                             }
                         } 
