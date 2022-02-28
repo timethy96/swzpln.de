@@ -118,9 +118,7 @@ const style = `
 
 //define svg osm-attribution text
 const osmattrtxt = `
-<text>
 Kartendaten: © OpenStreetMap.org contributors, opendatacommons.org
-</text>
 `
 
 
@@ -170,7 +168,7 @@ onmessage = function(e) {
                             if (f.data[0] == "svg") {
                                 postMessage(["setLBar", 80, "SVG-Datei erstellen..."]);
                                 var svg = resultArray.join("");
-                                var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters}mm" height="${heightMeters}mm" xmlns="http://www.w3.org/2000/svg">` + style + svg + osmattrtxt + '</svg>';
+                                var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters}mm" height="${heightMeters+8}mm" xmlns="http://www.w3.org/2000/svg">` + style + svg + `<rect x="0" y="${heightMeters}mm" height="10mm" width="${widthMeters}mm" fill="#FFFFFF"></rect><text x="0" y="${heightMeters+4}mm" style="font-family:Arial;font-size:34;fill:#000000;">` + osmattrtxt + '</text></svg>';
                                 postMessage(["setLBar", 100, "Download starten..."]);
                                 postMessage(["download", "svg", svgFile]);
                             } else if (f.data[0] == "dxf") {
@@ -188,8 +186,8 @@ onmessage = function(e) {
                                 postMessage(["download", "dxf", dxfString]);
                             } else if (f.data[0] == "pdf") {
                                 var svg = resultArray.join('');
-                                var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters * 3.7795}" height="${heightMeters * 3.7795}" xmlns="http://www.w3.org/2000/svg">` + style + svg + osmattrtxt + '</svg>';
-                                postMessage(["download", "pdf", svgFile, widthMeters, heightMeters]);
+                                var svgFile = `<svg version="1.1" baseProfile="full" width="${widthMeters * 3.7795}" height="${(heightMeters+6) * 3.7795}" xmlns="http://www.w3.org/2000/svg">` + style + svg + `<rect x="0" y="${heightMeters * 3.7795}" height="37.795" width="${widthMeters * 3.7795}" fill="#FFFFFF"></rect><text x="0" y="${(heightMeters+4) * 3.7795}" style="font-family:Arial;font-size:34;fill:#000000;">` + osmattrtxt + '</text></svg>';
+                                postMessage(["download", "pdf", svgFile, widthMeters, heightMeters+6]);
                             }
                         } 
                     }
