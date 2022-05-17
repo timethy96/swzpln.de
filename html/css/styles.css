@@ -365,7 +365,7 @@ a {
     transform-origin: right top;
     transform: rotate(90deg);
     position: fixed;
-    top:250px;
+    top:200px;
     right:0;
     font-style:oblique;
     text-decoration: none;
