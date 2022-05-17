@@ -47,7 +47,7 @@ $count = require_once('count.php');
 </head>
 
 <body>
-    <a href="https://rundgaenge.com" target="_blank" id="rundgaenge">Uni Stuttgart Arch Rundgänge</a>
+    <a href="https://synästhetische-ki.de" target="_blank" id="info_banner">Synästhetische KI</a>
     <div class="spacer"></div>
     <div id="main">
         <div id="title">
