@@ -15,6 +15,7 @@ export function initUI() {
     $('#dl_b').click(() => {
         $('#dl_b_c').toggleClass('active');
     })
+    map.on('zoomend', () => {$('#dl_b_c').removeClass('active');});
 
     //open menu
     $('#burger_b').click(() => {
@@ -29,4 +30,5 @@ export function initUI() {
         $('body').addClass('menu_inactive');
         $('body').removeClass('menu_active');
     })
+    
 }

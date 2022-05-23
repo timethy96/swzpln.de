@@ -46,7 +46,6 @@ body.menu_inactive {
 }
 
 a {
-    color: #000;
     font-weight: 800;
 }
 
@@ -287,12 +286,14 @@ header.active #burger_b {
     transform: scale(1.05);
 }
 
-.fab.inactive {
+.fab.inactive, .fab.inactive ~ .fab_small {
     box-shadow: none;
     filter: none;
+    pointer-events: none;
+    cursor:default;
 }
 
-.fab.inactive:hover {
+.fab.inactive:hover, .fab.inactive ~ .fab_small:hover {
     box-shadow: none;
     filter: none;
     transform: none;
@@ -362,7 +363,6 @@ header.active #burger_b {
     width: 31vw;
     height: calc(100% - 32px);
     position: absolute;
-    background-color: #eee;
     transition: all 0.3s;
     grid-column: 1 / 1;
     grid-row: 1 / 1;
@@ -422,10 +422,7 @@ header.active #burger_b {
     cursor: pointer;
 }
 
-.menu_item:hover {
-    background-color: #ccc;
 
-}
 
 .menu_item svg:first-of-type {
     margin-left: 16px;
