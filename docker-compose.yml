@@ -10,8 +10,13 @@ services:
             - ./html:/var/www/html
         restart: unless-stopped
         environment:
+<<<<<<< HEAD
             VIRTUAL_HOST: swzpln.de,www.swzpln.de,xn--plne-moa.io,www.xn--plne-moa.io
             LETSENCRYPT_HOST: swzpln.de,www.swzpln.de,xn--plne-moa.io,www.xn--plne-moa.io
+=======
+            VIRTUAL_HOST: swzpln.de,www.swzpln.de
+            LETSENCRYPT_HOST: swzpln.de,www.swzpln.de
+>>>>>>> alpha
 
 networks:
   default:
