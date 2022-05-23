@@ -1,8 +1,9 @@
 :root {
     --bg: #fff;
+    --bg-2: #eee;
+    --bg-3: #ccc;
     --txt: #333;
     --fab: #333;
-    --fab-grey: #aaa;
     --fab-grey-txt: #999;
     
     --l_buildings: #ddd;
@@ -20,6 +21,10 @@ body{
     color: var(--txt);
 }
 
+a {
+    color: var(--txt);
+}
+
 #burger_b svg {
     fill: var(--txt);
 }
@@ -34,7 +39,7 @@ body{
 }
 
 .fab.inactive, .fab_large.inactive, .fab_small.inactive {
-    background: var(--fab-grey);
+    background: var(--bg-3);
 }
 
 .fab.inactive svg, .fab_large.inactive svg, .fab_small.inactive svg {
@@ -64,6 +69,14 @@ body{
 
 #layers label svg {
     fill: var(--txt);
+}
+
+#menu {
+    background-color: var(--bg-2);
+}
+
+.menu_item:hover {
+    background-color: var(--bg-3);
 }
 
 /* Layer colors */
