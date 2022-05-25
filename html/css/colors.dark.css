@@ -1,10 +1,10 @@
 :root {
-    --bg: #fff;
-    --bg-2: #eee;
-    --bg-3: #ccc;
-    --txt: #333;
-    --fab: #333;
-    --fab-grey-txt: #999;
+    --bg: #000;
+    --bg-2: #111;
+    --bg-3: #333;
+    --txt: #eee;
+    --fab: #eee;
+    --fab-grey-txt: #888;
     
     --l_buildings: #ddd;
     --l_green: rgb(196, 255, 153);
@@ -16,6 +16,10 @@
     --l_contours: rgb(153, 255, 207);
 }
 
+#map {
+    filter:  invert(1) grayscale(100%) contrast(1.3)!important;
+}
+
 body{
     background: var(--bg);
     color: var(--txt);
@@ -25,11 +29,15 @@ a {
     color: var(--txt);
 }
 
-#burger_b svg {
+#burger_b svg, #burger_b_menu {
     fill: var(--txt);
 }
 
-#search_b svg {
+.menu_item {
+    fill: var(--txt);
+}
+
+#search_b svg, #search_exit_b svg {
     fill: var(--txt);
 }
 
@@ -53,6 +61,7 @@ a {
 #search {
     color: var(--bg);
     border-color: var(--txt) !important;
+    background-color: var(--bg);
 }
 
 #search:focus {
@@ -73,6 +82,14 @@ a {
 
 #menu {
     background-color: var(--bg-2);
+}
+
+#layers input:checked + label {
+    color:var(--bg-3)
+}
+
+#layers input:checked + label svg {
+    fill:var(--bg-3)
 }
 
 /* Layer colors */

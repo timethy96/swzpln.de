@@ -7,6 +7,16 @@ $l = in_array($userLang, $langs) ? $userLang : 'en';
 
 $la = getTranslations($l); // var $la and $l get read by translation-functions
 
+if (isset($_COOKIE['darkmode'])){
+  $darkmode = filter_var(clean($_COOKIE['darkmode']), FILTER_VALIDATE_BOOLEAN);
+} else {
+  if (date('H') > 19 || date('H') < 7) {
+    $darkmode = true;
+  } else {
+    $darkmode = false;
+  }
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $l; ?>">
@@ -19,8 +29,12 @@ $la = getTranslations($l); // var $la and $l get read by translation-functions
   <title>swzpln.de</title>
 
   <link rel="stylesheet" href="/css/reset.css">
-  <link rel="stylesheet" href="/css/colors.light.css">
   <?php
+  if ($darkmode){
+   echo '<link rel="stylesheet" href="/css/colors.dark.css" id="colors">';
+  } else {
+    echo '<link rel="stylesheet" href="/css/colors.light.css" id="colors">';
+  }
   if ($_SERVER['SERVER_NAME'] != 'localhost') {
     echo '<link rel="stylesheet" href="/css/style.css">'; // only use prefixed css on production servers
   } else {
@@ -98,18 +112,20 @@ $la = getTranslations($l); // var $la and $l get read by translation-functions
     <h2><?php __('Schwarzpläne für alle!'); ?></h2>
     <p id="menu_subtitle"><?php __('Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpläne von überall erstellen. Und wir sammeln nicht einmal deine Daten!'); ?></p>
     
-    <div class="menu_item"><?php echo file_get_contents("img/lang.svg"); __('English'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item"><?php echo file_get_contents("img/help.svg"); __('Hilfe (Tutorial)'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item"><?php echo file_get_contents("img/donate.svg"); __('Spenden'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item"><?php echo file_get_contents("img/darkmode.svg"); __('Dunkel-Modus'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item"><?php echo file_get_contents("img/github.svg"); __('Quellcode (GitHub)'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item"><?php echo file_get_contents("img/imprint.svg"); __('Impressum'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="lang"><?php echo file_get_contents("img/lang.svg"); __('English'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="help"><?php echo file_get_contents("img/help.svg"); __('Hilfe (Tutorial)'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="donate" data-href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA"><?php echo file_get_contents("img/donate.svg"); __('Spenden (PayPal)'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="darkmode"><?php echo file_get_contents("img/darkmode.svg"); __('Dunkel-Modus'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="github" data-href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __('Quellcode (GitHub)'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="imprint"><?php echo file_get_contents("img/imprint.svg"); __('Impressum'); echo file_get_contents("img/arrow_right.svg");?></div>
     
     <div id="menu_footer">
       <p>&copy; <?php echo date("Y"); ?> <span class="logo">SWZPLN</span> erstellt in Stuttgart von <a href="https://timo.bilhoefer.de">Timo Bilhöfer</a><br />unterstützt durch <a href="https://themom.studio">The MoM Studio</a>.</p>
       <p>Diese Webseite ist Quelloffen und unter der <a href="https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE">AGPL-3 Lizenz</a> veröffentlicht.</p>
     </div>
   </div>
+  <div id="menu_shadow"></div>
+
 
   <script src="js/jquery-3.6.0.min.js"></script>
   <script src="js/leaflet/leaflet.js"></script>
