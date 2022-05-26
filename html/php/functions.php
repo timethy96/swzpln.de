@@ -9,18 +9,18 @@ function clean($str){
 function getTranslations($lang){
     if (in_array($lang, ['de','en'])) {
         $file = file_get_contents(dirname(__FILE__).'/../translations.json');
-        $json_a = json_decode($file);
+        $json_a = json_decode($file, true);
         return $json_a;
     };
 }
 
-function _n($str){
-    if (isset($la) && isset ($l)){
+function _n($la,$l,$str){
+    if (isset($la) && isset ($l) && isset ($la[$str][$l])){
         return $la[$str][$l];
     }
     return $str;
 }
 
-function __($str){
-    echo _n($str);
+function __($la,$l,$str){
+    echo _n($la,$l,$str);
 }

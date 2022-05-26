@@ -3,8 +3,13 @@ import { setCookie } from "./jsCookie.js";
 export function initUI() {
     //open search
     $('#search_b').click(() => {
-        $('header').removeClass('inactive');
-        $('header').addClass('active');
+        if ($('header').hasClass('active')){
+            $('#search_form').submit();
+        } else {
+            $('header').removeClass('inactive');
+            $('header').addClass('active');
+            $('#search').focus();
+        }
     })
 
     //close search
@@ -37,16 +42,22 @@ export function initUI() {
     $(".menu_item").click((event) => {
         const id = $(event.currentTarget).attr("id");
         switch (id) {
-            case "lang":
+            case "m_lang":
+                if ($('html').attr('lang') == 'en') {
+                    setCookie('lang','de',30);
+                    window.location.reload(true);
+                } else {
+                    setCookie('lang','en',30);
+                    window.location.reload(true);
+                }
+                break;
+            case "m_help":
 
                 break;
-            case "help":
-
-                break;
-            case "donate":
+            case "m_donate":
                 window.location = $(event.currentTarget).attr("data-href");
                 break;
-            case "darkmode":
+            case "m_darkmode":
                 const style = $("#colors").attr("href");
                 if (style=="/css/colors.light.css"){
                     $("#colors").attr("href", "/css/colors.dark.css");
@@ -56,11 +67,15 @@ export function initUI() {
                     setCookie('darkmode','false',30);
                 }
                 break;
-            case "github":
+            case "m_github":
                 window.location = $(event.currentTarget).attr("data-href");
                 break;
-            case "imprint":
-
+            case "m_legal":
+                $("#legal").addClass('active');
+                $("#legal").load("/legal/index.php");
+                $('#menu').removeClass('active');
+                $('body').addClass('menu_inactive');
+                $('body').removeClass('menu_active');
                 break;
 
             default:
@@ -68,4 +83,8 @@ export function initUI() {
         }
     })
 
+    //close dialogs
+    $("#dialog_shadow").click(() => {
+        $('.dialog.active.closable').removeClass('active')
+    })
 }
