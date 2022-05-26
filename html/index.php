@@ -1,9 +1,13 @@
 <?php
 require('php/functions.php');
 
-$langs = ['de', 'en'];
-$userLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-$l = in_array($userLang, $langs) ? $userLang : 'en';
+if (isset($_COOKIE['lang'])){
+    $l = clean($_COOKIE['lang']);
+} else{
+  $langs = ['de', 'en'];
+  $userLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+  $l = in_array($userLang, $langs) ? $userLang : 'de';
+}
 
 $la = getTranslations($l); // var $la and $l get read by translation-functions
 
@@ -56,7 +60,7 @@ if (isset($_COOKIE['darkmode'])){
         <div id="search_b"><?php echo file_get_contents("img/search.svg"); ?></div>
         <form id="search_form">
           <input id="search" name="search" type="text" />
-          <label for="search" id="search_l"><?php __('Suche'); ?></label>
+          <label for="search" id="search_l"><?php __($la,$l,'search'); ?></label>
         </form>
         <div id="search_exit_b"><?php echo file_get_contents("img/exit.svg"); ?></div>
       </div>
@@ -64,21 +68,21 @@ if (isset($_COOKIE['darkmode'])){
 
     <div id="layers">
       <input type="checkbox" id="l_buildings" name="l_buildings" value="buildings" checked>
-      <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __('Gebäude'); ?></label>
+      <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings'); ?></label>
       <input type="checkbox" id="l_green" name="l_green" value="green">
-      <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __('Grünflächen'); ?></label>
+      <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
       <input type="checkbox" id="l_water" name="l_water" value="water">
-      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __('Wasserflächen'); ?></label>
+      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
       <input type="checkbox" id="l_forest" name="l_forest" value="forest">
-      <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __('Waldflächen'); ?></label>
+      <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
       <input type="checkbox" id="l_land" name="l_land" value="land">
-      <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __('Landwirtschaft'); ?></label>
+      <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
       <input type="checkbox" id="l_streets" name="l_streets" value="streets">
-      <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __('Straßen'); ?></label>
+      <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la,$l,'roads'); ?></label>
       <input type="checkbox" id="l_rails" name="l_rails" value="rails">
-      <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __('Schienen'); ?></label>
+      <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
       <input type="checkbox" id="l_contours" name="l_contours" value="contours">
-      <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __('Höhenlinien'); ?></label>
+      <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label>
     </div>
 
     <div id="map">
@@ -101,31 +105,32 @@ if (isset($_COOKIE['darkmode'])){
 
     <noscript>
       <div id="noscript">
-        <?php __('Die Kernfunktion dieser Webseite (Pläne erstellen) ist in JavaScript geschrieben. Daher funktioniert die Webseite nur mit aktiviertem JavaScript!'); ?>
-        <a href="imprint"><?php __('Impressum'); ?></a>
+        <?php __($la,$l,'noscript'); ?>
+        <a href="legal"><?php __($la,$l,'legal'); ?></a>
       </div>
     </noscript>
 
   </div>
 
   <div id="menu">
-    <h2><?php __('Schwarzpläne für alle!'); ?></h2>
-    <p id="menu_subtitle"><?php __('Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpläne von überall erstellen. Und wir sammeln nicht einmal deine Daten!'); ?></p>
+    <h2><?php __($la,$l,'m_title'); ?></h2>
+    <p id="menu_subtitle"><?php __($la,$l,'m_subtitle'); ?></p>
     
-    <div class="menu_item" id="lang"><?php echo file_get_contents("img/lang.svg"); __('English'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item" id="help"><?php echo file_get_contents("img/help.svg"); __('Hilfe (Tutorial)'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item" id="donate" data-href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA"><?php echo file_get_contents("img/donate.svg"); __('Spenden (PayPal)'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item" id="darkmode"><?php echo file_get_contents("img/darkmode.svg"); __('Dunkel-Modus'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item" id="github" data-href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __('Quellcode (GitHub)'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item" id="imprint"><?php echo file_get_contents("img/imprint.svg"); __('Impressum'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="m_lang"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="m_donate" data-href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="m_darkmode"><?php echo file_get_contents("img/darkmode.svg"); __($la,$l,'m_darkmode'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="m_github" data-href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __($la,$l,'m_source'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <div class="menu_item" id="m_legal"><?php echo file_get_contents("img/imprint.svg"); __($la,$l,'legal'); echo file_get_contents("img/arrow_right.svg");?></div>
     
     <div id="menu_footer">
-      <p>&copy; <?php echo date("Y"); ?> <span class="logo">SWZPLN</span> erstellt in Stuttgart von <a href="https://timo.bilhoefer.de">Timo Bilhöfer</a><br />unterstützt durch <a href="https://themom.studio">The MoM Studio</a>.</p>
-      <p>Diese Webseite ist Quelloffen und unter der <a href="https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE">AGPL-3 Lizenz</a> veröffentlicht.</p>
+      <p>&copy; <?php echo date("Y")." "; __($la,$l,'m_footer'); ?>
     </div>
   </div>
   <div id="menu_shadow"></div>
 
+  <div id="legal" class="dialog closable"></div>
+  <div id="dialog_shadow"></div>
 
   <script src="js/jquery-3.6.0.min.js"></script>
   <script src="js/leaflet/leaflet.js"></script>

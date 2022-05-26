@@ -57,6 +57,7 @@ export function initSearch(searchForm) {
                 .then((res) => res.json())
                 .then((json) => {
                     if (json[0]) {
+                        searchInput.removeClass('error');
                         map.fitBounds([
                             [json[0].boundingbox[0], json[0].boundingbox[2]],
                             [json[0].boundingbox[1], json[0].boundingbox[3]],

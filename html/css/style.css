@@ -130,6 +130,11 @@ body.menu_active #burger_b_menu {
     box-sizing: border-box;
 }
 
+#search.error {
+    border: 2px solid red !important;
+}
+
+
 #search_l {
     font-size: 14px;
     position: absolute;
@@ -206,7 +211,6 @@ header.active #burger_b, header.active #burger_b_menu {
     font-size: 12px;
     transition: all 0.3s;
 }
-
 
 #layers {
     margin: 8px 16px 4px 16px;
@@ -442,6 +446,56 @@ header.active #burger_b, header.active #burger_b_menu {
 
 #menu_shadow{
     display: none;
+}
+
+.dialog {
+    position: absolute;
+    display: flex;
+    opacity: 0;
+    flex-direction: column;
+    min-width: 280px;
+    max-width: 560px;
+    max-height: 50vh;
+    overflow: auto;
+    border-radius: 28px;
+    padding: 24px;
+    top: 50%;
+    transform: translateY(-50%);
+    left: 5vw; 
+    right: 5vw; 
+    margin-left: auto; 
+    margin-right: auto;
+    z-index: 99;
+    animation: close_dialog 0.3s;
+    pointer-events: none;
+    transition: opacity 0.3s;
+
+    background-color: #ddd;
+}
+
+.dialog.active{
+    opacity: 1;
+    pointer-events: all;
+}
+
+#dialog_shadow {
+    display: block;
+    opacity: 0;
+    position: absolute;
+    top:0;
+    right:0;
+    bottom:0;
+    left:0;
+    background-color: rgba(0, 0, 0, 0.3);
+    animation: close_dialog 0.3s;
+    z-index: 98;
+    pointer-events: none;
+    transition: opacity 0.3s;
+}
+
+.dialog.active + #dialog_shadow{
+    opacity: 1;
+    pointer-events: all;
 }
 
 
