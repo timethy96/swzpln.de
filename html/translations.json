@@ -20,5 +20,8 @@
     "m_source":{"de":"Quellcode (GitHub)","en":"Source Code (GitHub)"},
     "m_darkmode":{"de":"Dunkel-Modus","en":"Dark-Mode"},
     
-    "m_footer":{"de":"<span class='logo'>SWZPLN</span> erstellt in Stuttgart von <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />unterstützt durch <a href='https://themom.studio'>The MoM Studio</a>.</p><p>Diese Webseite ist Quelloffen und unter der <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3 Lizenz</a> veröffentlicht.</p>","en":"<span class='logo'>SWZPLN</span> made in Stuttgart by <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />supported by <a href='https://themom.studio'>The MoM Studio</a>.</p><p>This website is open-source, licensed under <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3</a>.</p>"}
+    "m_footer":{"de":"<span class='logo'>SWZPLN</span> erstellt in Stuttgart von <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />unterstützt durch <a href='https://themom.studio'>The MoM Studio</a>.</p><p>Diese Webseite ist Quelloffen und unter der <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3 Lizenz</a> veröffentlicht.</p>","en":"<span class='logo'>SWZPLN</span> made in Stuttgart by <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />supported by <a href='https://themom.studio'>The MoM Studio</a>.</p><p>This website is open-source, licensed under <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3</a>.</p>"},
+
+    "init":{"de":"Initialisieren...","en":"Initialize..."},
+    "osm_dl":{"de":"Kartendaten werden heruntergeladen...","en":"Map-Data is being downloaded..."}
 }

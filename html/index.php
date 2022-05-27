@@ -92,13 +92,13 @@ if (isset($_COOKIE['darkmode'])){
       <div id="dl_b" class="fab">
         <?php echo file_get_contents("img/dl.svg"); ?>
       </div>
-      <div id="dl_dxf_b" class="fab_small">
+      <div id="dl_dxf_b" class="fab_small dl_bs">
         dxf
       </div>
-      <div id="dl_svg_b" class="fab_small">
+      <div id="dl_svg_b" class="fab_small dl_bs">
         svg
       </div>
-      <div id="dl_pdf_b" class="fab_small">
+      <div id="dl_pdf_b" class="fab_small dl_bs">
         pdf
       </div>
     </div>
@@ -130,6 +130,14 @@ if (isset($_COOKIE['darkmode'])){
   <div id="menu_shadow"></div>
 
   <div id="legal" class="dialog closable"></div>
+  <div id="dl_progress" class="dialog">
+    <?php echo file_get_contents("img/world.svg");?>
+    <h2>Schwarzplan generieren</h2>
+    <div id="dl_status_text"></div>
+    <div id="dl_bar"><div></div></div>
+    <div id="dl_status_percent"></div>
+    <div id="dl_ad">Spendier' mir einen Kaffee: <a href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA" target="_blank">PayPal</a> (öffnet in neuem Fenster)</div>
+  </div>
   <div id="dialog_shadow"></div>
 
   <script src="js/jquery-3.6.0.min.js"></script>
