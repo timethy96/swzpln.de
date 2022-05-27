@@ -493,12 +493,67 @@ header.active #burger_b, header.active #burger_b_menu {
     transition: opacity 0.3s;
 }
 
-.dialog.active + #dialog_shadow{
+.dialog.active ~ #dialog_shadow{
     opacity: 1;
     pointer-events: all;
 }
 
+.dialog svg {
+    margin-bottom: 19px;
+}
 
+.dialog h2 {
+    font-size: 24px;
+    margin-bottom: 16px;
+}
+
+#dl_progress {
+    align-items: center;
+}
+
+#dl_bar {
+    position: relative;
+    width: 80%;
+    height: 5px;
+    border: 1px solid #000;
+    border-radius: 5px;
+}
+
+#dl_bar div {
+    content: "";
+    display: block;
+    position: absolute;
+    width: attr(data-width);
+    height: 100%;
+    background-color: #000;
+}
+
+#dl_bar.stateless div {
+    animation: stateless_load 3s linear infinite;
+}
+
+@keyframes stateless_load {
+    0% {
+        left:0;
+        right:auto;
+        width: 0;
+    }
+    49% {
+        left:0;
+        right:auto;
+        width: 100%;
+    }
+    51% {
+        left:auto;
+        right:0;
+        width: 100%;
+    }
+    100% {
+        left:auto;
+        right: 0;
+        width: 0;
+    }
+}
 
 #noscript {
     position: absolute;

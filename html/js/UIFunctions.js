@@ -1,4 +1,53 @@
 import { setCookie } from "./jsCookie.js";
+import { genSwzpln, estimateOsmFilesize } from "./osm/gen_swzpln.js";
+
+//load string array for translations
+let langArray;
+const l = $('html').attr('lang');
+$.get("/translations.json", (langResponse) => {
+    langArray = langResponse;
+})
+
+function getLayers(){
+    let layers = [];
+    $('#layers input:checked').each((index, layer) => {
+        const layer_name = $(layer).attr('value');
+        layers.push(layer_name);
+    })
+    return layers;
+}
+
+function getStr(str){
+    return langArray[str][l];
+}
+
+var estTotalSize;
+
+function progressBar(task, status){
+    if (! $('#dl_progress').hasClass('active')){
+        $('#dl_progress').addClass('active');
+    }
+    switch (task) {
+        case 0:
+            $("#dl_status_text").html(getStr('init'));
+            $("#dl_bar").addClass('stateless');
+            $("#dl_status_percent").html('');
+            break;
+        
+        case 1:
+
+            $("#dl_status_text").html(getStr('osm_dl'));
+            $("#dl_bar").removeClass('stateless');
+            var percent = Math.round(100 * status / estTotalSize);
+            if (percent > 100) {percent = 100;};
+            $("#dl_status_percent").html(percent+'%');
+            $("#dl_bar div").css({"width": percent+"%"});
+            break;
+    
+        default:
+            break;
+    }
+}
 
 export function initUI() {
     //open search
@@ -23,6 +72,15 @@ export function initUI() {
         $('#dl_b_c').toggleClass('active');
     })
     map.on('zoomend', () => { $('#dl_b_c').removeClass('active'); });
+
+    //run download
+    $('.dl_bs').click((event) => {
+        const format = $(event.currentTarget).html().replaceAll(" ","");
+        const bounds = map.getBounds();
+        const layers = getLayers();
+        estTotalSize = estimateOsmFilesize(map.getZoom());
+        genSwzpln(format,bounds,layers,progressBar);
+    })
 
     //open menu
     $('#burger_b').click(() => {

@@ -2,18 +2,18 @@ import { getCookie, setCookie } from "./jsCookie.js";
 
 // - save position cookie - 
 function savePosCookie() {
-    var curPos = map.getCenter();
-    var curZoom = map.getZoom();
+    let curPos = map.getCenter();
+    let curZoom = map.getZoom();
     setCookie('lastCenter', JSON.stringify([curPos.lat, curPos.lng, curZoom]), 30);
 }
 
 // - init map & load last position -
 export function initMap(elemID) {
-    var lastPos = getCookie('lastCenter');
+    let lastPos = getCookie('lastCenter');
     if (lastPos) {
         lastPos = JSON.parse(lastPos);
-        var lastCenter = [lastPos[0], lastPos[1]];
-        var lastZoom = lastPos[2];
+        let lastCenter = [lastPos[0], lastPos[1]];
+        let lastZoom = lastPos[2];
         var map = L.map(elemID).setView(lastCenter, lastZoom);
         if (lastZoom < 11) {
             $('#dl_b').addClass('inactive');
@@ -45,10 +45,10 @@ export function initMap(elemID) {
 export function initSearch(searchForm) {
     if ($(searchForm).attr('data-searchstate') != 'init') {
         $(searchForm).attr('data-searchstate', 'init')
-        var searchInput = $(searchForm).children('input');
+        let searchInput = $(searchForm).children('input');
         $(searchForm).on('submit', function (e) {
             e.preventDefault();
-            var query = new URLSearchParams;
+            let query = new URLSearchParams;
             query.append('q', searchInput.val());
             query.append('format', 'json');
             searchInput.val('');
