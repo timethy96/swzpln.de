@@ -9,7 +9,7 @@ if (isset($_COOKIE['lang'])){
   $l = in_array($userLang, $langs) ? $userLang : 'de';
 }
 
-$la = getTranslations($l); // var $la and $l get read by translation-functions
+$la = getTranslations($l);
 
 if (isset($_COOKIE['darkmode'])){
   $darkmode = filter_var(clean($_COOKIE['darkmode']), FILTER_VALIDATE_BOOLEAN);
@@ -124,6 +124,7 @@ if (isset($_COOKIE['darkmode'])){
     <div class="menu_item" id="m_legal"><?php echo file_get_contents("img/imprint.svg"); __($la,$l,'legal'); echo file_get_contents("img/arrow_right.svg");?></div>
     
     <div id="menu_footer">
+      <p id="counter"><span id="counter_no"></span> <?php __($la,$l,'m_counter'); ?></p>
       <p>&copy; <?php echo date("Y")." "; __($la,$l,'m_footer'); ?>
     </div>
   </div>

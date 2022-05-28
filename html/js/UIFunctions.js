@@ -83,10 +83,16 @@ export function initUI() {
     })
 
     //open menu
+    var counterInt
     $('#burger_b').click(() => {
         $('#menu').addClass('active');
         $('body').removeClass('menu_inactive');
         $('body').addClass('menu_active');
+        //init counter ajax
+        $('#counter_no').load('/counter');
+        counterInt = setInterval(() => {
+            $('#counter_no').load('/counter');
+        },500);
     })
 
     //close menu
@@ -94,6 +100,7 @@ export function initUI() {
         $('#menu').removeClass('active');
         $('body').addClass('menu_inactive');
         $('body').removeClass('menu_active');
+        clearInterval(counterInt);
     })
 
     //menu links
@@ -145,4 +152,5 @@ export function initUI() {
     $("#dialog_shadow").click(() => {
         $('.dialog.active.closable').removeClass('active')
     })
+
 }
