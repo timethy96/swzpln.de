@@ -397,7 +397,7 @@ header.active #burger_b, header.active #burger_b_menu {
 }
 
 #menu_footer {
-    width: calc(100%-48px);
+    width: calc(100% - 48px);
     padding: 24px;
     position: absolute;
     bottom: 0;
