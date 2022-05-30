@@ -1,12 +1,6 @@
 import { setCookie } from "./jsCookie.js";
-import { genSwzpln, estimateOsmFilesize } from "./osm/gen_swzpln.js";
-
-//load string array for translations
-let langArray;
-const l = $('html').attr('lang');
-$.get("/translations.json", (langResponse) => {
-    langArray = langResponse;
-})
+import { genSwzpln, estimateOsmFilesize, cancelGen } from "./osm/gen_swzpln.js";
+import { progressBar } from './progressBar.js'
 
 function getLayers(){
     let layers = [];
@@ -15,38 +9,6 @@ function getLayers(){
         layers.push(layer_name);
     })
     return layers;
-}
-
-function getStr(str){
-    return langArray[str][l];
-}
-
-var estTotalSize;
-
-function progressBar(task, status){
-    if (! $('#dl_progress').hasClass('active')){
-        $('#dl_progress').addClass('active');
-    }
-    switch (task) {
-        case 0:
-            $("#dl_status_text").html(getStr('init'));
-            $("#dl_bar").addClass('stateless');
-            $("#dl_status_percent").html('');
-            break;
-        
-        case 1:
-
-            $("#dl_status_text").html(getStr('osm_dl'));
-            $("#dl_bar").removeClass('stateless');
-            var percent = Math.round(100 * status / estTotalSize);
-            if (percent > 100) {percent = 100;};
-            $("#dl_status_percent").html(percent+'%');
-            $("#dl_bar div").css({"width": percent+"%"});
-            break;
-    
-        default:
-            break;
-    }
 }
 
 export function initUI() {
@@ -75,11 +37,13 @@ export function initUI() {
 
     //run download
     $('.dl_bs').click((event) => {
-        const format = $(event.currentTarget).html().replaceAll(" ","");
+        const format = $(event.currentTarget).html().replaceAll(" ","").replaceAll("\n","");
         const bounds = map.getBounds();
         const layers = getLayers();
-        estTotalSize = estimateOsmFilesize(map.getZoom());
-        genSwzpln(format,bounds,layers,progressBar);
+        const estTotalSize = estimateOsmFilesize(map.getZoom());
+        progressBar(0, estTotalSize)
+        const zoom = map.getZoom();
+        genSwzpln(format,bounds,layers,zoom,progressBar);
     })
 
     //open menu
@@ -150,7 +114,17 @@ export function initUI() {
 
     //close dialogs
     $("#dialog_shadow").click(() => {
-        $('.dialog.active.closable').removeClass('active')
+        $('.dialog.active.closable').removeClass('active');
+    })
+
+    //close dl dialog
+    $("#dl_close").click(() => {
+        $('#dl_progress').removeClass('active');
+    })
+
+    $("#dl_cancel").click(() => {
+        cancelGen();
+        $('#dl_progress').removeClass('active');
     })
 
 }

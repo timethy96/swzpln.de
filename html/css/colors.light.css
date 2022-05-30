@@ -3,6 +3,7 @@
     --bg-2: #eee;
     --bg-3: #ccc;
     --txt: #333;
+    --txt-2: #555;
     --fab: #333;
     --fab-grey-txt: #999;
     
@@ -99,6 +100,23 @@ a {
 }
 #l_contours:checked + label{
     background-color: var(--l_contours);
+}
+
+.dialog {
+    background-color: var(--bg-2);
+}
+.dialog svg {
+    fill: var(--txt);
+}
+#dl_bar{
+    border-color: var(--txt);
+}
+#dl_bar div {
+    background-color: var(--txt);
+}
+
+.dialog_b {
+    color: var(--txt-2);
 }
 
 @media (hover: hover) {

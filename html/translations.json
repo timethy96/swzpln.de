@@ -22,7 +22,13 @@
     
     "m_footer":{"de":"<span class='logo'>SWZPLN</span> erstellt in Stuttgart von <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />unterstützt durch <a href='https://themom.studio'>The MoM Studio</a>.</p><p>Diese Webseite ist Quelloffen und unter der <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3 Lizenz</a> veröffentlicht.</p>","en":"<span class='logo'>SWZPLN</span> made in Stuttgart by <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />supported by <a href='https://themom.studio'>The MoM Studio</a>.</p><p>This website is open-source, licensed under <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3</a>.</p>"},
     "m_counter":{"de":"erstellte Pläne","en":"generated plans"},
+    
+    "dl_cancel":{"de":"abbrechen","en":"cancel"},
+    "dl_close":{"de":"schließen","en":"close"},
 
-    "init":{"de":"Initialisieren...","en":"Initialize..."},
-    "osm_dl":{"de":"Kartendaten werden heruntergeladen...","en":"Map-Data is being downloaded..."}
+    "init":{"de":"1 / 4 - Initialisieren...","en":"1 / 4 - Initialize..."},
+    "osm_dl":{"de":"2 / 4 - Kartendaten werden heruntergeladen...","en":"2 / 4 - Map-Data is being downloaded..."},
+    "osm2obj":{"de":"3 / 4 - Kartendaten werden verarbeitet...","en":"3 / 4 - Map-Data is being processed..."},
+    "osm2file":{"de":"4 / 4 - Konvertiere zu ","en":"4 / 4 - Convert to "},
+    "dl_done":{"de":"Download wird gestartet...","en":"Download is starting..."}
 }
