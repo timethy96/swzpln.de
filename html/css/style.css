@@ -478,8 +478,6 @@ p#counter {
     animation: close_dialog 0.3s;
     pointer-events: none;
     transition: opacity 0.3s;
-
-    background-color: #ddd;
 }
 
 .dialog.active{
@@ -524,8 +522,9 @@ p#counter {
     position: relative;
     width: 80%;
     height: 5px;
-    border: 1px solid #000;
+    border: 1px solid;
     border-radius: 5px;
+    margin-top: 6px;
 }
 
 #dl_bar div {
@@ -534,7 +533,6 @@ p#counter {
     position: absolute;
     width: attr(data-width);
     height: 100%;
-    background-color: #000;
 }
 
 #dl_bar.stateless div {
@@ -562,6 +560,34 @@ p#counter {
         right: 0;
         width: 0;
     }
+}
+
+#dl_status_percent {
+    margin-top: 6px;
+    font-weight: 800;
+}
+
+#dl_ad {
+    margin-top: 30px;
+}
+
+.dialog_b_cont {
+    width: 100%;
+    margin: 24px 0 0 0;
+    display: flex;
+    gap: 8px;
+    justify-content: end;
+}
+
+.dialog_b {
+    display: none;
+    margin: 10px 12px;
+    font-weight: 800;
+    text-decoration: none;
+}
+
+.dialog_b.active {
+    display: block;
 }
 
 #noscript {

@@ -92,6 +92,19 @@ a {
     fill:var(--bg-3)
 }
 
+.dialog {
+    background-color: var(--bg-2);
+}
+.dialog svg {
+    fill: var(--txt);
+}
+#dl_bar{
+    border-color: var(--txt);
+}
+#dl_bar div {
+    background-color: var(--txt);
+}
+
 /* Layer colors */
 #l_buildings:checked + label {
     background-color: var(--l_buildings);

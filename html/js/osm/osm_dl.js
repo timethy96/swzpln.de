@@ -1,25 +1,19 @@
 
 const overpassApi = "https://overpass.kumi.systems/api/";
 
-function boundsToString(bounds) {
-    let bbox_arr = Object.values(Object.values(bounds)[0]);
-    bbox_arr.push(Object.values(Object.values(bounds)[1]));
-    const bbox = bbox_arr.toString();
-    return bbox;
-}
 
 function constructUrl(bounds, layers) {
-    const bbox = boundsToString(bounds);
+    const bbox = [bounds[0],bounds[3],bounds[2],bounds[1]].toString();
     let ajaxUrl = overpassApi + `/interpreter?data=[out:json][bbox:${bbox}];(`;
     layers.forEach((layer) => {
         switch (layer) {
-            case "buildings":
+            case "building":
                 ajaxUrl += 'nwr["building"];';
                 break;
     
             case "green":
                 ajaxUrl += 'nwr["leisure"="park"];';
-                ajaxUrl += 'nwr["surface"="grass"];';
+                //ajaxUrl += 'nwr["surface"="grass"];'; //highways with grass --> shown as highway
                 ajaxUrl += 'nwr["landuse"="allotments"];';
                 ajaxUrl += 'nwr["landuse"="meadow"];';
                 ajaxUrl += 'nwr["landuse"="orchard"];';
@@ -44,7 +38,7 @@ function constructUrl(bounds, layers) {
                 ajaxUrl += 'nwr["landuse"="farmland"];';
                 break;
 
-            case "highways":
+            case "highway":
                 ajaxUrl += 'nwr["highway"];';
                 break;
 
@@ -68,7 +62,7 @@ function constructUrl(bounds, layers) {
     return ajaxUrl;
 }
 
-export async function osm_dl(bounds, layers, progressCallback){
+export async function osm_dl(bounds, layers, working, progressCallback){
     const ajaxUrl = constructUrl(bounds, layers);
     let response = await fetch(ajaxUrl);
     const reader = response.body.getReader();
@@ -77,7 +71,7 @@ export async function osm_dl(bounds, layers, progressCallback){
     let chunks = [];
     while(true) {
         const {done, value} = await reader.read();
-        if (done) {
+        if (done || !working()) {
             break;
         }
         chunks.push(value);

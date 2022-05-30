@@ -67,7 +67,7 @@ if (isset($_COOKIE['darkmode'])){
     </header>
 
     <div id="layers">
-      <input type="checkbox" id="l_buildings" name="l_buildings" value="buildings" checked>
+      <input type="checkbox" id="l_buildings" name="l_buildings" value="building" checked>
       <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings'); ?></label>
       <input type="checkbox" id="l_green" name="l_green" value="green">
       <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
@@ -75,11 +75,11 @@ if (isset($_COOKIE['darkmode'])){
       <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
       <input type="checkbox" id="l_forest" name="l_forest" value="forest">
       <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
-      <input type="checkbox" id="l_land" name="l_land" value="land">
+      <input type="checkbox" id="l_land" name="l_land" value="farmland">
       <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
-      <input type="checkbox" id="l_streets" name="l_streets" value="streets">
+      <input type="checkbox" id="l_streets" name="l_streets" value="highway">
       <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la,$l,'roads'); ?></label>
-      <input type="checkbox" id="l_rails" name="l_rails" value="rails">
+      <input type="checkbox" id="l_rails" name="l_rails" value="railway">
       <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
       <input type="checkbox" id="l_contours" name="l_contours" value="contours">
       <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label>
@@ -137,7 +137,12 @@ if (isset($_COOKIE['darkmode'])){
     <div id="dl_status_text"></div>
     <div id="dl_bar"><div></div></div>
     <div id="dl_status_percent"></div>
-    <div id="dl_ad">Spendier' mir einen Kaffee: <a href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA" target="_blank">PayPal</a> (öffnet in neuem Fenster)</div>
+    <div id="dl_ad">Spendier' mir einen Kaffee &#9749; <a href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA" target="_blank">PayPal</a> (Download läuft weiter!)</div>
+    <div class="dialog_b_cont">
+      <a id="dl_cancel" class="dialog_b" href="javascript:"><?php __($la,$l,'dl_cancel'); ?></a>
+      <a id="dl_close" class="dialog_b" href="javascript:"><?php __($la,$l,'dl_close'); ?></a>
+      <a id="dl_start" class="dialog_b" href="javascript:">download</a>
+    </div>
   </div>
   <div id="dialog_shadow"></div>
 
