@@ -62,7 +62,7 @@ function constructUrl(bounds, layers) {
     return ajaxUrl;
 }
 
-export async function osm_dl(bounds, layers, working, progressCallback){
+export async function osm_dl(bounds, layers, progressCallback){
     const ajaxUrl = constructUrl(bounds, layers);
     let response = await fetch(ajaxUrl);
     const reader = response.body.getReader();
@@ -71,7 +71,7 @@ export async function osm_dl(bounds, layers, working, progressCallback){
     let chunks = [];
     while(true) {
         const {done, value} = await reader.read();
-        if (done || !working()) {
+        if (done) {
             break;
         }
         chunks.push(value);
