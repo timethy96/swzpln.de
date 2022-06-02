@@ -18,6 +18,7 @@ function osmjson2dxf(osm_json, bounds, layers, zoom, progressCallback) {
 
         //add OSM contribution text
         .drawText(txtXY[0], txtXY[1] - txtSize, txtSize, 0, '(c) OpenStreetMap.org contributors', 'right', 'top');
+    
     if (layers.includes('building')) {
         d.addLayer('building', 0, 'CONTINUOUS');
     }

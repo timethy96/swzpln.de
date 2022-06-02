@@ -23,6 +23,8 @@
     "m_footer":{"de":"<span class='logo'>SWZPLN</span> erstellt in Stuttgart von <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />unterstützt durch <a href='https://themom.studio'>The MoM Studio</a>.</p><p>Diese Webseite ist Quelloffen und unter der <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3 Lizenz</a> veröffentlicht.</p>","en":"<span class='logo'>SWZPLN</span> made in Stuttgart by <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />supported by <a href='https://themom.studio'>The MoM Studio</a>.</p><p>This website is open-source, licensed under <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3</a>.</p>"},
     "m_counter":{"de":"erstellte Pläne","en":"generated plans"},
     
+    "dl_gen":{"de":"Schwarzplan generieren","en":"Ground figure plan generation"},
+    "dl_donate":{"de":"Spendier' mir einen Kaffee &#9749; <a href='https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA' target='_blank'>PayPal</a> (Download läuft weiter!)","en":"Buy me a coffee &#9749; <a href='https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA' target='_blank'>PayPal</a> (Download continues in background!)"},
     "dl_cancel":{"de":"abbrechen","en":"cancel"},
     "dl_close":{"de":"schließen","en":"close"},
 

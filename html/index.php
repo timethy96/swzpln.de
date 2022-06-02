@@ -133,11 +133,11 @@ if (isset($_COOKIE['darkmode'])){
   <div id="legal" class="dialog closable"></div>
   <div id="dl_progress" class="dialog">
     <?php echo file_get_contents("img/world.svg");?>
-    <h2>Schwarzplan generieren</h2>
+    <h2><?php __($la,$l,'dl_gen'); ?></h2>
     <div id="dl_status_text"></div>
     <div id="dl_bar"><div></div></div>
     <div id="dl_status_percent"></div>
-    <div id="dl_ad">Spendier' mir einen Kaffee &#9749; <a href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA" target="_blank">PayPal</a> (Download läuft weiter!)</div>
+    <div id="dl_ad"><?php __($la,$l,'dl_donate'); ?></div>
     <div class="dialog_b_cont">
       <a id="dl_cancel" class="dialog_b" href="javascript:"><?php __($la,$l,'dl_cancel'); ?></a>
       <a id="dl_close" class="dialog_b" href="javascript:"><?php __($la,$l,'dl_close'); ?></a>
