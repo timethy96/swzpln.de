@@ -124,7 +124,7 @@ function osmjson2objarray(osm_json, bounds, progressCallback) {
     Object.values(ways).forEach((way) => {
         var path = []
         way['nodes'].forEach((nodeID) => {
-            path.push(nodes[nodeID]);
+            path.push([...nodes[nodeID]]);
             //callback
             i += 1
             if (i % 10 == 0){
@@ -138,6 +138,10 @@ function osmjson2objarray(osm_json, bounds, progressCallback) {
             progressCallback(4,10);
         }
     })
+
+    var ways = {};
+    var relations = [];
+    var nodes = {};
 
     return objects;
 }
