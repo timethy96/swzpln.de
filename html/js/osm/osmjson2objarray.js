@@ -33,9 +33,9 @@ function haveCommon(val, tags) {
     return val.some(e => tags.includes(e));
 }
 
-const greenTags = ['park', 'grass', 'allotments', 'meadow', 'orchard', 'vineyard', 'cemetery', 'plant_nursery', 'recreation_ground', 'village_green']
-const forestTags = ['forest', 'wood'];
-const railwayTags = ['rail', 'tram', 'subway', 'narrow_gauge', 'monorail', 'light_rail', 'funicular']; // TODO: some ambigous tags are left out here!
+var greenTags = ['park', 'grass', 'allotments', 'meadow', 'orchard', 'vineyard', 'cemetery', 'plant_nursery', 'recreation_ground', 'village_green']
+var forestTags = ['forest', 'wood'];
+var railwayTags = ['rail', 'tram', 'subway', 'narrow_gauge', 'monorail', 'light_rail', 'funicular']; // TODO: some ambigous tags are left out here!
 
 function filterTagsToType(tagsObj) {
     if (tagsObj) {

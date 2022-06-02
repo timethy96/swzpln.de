@@ -17,6 +17,11 @@ function bounds2array(bounds) {
     return [north, west, south, east];
 }
 
+// trigger the counter
+function countUp(){
+    $.ajax({url: "/counter?count=1"});
+}
+
 export function cancelGen() {
     
     swzplnWorker.terminate();
@@ -36,11 +41,20 @@ export async function genSwzpln(format, bounds, layers, zoom, progressCallback) 
         if (e.data[0] == 'result') {
             let result = e.data[1];
             progressCallback(7);
+            countUp();
             switch (format) {
                 case 'dxf':
                     download('swzpln.dxf', result, 'application/dxf');
                     break;
 
+                case 'svg':
+                    download('swzpln.svg', result, 'image/svg+xml');
+                    break;
+
+                case 'pdf':
+                    download('swzpln.pdf', result, 'application/pdf');
+                    break;
+                
                 default:
                     break;
             }
