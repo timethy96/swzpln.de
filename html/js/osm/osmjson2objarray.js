@@ -139,9 +139,9 @@ function osmjson2objarray(osm_json, bounds, progressCallback) {
         }
     })
 
-    var ways = {};
-    var relations = [];
-    var nodes = {};
+    var ways = null;
+    var relations = null;
+    var nodes = null;
 
     return objects;
 }
