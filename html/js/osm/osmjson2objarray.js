@@ -110,8 +110,10 @@ function osmjson2objarray(osm_json, bounds, progressCallback) {
 
     relations.forEach((relation) => {
         relation['members'].forEach((member) => {
-            ways[member['ref']]['type'] = relation['type'];
-            ways[member['ref']]['role'] = member['role'];
+            if (ways[member['ref']]){
+                ways[member['ref']]['type'] = relation['type'];
+                ways[member['ref']]['role'] = member['role'];
+            };
         })
         //callback
         i += 1

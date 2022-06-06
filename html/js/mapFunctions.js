@@ -68,6 +68,8 @@ export function initSearch(searchForm) {
                             $('#dl_b').removeClass('inactive');
                         };
                         savePosCookie();
+                        $('header').removeClass('active');
+                        $('header').addClass('inactive');
                     } else {
                         searchInput.addClass('error');
                     }

@@ -118,9 +118,9 @@ if (isset($_COOKIE['darkmode'])){
     
     <div class="menu_item" id="m_lang"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></div>
     <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item" id="m_donate" data-href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <a class="menu_item" id="m_donate" href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></a>
     <div class="menu_item" id="m_darkmode"><?php echo file_get_contents("img/darkmode.svg"); __($la,$l,'m_darkmode'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item" id="m_github" data-href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __($la,$l,'m_source'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <a class="menu_item" id="m_github" href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __($la,$l,'m_source'); echo file_get_contents("img/arrow_right.svg");?></a>
     <div class="menu_item" id="m_legal"><?php echo file_get_contents("img/imprint.svg"); __($la,$l,'legal'); echo file_get_contents("img/arrow_right.svg");?></div>
     
     <div id="menu_footer">
@@ -131,6 +131,16 @@ if (isset($_COOKIE['darkmode'])){
   <div id="menu_shadow"></div>
 
   <div id="legal" class="dialog closable"></div>
+  <div id="dl_scale" class="dialog">
+    <h2><?php __($la,$l,'dl_scales'); ?></h2>
+    <p><?php __($la,$l,'dl_scales_info'); ?></p>
+    <a class="scale_opt">-</a>
+    <a class="scale_opt">-</a>
+    <a class="scale_opt">-</a>
+    <div class="dialog_b_cont">
+      <a id="dl_scales_close" class="dialog_b active" href="javascript:"><?php __($la,$l,'dl_close'); ?></a>
+    </div>
+  </div>
   <div id="dl_progress" class="dialog">
     <?php echo file_get_contents("img/world.svg");?>
     <h2><?php __($la,$l,'dl_gen'); ?></h2>

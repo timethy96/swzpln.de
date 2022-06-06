@@ -14,11 +14,9 @@ function osmjson2dxf(osm_json, bounds, layers, zoom, progressCallback) {
 
     var Drawing = require('Drawing');
     let d = new Drawing();
-    d.setUnits('Meters')
+    d.setUnits('Meters');
 
-        //add OSM contribution text
-        .drawText(txtXY[0], txtXY[1] - txtSize, txtSize, 0, '(c) OpenStreetMap.org contributors', 'right', 'top');
-    
+   
     if (layers.includes('building')) {
         d.addLayer('building', 0, 'CONTINUOUS');
     }
@@ -43,7 +41,12 @@ function osmjson2dxf(osm_json, bounds, layers, zoom, progressCallback) {
     if (layers.includes('contours')) {
         d.addLayer('contours', 6, 'CONTINUOUS');
     }
-    d.addLayer('other', 1, 'CONTINUOUS');
+    d.addLayer('other', 1, 'CONTINUOUS')
+         
+    //add OSM contribution text
+        .setActiveLayer('other')
+        .drawText(txtXY[0], txtXY[1] - txtSize, txtSize, 0, '(c) OpenStreetMap.org contributors', 'right', 'top');
+    
 
     objects.forEach((obj) => {
         let type = obj['type'];

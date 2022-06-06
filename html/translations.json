@@ -5,9 +5,9 @@
     "water":{"de":"Wasserflächen","en":"water"},
     "forest":{"de":"Waldflächen","en":"forest"},
     "land":{"de":"Landwirtschaft","en":"landuse"},
-    "roads":{"de":"Straßen","en":"roads"},
-    "rails":{"de":"Schienen","en":"rails"},
-    "contours":{"de":"Höhenlinien","en":"contour lines"},
+    "roads":{"de":"Straßen<sup>beta</sup>","en":"roads<sup>beta</sup>"},
+    "rails":{"de":"Schienen<sup>beta</sup>","en":"rails<sup>beta</sup>"},
+    "contours":{"de":"Höhenlinien<sup>beta</sup>","en":"contour lines<sup>beta</sup>"},
 
     "noscript":{"de":"Die Kernfunktion dieser Webseite (Pläne erstellen) ist in JavaScript geschrieben. Daher funktioniert die Webseite nur mit aktiviertem JavaScript!","en":"The core function of this website (creating plans) is written in JavaScript. Therefore, the website only works with JavaScript enabled!"},
     "legal":{"de":"Impressum","en":"Legal"},
@@ -27,6 +27,8 @@
     "dl_donate":{"de":"Spendier' mir einen Kaffee &#9749; <a href='https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA' target='_blank'>PayPal</a> (Download läuft weiter!)","en":"Buy me a coffee &#9749; <a href='https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA' target='_blank'>PayPal</a> (Download continues in background!)"},
     "dl_cancel":{"de":"abbrechen","en":"cancel"},
     "dl_close":{"de":"schließen","en":"close"},
+    "dl_scales":{"de":"Maßstab auswählen","en":"Choose scale"},
+    "dl_scales_info":{"de":"SVG- und PDF-Formate haben eine Maximalgröße und können daher nicht in 1 zu 1 exportiert werden. Nachfolgend werden drei passende Maßstäbe zur Skalierung angeboten.","en":"SVG and PDF formats have a maximum size and therefore cannot be exported in 1 to 1. Three suitable scales for scaling are offered below."},
 
     "init":{"de":"1 / 4 - Initialisieren...","en":"1 / 4 - Initialize..."},
     "osm_dl":{"de":"2 / 4 - Kartendaten werden heruntergeladen...","en":"2 / 4 - Map-Data is being downloaded..."},

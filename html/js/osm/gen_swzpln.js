@@ -5,6 +5,7 @@ var swzplnWorker = new Worker('/js/osm/gen_swzpln_worker.js', { type: "module" }
 function download(filename, text, mime) {
     var element = document.getElementById("dl_start");
     element.setAttribute('href', `data:${mime};charset=utf-8,` + encodeURIComponent(text));
+    element.setAttribute('target', '_self');
     element.setAttribute('download', filename);
     element.click();
 }
@@ -29,14 +30,14 @@ export function cancelGen() {
 
 export function estimateOsmFilesize(zoom) {
     const zoom_factor = 19 - zoom;
-    const est_fs = 1.01 * 100000 * 3 ** zoom_factor;
+    const est_fs = 1.1 * 100000 * 3 ** zoom_factor;
     return est_fs;
 };
 
-export async function genSwzpln(format, bounds, layers, zoom, progressCallback) {
+export async function genSwzpln(format, bounds, layers, zoom, scale, progressCallback) {
     bounds = bounds2array(bounds);
     const osm_json = await osm_dl(bounds, layers, progressCallback);
-    swzplnWorker.postMessage([format, osm_json, bounds, layers, zoom]);
+    swzplnWorker.postMessage([format, osm_json, bounds, layers, zoom, scale]);
     swzplnWorker.onmessage = function (e) {
         if (e.data[0] == 'result') {
             let result = e.data[1];
@@ -52,7 +53,10 @@ export async function genSwzpln(format, bounds, layers, zoom, progressCallback) 
                     break;
 
                 case 'pdf':
-                    download('swzpln.pdf', result, 'application/pdf');
+                    var element = document.getElementById("dl_start");
+                    element.setAttribute('href', result);
+                    element.setAttribute('target', '_blank');
+                    element.click();
                     break;
                 
                 default:
