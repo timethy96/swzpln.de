@@ -5,7 +5,7 @@ function progressCallback(task, status){
 }
 
 onmessage = function(e) {
-    const [format, osm_json, bounds, layers, zoom] = e.data;
+    const [format, osm_json, bounds, layers, zoom, scale] = e.data;
     let resultString;
 
     switch (format) {
@@ -16,12 +16,12 @@ onmessage = function(e) {
     
         case "svg":
             importScripts('./osmjson2svg.js');
-            resultString = osmjson2svg(osm_json, bounds, layers, zoom, progressCallback);
+            resultString = osmjson2svg(osm_json, bounds, layers, zoom, scale, progressCallback);
             break;
     
         case "pdf":
             importScripts('./osmjson2pdf.js');
-            resultString = osmjson2pdf(osm_json, bounds, layers, zoom, progressCallback);
+            resultString = osmjson2pdf(osm_json, bounds, layers, zoom, scale, progressCallback);
             break;
     
         default:

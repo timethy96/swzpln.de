@@ -1,6 +1,7 @@
 import { setCookie } from "./jsCookie.js";
 import { genSwzpln, estimateOsmFilesize, cancelGen } from "./osm/gen_swzpln.js";
-import { progressBar } from './progressBar.js'
+import { progressBar } from './progressBar.js';
+import { getScales } from './osm/getScales.js';
 
 function getLayers(){
     let layers = [];
@@ -36,15 +37,35 @@ export function initUI() {
     map.on('zoomend', () => { $('#dl_b_c').removeClass('active'); });
 
     //run download
-    $('.dl_bs').click((event) => {
-        const format = $(event.currentTarget).html().replaceAll(" ","").replaceAll("\n","");
+    function startDL(format,scale = null) {
         const bounds = map.getBounds();
         const layers = getLayers();
         const estTotalSize = estimateOsmFilesize(map.getZoom());
-        progressBar(0, estTotalSize)
         const zoom = map.getZoom();
-        genSwzpln(format,bounds,layers,zoom,progressBar);
+        progressBar(0, estTotalSize)
+        genSwzpln(format,bounds,layers,zoom,scale,progressBar);
+    }
+    $('.dl_bs').click((event) => {
+        const format = $(event.currentTarget).html().replaceAll(" ","").replaceAll("\n","");
+        if (format == "dxf") {
+            startDL(format);
+        } else {
+            const bounds = map.getBounds();
+            let scales = getScales(bounds);
+            $(scales).each((index, scale) => {
+                $('.scale_opt')[index].innerHTML = scale.name;
+                $('.scale_opt')[index].setAttribute('data-scale',scale.scale);
+                $('.scale_opt')[index].setAttribute('data-format',format);
+            })
+            $('#dl_scale').addClass('active');
+        }
     })
+    $('.scale_opt').click((event) => {
+        let scale = $(event.currentTarget).attr('data-scale');
+        let format = $(event.currentTarget).attr('data-format');
+        $('#dl_scale').removeClass('active');
+        startDL(format, scale);
+    });
 
     //open menu
     var counterInt
@@ -81,10 +102,7 @@ export function initUI() {
                 }
                 break;
             case "m_help":
-
-                break;
-            case "m_donate":
-                window.location = $(event.currentTarget).attr("data-href");
+                
                 break;
             case "m_darkmode":
                 const style = $("#colors").attr("href");
@@ -95,9 +113,6 @@ export function initUI() {
                     $("#colors").attr("href", "/css/colors.light.css");
                     setCookie('darkmode','false',30);
                 }
-                break;
-            case "m_github":
-                window.location = $(event.currentTarget).attr("data-href");
                 break;
             case "m_legal":
                 $("#legal").addClass('active');
@@ -120,6 +135,9 @@ export function initUI() {
     //close dl dialog
     $("#dl_close").click(() => {
         $('#dl_progress').removeClass('active');
+    })
+    $("#dl_scales_close").click(() => {
+        $('#dl_scale').removeClass('active');
     })
 
     $("#dl_cancel").click(() => {

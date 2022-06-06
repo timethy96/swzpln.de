@@ -49,6 +49,11 @@ a {
     font-weight: 800;
 }
 
+sup {
+    font-size: 6px;
+    transform:translateY(-3px);
+}
+
 #main {
     display: flex;
     flex-direction: column;
@@ -424,6 +429,7 @@ header.active #burger_b, header.active #burger_b_menu {
     padding: 16px 24px 16px 16px;
     font-weight: 800;
     cursor: pointer;
+    text-decoration: none;
 }
 
 p#counter {
@@ -569,6 +575,27 @@ p#counter {
 
 #dl_ad {
     margin-top: 30px;
+}
+
+#dl_scale p {
+    margin-bottom: 24px;
+}
+
+.scale_opt {
+    font-size: 20px;
+    font-weight: 400;
+    margin: 0 24px;
+    height: 57px;
+    border-bottom: solid 1px #000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background-color 0.3s;
+    cursor: pointer;
+}
+
+.scale_opt:hover{
+    background-color: #aaa;
 }
 
 .dialog_b_cont {
