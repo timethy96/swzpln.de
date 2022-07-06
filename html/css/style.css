@@ -90,7 +90,7 @@ body.menu_active #burger_b_menu {
 }
 
 #logoCont {
-    margin: 0;
+    margin: 0 0 0 16px;
     position: relative;
 }
 
