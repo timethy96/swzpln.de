@@ -89,15 +89,34 @@ body.menu_active #burger_b_menu {
     display: block;
 }
 
+#logoCont {
+    margin: 0;
+    position: relative;
+}
+
+#logoCont div {
+    position: absolute;
+    width: 100%;
+    text-align: center;
+    bottom: -15px;
+    right: 0;
+}
+
+#logoCont div a {
+    font-size: 12px;
+    font-weight: 200;
+    text-decoration: none;
+}
+
 #logo {
     font-family: OpenSans, Arial, Helvetica, sans-serif;
     font-size: 28px;
     line-height: 30px;
     font-weight: 800;
-    margin: 0 0 0 16px;
+    margin: 0 0 0 0;
     transition: all 0.3s;
     justify-self: center;
-
+    text-align: center;
 }
 
 #search_b {

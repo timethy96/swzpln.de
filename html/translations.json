@@ -11,6 +11,7 @@
 
     "noscript":{"de":"Die Kernfunktion dieser Webseite (Pläne erstellen) ist in JavaScript geschrieben. Daher funktioniert die Webseite nur mit aktiviertem JavaScript!","en":"The core function of this website (creating plans) is written in JavaScript. Therefore, the website only works with JavaScript enabled!"},
     "legal":{"de":"Impressum","en":"Legal"},
+    "backToOld":{"de":"> zum alten Design","en":"> to the old design"},
 
     "m_title":{"de":"Schwarzpläne für alle!","en":"Ground figure plans for everyone!"},
     "m_subtitle":{"de":"Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpläne von überall erstellen. Und wir sammeln nicht einmal deine Daten!","en":"On this website, you can create as many ground figure plans as you want from anywhere, for free, with just one click. And we don't even collect your data!"},
