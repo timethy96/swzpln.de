@@ -1,6 +1,6 @@
 import { osm_dl } from './osm_dl.js'
 
-var swzplnWorker = new Worker('/js/osm/gen_swzpln_worker.js', { type: "module" });
+var swzplnWorker = new Worker('/js/osm/gen_swzpln_worker.js');
 
 function download(filename, text, mime) {
     var element = document.getElementById("dl_start");

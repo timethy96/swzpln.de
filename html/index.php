@@ -21,6 +21,12 @@ if (isset($_COOKIE['darkmode'])){
   }
 }
 
+if (isset($_COOKIE['layers'])){
+  $layers = explode(",", clean($_COOKIE['layers']));
+} else {
+  $layers = [];
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $l; ?>">
@@ -68,7 +74,7 @@ if (isset($_COOKIE['darkmode'])){
 
     <div id="layers">
       <input type="checkbox" id="l_buildings" name="l_buildings" value="building" checked>
-      <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings'); ?></label>
+      <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings');?></label>
       <input type="checkbox" id="l_green" name="l_green" value="green">
       <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
       <input type="checkbox" id="l_water" name="l_water" value="water">
@@ -81,8 +87,8 @@ if (isset($_COOKIE['darkmode'])){
       <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la,$l,'roads'); ?></label>
       <input type="checkbox" id="l_rails" name="l_rails" value="railway">
       <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
-      <input type="checkbox" id="l_contours" name="l_contours" value="contours">
-      <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label>
+      <!-- <input type="checkbox" id="l_contours" name="l_contours" value="contours">
+      <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label> -->
     </div>
 
     <div id="map">
@@ -117,7 +123,7 @@ if (isset($_COOKIE['darkmode'])){
     <p id="menu_subtitle"><?php __($la,$l,'m_subtitle'); ?></p>
     
     <div class="menu_item" id="m_lang"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <!-- <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div> -->
     <a class="menu_item" id="m_donate" href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></a>
     <div class="menu_item" id="m_darkmode"><?php echo file_get_contents("img/darkmode.svg"); __($la,$l,'m_darkmode'); echo file_get_contents("img/arrow_right.svg");?></div>
     <a class="menu_item" id="m_github" href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __($la,$l,'m_source'); echo file_get_contents("img/arrow_right.svg");?></a>
