@@ -1,7 +1,7 @@
 <?php
 $allowedOrigins = array(
-    '(http(s)://)?(www\.)?swzpln.de',
-    '(http(s)://)?(old\.)?swzpln.de'
+    '(http(s)?:\/\/)?(www\.)?swzpln.de',
+    '(http(s)?:\/\/)?(old\.)?swzpln.de'
   );
    
 if (isset($_SERVER['HTTP_ORIGIN']) && $_SERVER['HTTP_ORIGIN'] != '') {
