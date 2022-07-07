@@ -2,7 +2,8 @@
 $allowed_domains = array(
     'https://swzpln.de',
     'https://www.swzpln.de',
-    'https://old.swzpln.de'
+    'https://old.swzpln.de',
+    '172.18.0.2'
 );
 if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
     $origin = $_SERVER['HTTP_ORIGIN'];
@@ -11,7 +12,6 @@ if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
 } else {
     $origin = $_SERVER['REMOTE_ADDR'];
 }
-echo $origin;
 if (in_array($origin, $allowed_domains)) {
     header('Access-Control-Allow-Origin: ' . $origin);
 }
