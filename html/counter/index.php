@@ -11,6 +11,7 @@ if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
 } else {
     $origin = $_SERVER['REMOTE_ADDR'];
 }
+echo $origin;
 if (in_array($origin, $allowed_domains)) {
     header('Access-Control-Allow-Origin: ' . $origin);
 }
