@@ -4,7 +4,7 @@ $lang = 'de';
 
 $count = 0;
 
-$count = require_once('count.php');
+$count = file_get_contents("https://swzpln.de/counter/");
 
 ?>
 <!DOCTYPE html>
