@@ -43,7 +43,11 @@ if (isset($_COOKIE['layers'])){
   <link rel="icon" type="image/png" sizes="16x16" href="/meta/favicon-16x16.png">
   <link rel="manifest" href="/meta/site.webmanifest">
   <link rel="mask-icon" href="/meta/safari-pinned-tab.svg" color="#000000">
+  <link rel="shortcut icon" href="/meta/favicon.ico">
+  <meta name="apple-mobile-web-app-title" content="swzpln.de">
+  <meta name="application-name" content="swzpln.de">
   <meta name="msapplication-TileColor" content="#000000">
+  <meta name="msapplication-config" content="/meta/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
 
   <meta property="og:image:height" content="1257">
