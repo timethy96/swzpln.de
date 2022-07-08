@@ -76,7 +76,7 @@ export function initUI() {
         //init counter ajax
         $('#counter_no').load('/counter');
         counterInt = setInterval(() => {
-            $('#counter_no').load('/counter');
+            $('#counter_no').load('/counter/');
         },500);
     })
 
