@@ -38,6 +38,25 @@ if (isset($_COOKIE['layers'])){
 
   <title>swzpln.de</title>
 
+  <link rel="apple-touch-icon" sizes="180x180" href="/meta/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/meta/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/meta/favicon-16x16.png">
+  <link rel="manifest" href="/meta/site.webmanifest">
+  <link rel="mask-icon" href="/meta/safari-pinned-tab.svg" color="#000000">
+  <link rel="shortcut icon" href="/meta/favicon.ico">
+  <meta name="apple-mobile-web-app-title" content="swzpln.de">
+  <meta name="application-name" content="swzpln.de">
+  <meta name="msapplication-TileColor" content="#000000">
+  <meta name="msapplication-config" content="/meta/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+  <meta property="og:image:height" content="1257">
+  <meta property="og:image:width" content="2400">
+  <meta property="og:description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!">
+  <meta property="og:url" content="https://swzpln.de">
+  <meta property="og:image" content="https://swzpln.de/meta/og-image.jpg">
+  <meta property="og:title" content="swzpln.de | Schwarzplan - Generator">
+
   <link rel="stylesheet" href="/css/reset.css">
   <?php
   if ($darkmode){
