@@ -176,7 +176,7 @@ function download(filename, text, mime) {
 // trigger the counter
 
 function countUp(){
-    $.ajax({url: "https://swzpln.de/counter?count=1"});
+    $.ajax({url: "https://swzpln.de/counter/?count=1"});
 }
 
 
