@@ -1,8 +1,27 @@
 <?php
-header('Access-Control-Allow-Origin: *');
-header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
-header('Access-Control-Max-Age: 600');
-header('Access-Control-Allow-Headers: *');
+$allowedOrigins = array(
+    '(https?:\/\/)(old\.|www\.)?swzpln\.de(\/)?'
+);
+if (array_key_exists('HTTP_ORIGIN', $_SERVER)) {
+    $origin = $_SERVER['HTTP_ORIGIN'];
+}
+else if (array_key_exists('HTTP_REFERER', $_SERVER)) {
+    $origin = $_SERVER['HTTP_REFERER'];
+} else {
+    $origin = $_SERVER['REMOTE_ADDR'];
+}
+if (isset($origin) && $origin != '') {
+    foreach ($allowedOrigins as $allowedOrigin) {
+        if (preg_match('#' . $allowedOrigin . '#', $allowedOrigin)) {
+            header('Access-Control-Allow-Origin: ' . $origin);
+            header('Access-Control-Allow-Methods: GET, POST, OPTIONS');
+            header('Access-Control-Max-Age: 600');
+            header('Access-Control-Allow-Headers: *');
+            break;
+        }
+    }
+}
+
 
 error_reporting(0);
 
