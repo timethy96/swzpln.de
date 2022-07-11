@@ -5,8 +5,13 @@ if (isset($_COOKIE['lang'])){
     $l = clean($_COOKIE['lang']);
 } else{
   $langs = ['de', 'en'];
-  $userLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-  $l = in_array($userLang, $langs) ? $userLang : 'de';
+  if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+    $userLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+    $l = in_array($userLang, $langs) ? $userLang : 'de';
+  } else {
+    $l = 'de';
+  }
+  
 }
 
 $la = getTranslations($l);
