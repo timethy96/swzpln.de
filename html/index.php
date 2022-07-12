@@ -48,9 +48,9 @@ if (isset($_COOKIE['layers'])){
   <meta name="publisher" content="Timo Bilhöfer"/>
   <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
   <meta name="revisit" content="After 30 days"/>
-  <meta name="keywords" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie"/>
+  <meta name="keywords" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf"/>
   <meta name="description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!"/>
-  <meta name="page-topic" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie"/>
+  <meta name="page-topic" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf"/>
   <meta name="robots" content="INDEX,FOLLOW"/>
   <meta name="language" http-equiv="content-language" content="<?php echo $l; ?>"/>
 
