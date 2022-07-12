@@ -16,6 +16,7 @@ $count = file_get_contents("https://swzpln.de/counter/");
     <meta name="description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!">
     <meta name="author" content="Timo Bilhöfer">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name=”robots” content=”noindex”/>
 
     <link rel="apple-touch-icon" sizes="180x180" href="/apple-touch-icon.png">
     <link rel="icon" type="image/png" sizes="32x32" href="/favicon-32x32.png">
