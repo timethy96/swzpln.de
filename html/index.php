@@ -41,9 +41,9 @@ if (isset($_COOKIE['layers'])){
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <title>swzpln.de</title>
+  <title>swzpln.de | <?php __($la,$l,'title'); ?></title>
 
-  <meta name="title" content="swzpln.de"/>
+  <meta name="title" content="swzpln.de | <?php __($la,$l,'title') ?>"/>
   <meta name="author" content="Timo Bilhöfer"/>
   <meta name="publisher" content="Timo Bilhöfer"/>
   <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
