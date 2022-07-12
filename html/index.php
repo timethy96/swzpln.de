@@ -43,6 +43,17 @@ if (isset($_COOKIE['layers'])){
 
   <title>swzpln.de</title>
 
+  <meta name="title" content="swzpln.de"/>
+  <meta name="author" content="Timo Bilhöfer"/>
+  <meta name="publisher" content="Timo Bilhöfer"/>
+  <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
+  <meta name="revisit" content="After 30 days"/>
+  <meta name="keywords" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie"/>
+  <meta name="description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!"/>
+  <meta name="page-topic" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie"/>
+  <meta name="robots" content="INDEX,FOLLOW"/>
+  <meta name="language" http-equiv="content-language" content="<?php echo $l; ?>"/>
+
   <link rel="apple-touch-icon" sizes="180x180" href="/meta/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/meta/favicon-32x32.png">
   <link rel="icon" type="image/png" sizes="16x16" href="/meta/favicon-16x16.png">
