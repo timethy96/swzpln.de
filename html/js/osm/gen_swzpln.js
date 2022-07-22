@@ -15,6 +15,12 @@ function bounds2array(bounds) {
     let east = Object.values(Object.values(bounds)[0])[1];
     let south = Object.values(Object.values(bounds)[1])[0];
     let west = Object.values(Object.values(bounds)[1])[1];
+    while (Math.abs(east) > 180){
+        east = (Math.abs(east)-360)*(Math.abs(east)/east);
+    }
+    while (Math.abs(west) > 180){
+        west = (Math.abs(west)-360)*(Math.abs(west)/west);
+    }
     return [north, west, south, east];
 }
 
