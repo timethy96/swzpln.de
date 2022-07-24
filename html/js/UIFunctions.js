@@ -67,6 +67,17 @@ export function initUI() {
         startDL(format, scale);
     });
 
+
+    //save layers to cookies
+    $("#layers > input").click(() => {
+        var boolLayers = [];
+        $('#layers > input').each((index, layer) => {
+            var bool = $(layer).is(":checked");
+            boolLayers[index] = bool
+        })
+        setCookie('layers',JSON.stringify(boolLayers),30);
+    })
+
     //open menu
     var counterInt
     $('#burger_b').click(() => {
@@ -87,7 +98,7 @@ export function initUI() {
         $('body').removeClass('menu_active');
         clearInterval(counterInt);
     })
-
+    
     //menu links
     $(".menu_item").click((event) => {
         const id = $(event.currentTarget).attr("id");
