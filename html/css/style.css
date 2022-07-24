@@ -593,6 +593,10 @@ p#counter {
     margin-top: 2.5rem;
 }
 
+#dl_scale {
+    font-size: 1.2rem;
+}
+
 #dl_scale p {
     margin-bottom: 2rem;
 }
