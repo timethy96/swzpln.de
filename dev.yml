@@ -5,7 +5,7 @@ services:
         container_name: swzpln
         image: php:apache
         ports:
-            - 8083:80
+            - 8080:80
         volumes:
             - ./html:/var/www/html
         restart: unless-stopped
