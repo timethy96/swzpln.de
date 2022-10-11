@@ -19,6 +19,9 @@ export async function progressBar(task, status){
         case 0:
             $("#dl_status_text").html(getStr('init'));
             $("#dl_bar").addClass('stateless');
+            $("#dl_bar").show();
+            $("#dl_status_text").show();
+            $("#dl_status_percent").show();
             $("#dl_cancel").addClass('active');
             $("#dl_start").removeClass('active');
             $("#dl_close").removeClass('active');
@@ -70,6 +73,12 @@ export async function progressBar(task, status){
             $("#dl_cancel").removeClass('active');
             $("#dl_start").addClass('active');
             $("#dl_close").addClass('active');
+            $('#dl_bar').hide();
+            $('#dl_status_percent').hide();
+            $("#dl_feedback").addClass('active');
+            $("#dl_feedback_quick").addClass('active');
+            $("#dl_feedback_long").removeClass('active');
+            $("#dl_feedback_end").removeClass('active');
             break;
             
 

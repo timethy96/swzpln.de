@@ -1,4 +1,4 @@
-import { setCookie } from "./jsCookie.js";
+import { getCookie, setCookie } from "./jsCookie.js";
 import { genSwzpln, estimateOsmFilesize, cancelGen } from "./osm/gen_swzpln.js";
 import { progressBar } from './progressBar.js';
 import { getScales } from './osm/getScales.js';
@@ -146,6 +146,7 @@ export function initUI() {
     //close dl dialog
     $("#dl_close").click(() => {
         $('#dl_progress').removeClass('active');
+        $('#dl_feedback').removeClass('active');
     })
     $("#dl_scales_close").click(() => {
         $('#dl_scale').removeClass('active');
@@ -156,4 +157,27 @@ export function initUI() {
         $('#dl_progress').removeClass('active');
     })
 
+    //feedback functions
+    //quick feedback
+    $('.dl_feedback_quick_b').click((event) => {
+        const feedback = parseInt($(event.currentTarget).attr("data-feedback"));
+        $.post("/feedback/", {"type": "quick", "feedback": feedback}, (r) => {
+            console.log(r);
+            $('#dl_feedback_quick').removeClass('active');
+            $('#dl_feedback_long').addClass('active');
+            $('.dl_feedback_long_text').hide();
+            $('#dl_status_text').hide();
+            if (feedback) {
+                $('#dl_feedback_long_good').show();
+            } else {
+                $('#dl_feedback_long_bad').show();
+            }
+            const darkmode = getCookie('darkmode')
+            const theme = darkmode ? 'dark' : 'light';
+            hcaptcha.render('long_feedback_hcaptcha', {
+                sitekey: 'a264ee9e-a19b-44bd-9f11-4bcaae3f5fa3',
+                theme: theme
+            });
+        });
+    })
 }

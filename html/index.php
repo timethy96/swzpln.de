@@ -1,9 +1,9 @@
 <?php
 require('php/functions.php');
 
-if (isset($_COOKIE['lang'])){
-    $l = clean($_COOKIE['lang']);
-} else{
+if (isset($_COOKIE['lang'])) {
+  $l = clean($_COOKIE['lang']);
+} else {
   $langs = ['de', 'en'];
   if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
     $userLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
@@ -11,12 +11,11 @@ if (isset($_COOKIE['lang'])){
   } else {
     $l = 'de';
   }
-  
 }
 
 $la = getTranslations($l);
 
-if (isset($_COOKIE['darkmode'])){
+if (isset($_COOKIE['darkmode'])) {
   $darkmode = filter_var(clean($_COOKIE['darkmode']), FILTER_VALIDATE_BOOLEAN);
 } else {
   if (date('H') > 19 || date('H') < 7) {
@@ -26,10 +25,10 @@ if (isset($_COOKIE['darkmode'])){
   }
 }
 
-if (isset($_COOKIE['layers'])){
+if (isset($_COOKIE['layers'])) {
   $layers = json_decode(clean($_COOKIE['layers']));
 } else {
-  $layers = [true,false,false,false,false,false,false];
+  $layers = [true, false, false, false, false, false, false];
 }
 
 ?>
@@ -41,18 +40,18 @@ if (isset($_COOKIE['layers'])){
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <title>swzpln.de | <?php __($la,$l,'title'); ?></title>
+  <title>swzpln.de | <?php __($la, $l, 'title'); ?></title>
 
-  <meta name="title" content="swzpln.de | <?php __($la,$l,'title') ?>"/>
-  <meta name="author" content="Timo Bilhöfer"/>
-  <meta name="publisher" content="Timo Bilhöfer"/>
-  <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
-  <meta name="revisit" content="After 30 days"/>
-  <meta name="keywords" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf"/>
-  <meta name="description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!"/>
-  <meta name="page-topic" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf"/>
-  <meta name="robots" content="INDEX,FOLLOW"/>
-  <meta name="language" http-equiv="content-language" content="<?php echo $l; ?>"/>
+  <meta name="title" content="swzpln.de | <?php __($la, $l, 'title') ?>" />
+  <meta name="author" content="Timo Bilhöfer" />
+  <meta name="publisher" content="Timo Bilhöfer" />
+  <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>" />
+  <meta name="revisit" content="After 30 days" />
+  <meta name="keywords" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf" />
+  <meta name="description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!" />
+  <meta name="page-topic" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf" />
+  <meta name="robots" content="INDEX,FOLLOW" />
+  <meta name="language" http-equiv="content-language" content="<?php echo $l; ?>" />
 
   <link rel="apple-touch-icon" sizes="180x180" href="/meta/apple-touch-icon.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/meta/favicon-32x32.png">
@@ -76,8 +75,8 @@ if (isset($_COOKIE['layers'])){
 
   <link rel="stylesheet" href="/css/reset.css">
   <?php
-  if ($darkmode){
-   echo '<link rel="stylesheet" href="/css/colors.dark.css" id="colors">';
+  if ($darkmode) {
+    echo '<link rel="stylesheet" href="/css/colors.dark.css" id="colors">';
   } else {
     echo '<link rel="stylesheet" href="/css/colors.light.css" id="colors">';
   }
@@ -97,34 +96,37 @@ if (isset($_COOKIE['layers'])){
     <header>
       <div id="burger_b_menu"><?php echo file_get_contents("img/menu_close.svg"); ?></div>
       <div id="burger_b"><?php echo file_get_contents("img/menu.svg"); ?></div>
-      <div id="logoCont"><h1 id="logo">SWZPLN</h1><div><a href="https://old.swzpln.de"><?php __($la,$l,'backToOld'); ?></a></div></div>
+      <div id="logoCont">
+        <h1 id="logo">SWZPLN</h1>
+        <div><a href="https://old.swzpln.de"><?php __($la, $l, 'backToOld'); ?></a></div>
+      </div>
       <div id="search_c">
         <div id="search_b"><?php echo file_get_contents("img/search.svg"); ?></div>
         <form id="search_form">
           <input id="search" name="search" type="text" />
-          <label for="search" id="search_l"><?php __($la,$l,'search'); ?></label>
+          <label for="search" id="search_l"><?php __($la, $l, 'search'); ?></label>
         </form>
         <div id="search_exit_b"><?php echo file_get_contents("img/exit.svg"); ?></div>
       </div>
     </header>
 
     <div id="layers">
-      <input type="checkbox" id="l_buildings" name="l_buildings" value="building" <?php echo ($layers[0]) ? 'checked' : ''; ?> >
-      <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings');?></label>
-      <input type="checkbox" id="l_green" name="l_green" value="green" <?php echo ($layers[1]) ? 'checked' : ''; ?> >
-      <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
-      <input type="checkbox" id="l_water" name="l_water" value="water" <?php echo ($layers[2]) ? 'checked' : ''; ?> >
-      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
-      <input type="checkbox" id="l_forest" name="l_forest" value="forest" <?php echo ($layers[3]) ? 'checked' : ''; ?> >
-      <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
-      <input type="checkbox" id="l_land" name="l_land" value="farmland" <?php echo ($layers[4]) ? 'checked' : ''; ?> >
-      <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
-      <input type="checkbox" id="l_streets" name="l_streets" value="highway" <?php echo ($layers[5]) ? 'checked' : ''; ?> >
-      <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la,$l,'roads'); ?></label>
-      <input type="checkbox" id="l_rails" name="l_rails" value="railway" <?php echo ($layers[6]) ? 'checked' : ''; ?> >
-      <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
+      <input type="checkbox" id="l_buildings" name="l_buildings" value="building" <?php echo ($layers[0]) ? 'checked' : ''; ?>>
+      <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la, $l, 'buildings'); ?></label>
+      <input type="checkbox" id="l_green" name="l_green" value="green" <?php echo ($layers[1]) ? 'checked' : ''; ?>>
+      <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la, $l, 'green'); ?></label>
+      <input type="checkbox" id="l_water" name="l_water" value="water" <?php echo ($layers[2]) ? 'checked' : ''; ?>>
+      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la, $l, 'water'); ?></label>
+      <input type="checkbox" id="l_forest" name="l_forest" value="forest" <?php echo ($layers[3]) ? 'checked' : ''; ?>>
+      <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la, $l, 'forest'); ?></label>
+      <input type="checkbox" id="l_land" name="l_land" value="farmland" <?php echo ($layers[4]) ? 'checked' : ''; ?>>
+      <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la, $l, 'land'); ?></label>
+      <input type="checkbox" id="l_streets" name="l_streets" value="highway" <?php echo ($layers[5]) ? 'checked' : ''; ?>>
+      <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la, $l, 'roads'); ?></label>
+      <input type="checkbox" id="l_rails" name="l_rails" value="railway" <?php echo ($layers[6]) ? 'checked' : ''; ?>>
+      <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la, $l, 'rails'); ?></label>
       <!-- <input type="checkbox" id="l_contours" name="l_contours" value="contours" <?php echo ($layers[7]) ? 'checked' : ''; ?> >
-      <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label> -->
+      <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la, $l, 'contours'); ?></label> -->
     </div>
 
     <div id="map">
@@ -147,52 +149,86 @@ if (isset($_COOKIE['layers'])){
 
     <noscript>
       <div id="noscript">
-        <?php __($la,$l,'noscript'); ?>
-        <a href="legal"><?php __($la,$l,'legal'); ?></a>
+        <?php __($la, $l, 'noscript'); ?>
+        <a href="legal"><?php __($la, $l, 'legal'); ?></a>
       </div>
     </noscript>
 
   </div>
 
   <div id="menu">
-    <h2><?php __($la,$l,'m_title'); ?></h2>
-    <p id="menu_subtitle"><?php __($la,$l,'m_subtitle'); ?></p>
-    
-    <div class="menu_item" id="m_lang"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <!-- <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div> -->
-    <a class="menu_item" id="m_donate" href="https://ko-fi.com/swzpln"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></a>
-    <div class="menu_item" id="m_darkmode"><?php echo file_get_contents("img/darkmode.svg"); __($la,$l,'m_darkmode'); echo file_get_contents("img/arrow_right.svg");?></div>
-    <a class="menu_item" id="m_github" href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __($la,$l,'m_source'); echo file_get_contents("img/arrow_right.svg");?></a>
-    <div class="menu_item" id="m_legal"><?php echo file_get_contents("img/imprint.svg"); __($la,$l,'legal'); echo file_get_contents("img/arrow_right.svg");?></div>
-    
+    <h2><?php __($la, $l, 'm_title'); ?></h2>
+    <p id="menu_subtitle"><?php __($la, $l, 'm_subtitle'); ?></p>
+
+    <div class="menu_item" id="m_lang"><?php echo file_get_contents("img/lang.svg");
+                                        __($la, $l, 'm_lang');
+                                        echo file_get_contents("img/arrow_right.svg"); ?></div>
+    <!-- <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg");
+                                            __($la, $l, 'm_help');
+                                            echo file_get_contents("img/arrow_right.svg"); ?></div> -->
+    <a class="menu_item" id="m_donate" href="https://ko-fi.com/swzpln"><?php echo file_get_contents("img/donate.svg");
+                                                                        __($la, $l, 'm_donate');
+                                                                        echo file_get_contents("img/arrow_right.svg"); ?></a>
+    <div class="menu_item" id="m_darkmode"><?php echo file_get_contents("img/darkmode.svg");
+                                            __($la, $l, 'm_darkmode');
+                                            echo file_get_contents("img/arrow_right.svg"); ?></div>
+    <a class="menu_item" id="m_github" href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg");
+                                                                                        __($la, $l, 'm_source');
+                                                                                        echo file_get_contents("img/arrow_right.svg"); ?></a>
+    <div class="menu_item" id="m_legal"><?php echo file_get_contents("img/imprint.svg");
+                                        __($la, $l, 'legal');
+                                        echo file_get_contents("img/arrow_right.svg"); ?></div>
+
     <div id="menu_footer">
-      <p id="counter"><span id="counter_no"></span> <?php __($la,$l,'m_counter'); ?></p>
-      <p>&copy; <?php echo date("Y")." "; __($la,$l,'m_footer'); ?>
+      <p id="counter"><span id="counter_no"></span> <?php __($la, $l, 'm_counter'); ?></p>
+      <p>&copy; <?php echo date("Y") . " ";
+                __($la, $l, 'm_footer'); ?>
     </div>
   </div>
   <div id="menu_shadow"></div>
 
   <div id="legal" class="dialog closable"></div>
   <div id="dl_scale" class="dialog">
-    <h2><?php __($la,$l,'dl_scales'); ?></h2>
-    <p><?php __($la,$l,'dl_scales_info'); ?></p>
+    <h2><?php __($la, $l, 'dl_scales'); ?></h2>
+    <p><?php __($la, $l, 'dl_scales_info'); ?></p>
     <a class="scale_opt">-</a>
     <a class="scale_opt">-</a>
     <a class="scale_opt">-</a>
     <div class="dialog_b_cont">
-      <a id="dl_scales_close" class="dialog_b active" href="javascript:"><?php __($la,$l,'dl_close'); ?></a>
+      <a id="dl_scales_close" class="dialog_b active" href="javascript:"><?php __($la, $l, 'dl_close'); ?></a>
     </div>
   </div>
   <div id="dl_progress" class="dialog">
-    <?php echo file_get_contents("img/world.svg");?>
-    <h2><?php __($la,$l,'dl_gen'); ?></h2>
+    <?php echo file_get_contents("img/world.svg"); ?>
+    <h2><?php __($la, $l, 'dl_gen'); ?></h2>
     <div id="dl_status_text"></div>
-    <div id="dl_bar"><div></div></div>
+    <div id="dl_bar">
+      <div></div>
+    </div>
     <div id="dl_status_percent"></div>
-    <div id="dl_ad"><?php __($la,$l,'dl_donate'); ?></div>
+    <div id="dl_feedback">
+      <div id="dl_feedback_quick">
+        <p><?php __($la, $l, 'quick_feedback'); ?></p>
+        <button id="dl_feedback_good" class="dl_feedback_quick_b" data-feedback="1">good</button>
+        <button id="dl_feedback_bad" class="dl_feedback_quick_b" data-feedback="0">bad</button>
+      </div>
+      <div id="dl_feedback_long">
+        <p class="dl_feedback_long_text" id="dl_feedback_long_good"><?php __($la, $l, 'long_feedback_good'); ?></p>
+        <p class="dl_feedback_long_text" id="dl_feedback_long_bad"><?php __($la, $l, 'long_feedback_bad'); ?></p>
+        <form>
+          <textarea id="long_feedback" name="long_feedback" rows="2" cols="45" placeholder="<?php __($la, $l, 'long_feedback_here'); ?>"></textarea>
+          <div id="long_feedback_hcaptcha"></div>
+          <input type="submit" value="<?php __($la, $l, 'long_feedback_submit'); ?>" />
+        </form>
+      </div>
+      <div id="dl_feedback_end">
+        <p><?php __($la, $l, 'feedback_thanks'); ?></p>
+      </div>
+    </div>
+    <div id="dl_ad"><?php __($la, $l, 'dl_donate'); ?></div>
     <div class="dialog_b_cont">
-      <a id="dl_cancel" class="dialog_b" href="javascript:"><?php __($la,$l,'dl_cancel'); ?></a>
-      <a id="dl_close" class="dialog_b" href="javascript:"><?php __($la,$l,'dl_close'); ?></a>
+      <a id="dl_cancel" class="dialog_b" href="javascript:"><?php __($la, $l, 'dl_cancel'); ?></a>
+      <a id="dl_close" class="dialog_b" href="javascript:"><?php __($la, $l, 'dl_close'); ?></a>
       <a id="dl_start" class="dialog_b" href="javascript:">download</a>
     </div>
   </div>
@@ -200,6 +236,7 @@ if (isset($_COOKIE['layers'])){
 
   <script src="js/jquery-3.6.0.min.js"></script>
   <script src="js/leaflet/leaflet.js"></script>
+  <script src="https://js.hcaptcha.com/1/api.js?hl=<?php echo $l ?>&render=explicit" async defer></script>
   <script src="js/main.js" type="module"></script>
 </body>
 

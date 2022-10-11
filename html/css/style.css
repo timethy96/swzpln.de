@@ -646,6 +646,20 @@ p#counter {
     z-index: 99;
 }
 
+#dl_feedback, #dl_feedback_quick, #dl_feedback_long, #dl_feedback_end {
+    display:none;
+}
+#dl_feedback.active, #dl_feedback_quick.active, #dl_feedback_long.active, #dl_feedback_end.active {
+    display:block;
+}
+
+#dl_feedback_quick_b {
+    width: 40px;
+    height: 40px;
+    display: inline-block;
+    border: none;
+}
+
 @media only screen and (max-width: 108.3rem) {
     body.menu_active {
         grid-template-columns: 0px 2fr;
