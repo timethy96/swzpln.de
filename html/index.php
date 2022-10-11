@@ -97,7 +97,7 @@ if (isset($_COOKIE['layers'])){
     <header>
       <div id="burger_b_menu"><?php echo file_get_contents("img/menu_close.svg"); ?></div>
       <div id="burger_b"><?php echo file_get_contents("img/menu.svg"); ?></div>
-      <div id="logoCont"><h1 id="logo">SWZPLN</h1><div><a href="https://old.swzpln.de"><?php __($la,$l,'backToOld'); ?></a></div></div>
+      <div id="logoCont"><h1 id="logo">SWZPLN</h1></div>
       <div id="search_c">
         <div id="search_b"><?php echo file_get_contents("img/search.svg"); ?></div>
         <form id="search_form">
