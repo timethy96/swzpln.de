@@ -5,8 +5,13 @@ if (isset($_COOKIE['lang'])){
     $l = clean($_COOKIE['lang']);
 } else{
   $langs = ['de', 'en'];
-  $userLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
-  $l = in_array($userLang, $langs) ? $userLang : 'de';
+  if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
+    $userLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
+    $l = in_array($userLang, $langs) ? $userLang : 'de';
+  } else {
+    $l = 'de';
+  }
+  
 }
 
 $la = getTranslations($l);
@@ -22,9 +27,9 @@ if (isset($_COOKIE['darkmode'])){
 }
 
 if (isset($_COOKIE['layers'])){
-  $layers = explode(",", clean($_COOKIE['layers']));
+  $layers = json_decode(clean($_COOKIE['layers']));
 } else {
-  $layers = [];
+  $layers = [true,false,false,false,false,false,false];
 }
 
 ?>
@@ -36,7 +41,38 @@ if (isset($_COOKIE['layers'])){
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <title>swzpln.de</title>
+  <title>swzpln.de | <?php __($la,$l,'title'); ?></title>
+
+  <meta name="title" content="swzpln.de | <?php __($la,$l,'title') ?>"/>
+  <meta name="author" content="Timo Bilhöfer"/>
+  <meta name="publisher" content="Timo Bilhöfer"/>
+  <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
+  <meta name="revisit" content="After 30 days"/>
+  <meta name="keywords" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf"/>
+  <meta name="description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!"/>
+  <meta name="page-topic" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf"/>
+  <meta name="robots" content="INDEX,FOLLOW"/>
+  <meta name="language" http-equiv="content-language" content="<?php echo $l; ?>"/>
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/meta/apple-touch-icon.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/meta/favicon-32x32.png">
+  <link rel="icon" type="image/png" sizes="16x16" href="/meta/favicon-16x16.png">
+  <link rel="manifest" href="/meta/site.webmanifest">
+  <link rel="mask-icon" href="/meta/safari-pinned-tab.svg" color="#000000">
+  <link rel="shortcut icon" href="/meta/favicon.ico">
+  <link rel="canonical" href="https://swzpln.de">
+  <meta name="apple-mobile-web-app-title" content="swzpln.de">
+  <meta name="application-name" content="swzpln.de">
+  <meta name="msapplication-TileColor" content="#000000">
+  <meta name="msapplication-config" content="/meta/browserconfig.xml">
+  <meta name="theme-color" content="#ffffff">
+
+  <meta property="og:image:height" content="1257">
+  <meta property="og:image:width" content="2400">
+  <meta property="og:description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!">
+  <meta property="og:url" content="https://swzpln.de">
+  <meta property="og:image" content="https://swzpln.de/meta/og-image.jpg">
+  <meta property="og:title" content="swzpln.de | Schwarzplan - Generator">
 
   <link rel="stylesheet" href="/css/reset.css">
   <?php
@@ -61,7 +97,7 @@ if (isset($_COOKIE['layers'])){
     <header>
       <div id="burger_b_menu"><?php echo file_get_contents("img/menu_close.svg"); ?></div>
       <div id="burger_b"><?php echo file_get_contents("img/menu.svg"); ?></div>
-      <div id="logoCont"><h1 id="logo">SWZPLN</h1><div><a href="https://old.swzpln.de"><?php __($la,$l,'backToOld'); ?></a></div></div>
+      <div id="logoCont"><h1 id="logo">SWZPLN</h1></div>
       <div id="search_c">
         <div id="search_b"><?php echo file_get_contents("img/search.svg"); ?></div>
         <form id="search_form">
@@ -73,21 +109,21 @@ if (isset($_COOKIE['layers'])){
     </header>
 
     <div id="layers">
-      <input type="checkbox" id="l_buildings" name="l_buildings" value="building" checked>
+      <input type="checkbox" id="l_buildings" name="l_buildings" value="building" <?php echo ($layers[0]) ? 'checked' : ''; ?> >
       <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings');?></label>
-      <input type="checkbox" id="l_green" name="l_green" value="green">
+      <input type="checkbox" id="l_green" name="l_green" value="green" <?php echo ($layers[1]) ? 'checked' : ''; ?> >
       <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
-      <input type="checkbox" id="l_water" name="l_water" value="water">
+      <input type="checkbox" id="l_water" name="l_water" value="water" <?php echo ($layers[2]) ? 'checked' : ''; ?> >
       <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
-      <input type="checkbox" id="l_forest" name="l_forest" value="forest">
+      <input type="checkbox" id="l_forest" name="l_forest" value="forest" <?php echo ($layers[3]) ? 'checked' : ''; ?> >
       <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
-      <input type="checkbox" id="l_land" name="l_land" value="farmland">
+      <input type="checkbox" id="l_land" name="l_land" value="farmland" <?php echo ($layers[4]) ? 'checked' : ''; ?> >
       <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
-      <input type="checkbox" id="l_streets" name="l_streets" value="highway">
+      <input type="checkbox" id="l_streets" name="l_streets" value="highway" <?php echo ($layers[5]) ? 'checked' : ''; ?> >
       <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la,$l,'roads'); ?></label>
-      <input type="checkbox" id="l_rails" name="l_rails" value="railway">
+      <input type="checkbox" id="l_rails" name="l_rails" value="railway" <?php echo ($layers[6]) ? 'checked' : ''; ?> >
       <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
-      <!-- <input type="checkbox" id="l_contours" name="l_contours" value="contours">
+      <!-- <input type="checkbox" id="l_contours" name="l_contours" value="contours" <?php echo ($layers[7]) ? 'checked' : ''; ?> >
       <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label> -->
     </div>
 
@@ -124,7 +160,7 @@ if (isset($_COOKIE['layers'])){
     
     <div class="menu_item" id="m_lang"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></div>
     <!-- <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div> -->
-    <a class="menu_item" id="m_donate" href="https://www.paypal.com/donate/?hosted_button_id=TYWDA9EHEJZYA"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></a>
+    <a class="menu_item" id="m_donate" href="https://ko-fi.com/swzpln"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></a>
     <div class="menu_item" id="m_darkmode"><?php echo file_get_contents("img/darkmode.svg"); __($la,$l,'m_darkmode'); echo file_get_contents("img/arrow_right.svg");?></div>
     <a class="menu_item" id="m_github" href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __($la,$l,'m_source'); echo file_get_contents("img/arrow_right.svg");?></a>
     <div class="menu_item" id="m_legal"><?php echo file_get_contents("img/imprint.svg"); __($la,$l,'legal'); echo file_get_contents("img/arrow_right.svg");?></div>

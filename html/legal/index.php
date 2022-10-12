@@ -1,3 +1,26 @@
+<?php
+$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) AND
+strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
+if(!$isAjax) {  
+    ?>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+
+    <title>swzpln.de | Impressum</title>
+
+    <meta name="title" content="swzpln.de | Impressum"/>
+    <meta name="author" content="Timo Bilhöfer"/>
+    <meta name="publisher" content="Timo Bilhöfer"/>
+    <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
+    <meta name="robots" content="NOINDEX"/>
+    <meta name="language" http-equiv="content-language" content="de"/>
+</head>
+<body>
+    <?php
+}
+?>
 <h2>Impressum</h2>
 <p>Angaben gemäß § 5 TMG</p>
 <p>Timo Bilhöfer <br>
@@ -50,3 +73,11 @@ Website Impressum teilweise von <a href="https://www.impressum-generator.de">imp
     <?php echo date("Y"); ?> <a target="_blank" href="https://osm.org/copyright">OpenStreetMap</a> contributors
 </p>
 <p>Overpass-API bereitgestellt von <a target="_blank" href="https://overpass.kumi.systems/">kumi.systems</a></p>
+
+<?php
+if(!$isAjax) {
+    echo "</body>";
+}
+
+die();
+?>
