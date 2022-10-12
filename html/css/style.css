@@ -8,6 +8,8 @@ html,
 body {
     height: 100%;
     margin: 0;
+    font-size: 14px;
+
 }
 
 body {
@@ -50,8 +52,8 @@ a {
 }
 
 sup {
-    font-size: 6px;
-    transform:translateY(-3px);
+    font-size: 0.5rem;
+    transform:translateY(-0.25rem);
 }
 
 #main {
@@ -64,7 +66,7 @@ sup {
 header {
     display: grid;
     grid-template-columns: 1fr 1fr 1fr;
-    height: 64px;
+    height: 5.3rem;
     width: 100%;
     padding: 0 0;
     align-items: center;
@@ -74,10 +76,14 @@ header {
 
 #burger_b,
 #burger_b_menu {
-    margin: 0 24px 0 16px;
+    margin: 0 2rem 0 1.3rem;
     cursor: pointer;
     transition: opacity 0.3s;
-    width: 24px;
+    width: 2rem;
+}
+
+svg {
+    transform: scale( calc( 28 / 24 ) );
 }
 
 #burger_b_menu,
@@ -90,7 +96,7 @@ body.menu_active #burger_b_menu {
 }
 
 #logoCont {
-    margin: 0;
+    margin: 0 0 0 1.3rem;
     position: relative;
 }
 
@@ -98,20 +104,20 @@ body.menu_active #burger_b_menu {
     position: absolute;
     width: 100%;
     text-align: center;
-    bottom: -15px;
+    bottom: -1.25rem;
     right: 0;
 }
 
 #logoCont div a {
-    font-size: 12px;
+    font-size: 1rem;
     font-weight: 200;
     text-decoration: none;
 }
 
 #logo {
     font-family: OpenSans, Arial, Helvetica, sans-serif;
-    font-size: 28px;
-    line-height: 30px;
+    font-size: 2.3rem;
+    line-height: 2.5rem;
     font-weight: 800;
     margin: 0 0 0 0;
     transition: all 0.3s;
@@ -130,7 +136,7 @@ body.menu_active #burger_b_menu {
 
 #search_c {
     position: relative;
-    margin: 0 16px 0 24px;
+    margin: 0 1.3rem 0 2rem;
     display: flex;
     align-content: flex-end;
 }
@@ -146,12 +152,13 @@ body.menu_active #burger_b_menu {
     width: 100%;
     padding: 0;
     cursor: pointer;
-    height: 36px;
+    height: 3rem;
     border: 1px solid;
-    border-radius: 4px;
-    padding-left: 52px;
+    border-radius: 0.3rem;
+    padding-left: 4.3rem;
     outline: none;
     box-sizing: border-box;
+    font-size: 1.2rem;
 }
 
 #search.error {
@@ -160,10 +167,10 @@ body.menu_active #burger_b_menu {
 
 
 #search_l {
-    font-size: 14px;
+    font-size: 1.2rem;
     position: absolute;
     align-self: center;
-    left: 52px;
+    left: 4.3rem;
     transition: all 0.3s;
 }
 
@@ -171,7 +178,7 @@ body.menu_active #burger_b_menu {
     display: none;
     cursor: pointer;
     position: absolute;
-    right: 12px;
+    right: 1rem;
     align-self: center;
 }
 
@@ -208,7 +215,7 @@ header.inactive {
 header.active #search_b {
     position: absolute;
     align-self: center;
-    left: 12px;
+    left: 1rem;
 }
 
 header.active #search_exit_b {
@@ -230,14 +237,13 @@ header.active #burger_b, header.active #burger_b_menu {
 }
 
 #search:focus+#search_l {
-    transform: translate(-40px, -18px);
-    padding: 0 4px;
-    font-size: 12px;
+    transform: translate(-40px, -18px) scale(0.875);
+    padding: 0 0.3rem;
     transition: all 0.3s;
 }
 
 #layers {
-    margin: 8px 16px 4px 16px;
+    margin: 0.7rem 1.3rem 0.3rem 1.3rem;
     display: flex;
     flex-wrap: wrap;
 }
@@ -247,18 +253,18 @@ header.active #burger_b, header.active #burger_b_menu {
 }
 
 #layers label {
-    font-size: 12px;
+    font-size: 1rem;
     font-weight: 800;
     border: 1px solid;
     border-radius: 100px;
-    padding: 3px 16px 3px 12px;
+    padding: 0.25rem 1.3rem 0.25rem 1rem;
     width: auto;
     display: flex;
     align-items: center;
     text-align: center;
     letter-spacing: 0.1px;
-    margin-right: 12px;
-    margin-bottom: 8px;
+    margin-right: 1rem;
+    margin-bottom: 0.7rem;
     transition: all 0.3s;
 }
 
@@ -271,15 +277,15 @@ header.active #burger_b, header.active #burger_b_menu {
 }
 
 #layers label svg {
-    transform: scale(0.8);
-    margin: 0 8px 0 0;
+    transform: scale(0.9);
+    margin: 0 0.7rem 0 0;
 }
 
 #map {
     display: block;
     flex: 1 1 auto;
-    margin: 0 16px 16px 16px;
-    border-radius: 12px;
+    margin: 0 1.3rem 1.3rem 1.3rem;
+    border-radius: 1rem;
     filter: grayscale(100%) contrast(1.2);
     border: 1px solid #ddd;
     outline: none;
@@ -287,31 +293,25 @@ header.active #burger_b, header.active #burger_b_menu {
 
 #dl_b_c {
     position: absolute;
-    bottom: 32px;
-    right: 32px;
+    bottom: 2.7rem;
+    right: 2.7rem;
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
 .fab {
-    width: 56px;
-    height: 56px;
-    border-radius: 16px;
+    width: 4.7rem;
+    height: 4.7rem;
+    border-radius: 1.3rem;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
-    filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.3));
+    box-shadow: 0px 0.3rem 0.7rem 0.25rem rgba(0, 0, 0, 0.15);
+    filter: drop-shadow(0px 0.08rem 0.25rem rgba(0, 0, 0, 0.3));
     z-index: 1;
     transition: all 0.3s;
-}
-
-.fab:hover {
-    box-shadow: 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
-    filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.3));
-    transform: scale(1.05);
 }
 
 .fab.inactive, .fab.inactive ~ .fab_small {
@@ -328,9 +328,9 @@ header.active #burger_b, header.active #burger_b_menu {
 }
 
 .fab_small {
-    width: 40px;
-    height: 40px;
-    border-radius: 12px;
+    width: 3.3rem;
+    height: 3.3rem;
+    border-radius: 1rem;
     position: absolute;
     bottom: 0;
     display: flex;
@@ -338,66 +338,60 @@ header.active #burger_b, header.active #burger_b_menu {
     align-items: center;
     cursor: pointer;
     font-weight: 800;
-    font-size: 12px;
+    font-size: 1rem;
     transition: all 0.3s ease;
 }
 
 #dl_b_c.active .fab_small {
-    box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
-    filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.3));
+    box-shadow: 0px 0.3rem 0.7rem 0.25rem rgba(0, 0, 0, 0.15);
+    filter: drop-shadow(0px 0.08rem 0.25rem rgba(0, 0, 0, 0.3));
 }
 
 #dl_b_c.active #dl_dxf_b {
-    bottom: 80px;
+    bottom: 6.7rem;
 }
 
 #dl_b_c.active #dl_svg_b {
-    bottom: 136px;
+    bottom: 11.3rem;
 }
 
 #dl_b_c.active #dl_pdf_b {
-    bottom: 192px;
+    bottom: 16rem;
 }
 
 
-.fab:hover {
-    box-shadow: 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
-    filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.3));
-    transform: scale(1.05);
-}
-
-.fab_small:hover {
-    box-shadow: 0px 6px 10px 4px rgba(0, 0, 0, 0.15);
-    filter: drop-shadow(0px 2px 3px rgba(0, 0, 0, 0.3));
+.fab:hover, .fab_small:hover {
+    box-shadow: 0px 0.5rem 0.8rem 0.3rem rgba(0, 0, 0, 0.15);
+    filter: drop-shadow(0px 0.2rem 0.25rem rgba(0, 0, 0, 0.3));
     transform: scale(1.05);
 }
 
 .fab_large {
-    width: 96px;
-    height: 96px;
-    border-radius: 28px;
+    width: 8rem;
+    height: 8rem;
+    border-radius: 2.3rem;
     position: absolute;
-    bottom: 32px;
-    right: 32px;
+    bottom: 2.7rem;
+    right: 2.7rem;
     display: flex;
     justify-content: center;
     align-items: center;
     cursor: pointer;
-    box-shadow: 0px 4px 8px 3px rgba(0, 0, 0, 0.15);
-    filter: drop-shadow(0px 1px 3px rgba(0, 0, 0, 0.3));
+    box-shadow: 0px 0.3rem 0.7rem 0.25rem rgba(0, 0, 0, 0.15);
+    filter: drop-shadow(0px 0.08rem 0.25rem rgba(0, 0, 0, 0.3));
 }
 
 #menu {
     width: 31vw;
-    min-width: 345px;
-    height: calc(100% - 32px);
+    min-width: 28.75rem;
+    height: calc(100% - 2.7rem);
     position: absolute;
     transition: all 0.3s;
     grid-column: 1 / 1;
     grid-row: 1 / 1;
-    border-radius: 0 16px 16px 0;
+    border-radius: 0 1.3rem 1.3rem 0;
     transform: translateX(-100%);
-    padding: 16px;
+    padding: 1.3rem;
 }
 
 #menu.active {
@@ -405,32 +399,33 @@ header.active #burger_b, header.active #burger_b_menu {
 }
 
 #menu h2 {
-    padding: 8px 8px 8px 16px;
-    height: 56px;
+    padding: 0.7rem 0.7rem 0.7rem 1.3rem;
+    height: 4.7rem;
     width: auto;
     display: flex;
     flex-direction: column;
     justify-content: center;
-    font-size: 20px;
+    font-size: 1.7rem;
     font-weight: 800;
 }
 
 #menu_subtitle {
-    padding: 0 8px 8px 16px;
-    margin-bottom:24px;
+    padding: 0 0.7rem 0.7rem 1.3rem;
+    margin-bottom: 2rem;
+    font-size: 1.3rem;
 }
 
 #menu_footer {
-    width: calc(100% - 48px);
-    padding: 24px;
+    width: calc(100% - 4rem);
+    padding: 2rem;
     position: absolute;
     bottom: 0;
     left: 0px;
 }
 
 #menu_footer p {
-    margin-top: 8px;
-    font-size: 12px;
+    margin-top: 0.7rem;
+    font-size: 1rem;
 }
 
 #menu_footer p a {
@@ -440,22 +435,23 @@ header.active #burger_b, header.active #burger_b_menu {
 .menu_item {
     display: block;
     position: relative;
-    height: 24px;
+    height: 2rem;
     border-radius: 100px;
     display: flex;
     flex-direction: row;
     align-items: center;
-    padding: 16px 24px 16px 16px;
+    padding: 1.3rem 2rem 1.3rem 1.3rem;
     font-weight: 800;
     cursor: pointer;
     text-decoration: none;
+    font-size: 1.3rem;
 }
 
 p#counter {
-    font-size: 16px;
+    font-size: 1.3rem;
     width: 100%;
     text-align: center;
-    margin-bottom: 20px;
+    margin-bottom: 1.7rem;
 }
 
 #counter_no{
@@ -463,13 +459,13 @@ p#counter {
 }
 
 .menu_item svg:first-of-type {
-    margin-left: 16px;
-    margin-right: 12px;
+    margin-left: 1.3rem;
+    margin-right: 1rem;
 }
 .menu_item svg:last-of-type {
     visibility: hidden;
-    margin-left: 12px;
-    margin-right: 16px;
+    margin-left: 1rem;
+    margin-right: 1.3rem;
     right:0;
     position: absolute;
 }
@@ -487,12 +483,12 @@ p#counter {
     display: flex;
     opacity: 0;
     flex-direction: column;
-    min-width: 280px;
-    max-width: 560px;
+    min-width: 23.3rem;
+    max-width: 46.7rem;
     max-height: 50vh;
     overflow: auto;
-    border-radius: 28px;
-    padding: 24px;
+    border-radius: 2.3rem;
+    padding: 2rem;
     top: 50%;
     transform: translateY(-50%);
     left: 5vw; 
@@ -531,25 +527,26 @@ p#counter {
 }
 
 .dialog svg {
-    margin-bottom: 19px;
+    margin-bottom: 1.6rem;
 }
 
 .dialog h2 {
-    font-size: 24px;
-    margin-bottom: 16px;
+    font-size: 2rem;
+    margin-bottom: 1.3rem;
 }
 
 #dl_progress {
     align-items: center;
+    font-size: 1.2rem;
 }
 
 #dl_bar {
     position: relative;
     width: 80%;
-    height: 5px;
+    height: 0.4rem;
     border: 1px solid;
-    border-radius: 5px;
-    margin-top: 6px;
+    border-radius: 0.4rem;
+    margin-top: 0.5rem;
 }
 
 #dl_bar div {
@@ -588,23 +585,27 @@ p#counter {
 }
 
 #dl_status_percent {
-    margin-top: 6px;
+    margin-top: 0.5rem;
     font-weight: 800;
 }
 
 #dl_ad {
-    margin-top: 30px;
+    margin-top: 2.5rem;
+}
+
+#dl_scale {
+    font-size: 1.2rem;
 }
 
 #dl_scale p {
-    margin-bottom: 24px;
+    margin-bottom: 2rem;
 }
 
 .scale_opt {
-    font-size: 20px;
+    font-size: 1.7rem;
     font-weight: 400;
-    margin: 0 24px;
-    height: 57px;
+    margin: 0 2rem;
+    height: 4.75rem;
     border-bottom: solid 1px #000;
     display: flex;
     justify-content: center;
@@ -619,15 +620,15 @@ p#counter {
 
 .dialog_b_cont {
     width: 100%;
-    margin: 24px 0 0 0;
+    margin: 2rem 0 0 0;
     display: flex;
-    gap: 8px;
+    gap: 0.7rem;
     justify-content: end;
 }
 
 .dialog_b {
     display: none;
-    margin: 10px 12px;
+    margin: 0.8rem 1rem;
     font-weight: 800;
     text-decoration: none;
 }
@@ -638,14 +639,14 @@ p#counter {
 
 #noscript {
     position: absolute;
-    width: calc(100% - 32px);
-    padding: 16px;
+    width: calc(100% - 2.7rem);
+    padding: 1.3rem;
     background-color: yellow;
     bottom: 0;
     z-index: 99;
 }
 
-@media only screen and (max-width: 1300px) {
+@media only screen and (max-width: 108.3rem) {
     body.menu_active {
         grid-template-columns: 0px 2fr;
         animation: none;
@@ -679,9 +680,9 @@ p#counter {
     }
 }
 
-@media only screen and (max-width: 412px) {
+@media only screen and (max-width: 34rem) {
     #menu {
-        width:calc( 90vw - 32px );
+        width:calc( 90vw - 2.7rem );
         min-width: 0;
     }
 }
