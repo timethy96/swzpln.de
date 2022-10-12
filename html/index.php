@@ -32,6 +32,13 @@ if (isset($_COOKIE['layers'])){
   $layers = [true,false,false,false,false,false,false];
 }
 
+$main_title_array = explode(".",$_SERVER['SERVER_NAME']);
+if (isset($main_title_array[count($main_title_array) - 2])) {
+  $main_title = strtoupper($main_title_array[count($main_title_array) - 2]);
+} else {
+  $main_title = strtoupper($main_title_array[0]);
+}
+
 ?>
 <!DOCTYPE html>
 <html lang="<?php echo $l; ?>">
@@ -41,9 +48,9 @@ if (isset($_COOKIE['layers'])){
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <title>swzpln.de | <?php __($la,$l,'title'); ?></title>
+  <title><?php echo $_SERVER['SERVER_NAME'] ?> | <?php __($la,$l,'title'); ?></title>
 
-  <meta name="title" content="swzpln.de | <?php __($la,$l,'title') ?>"/>
+  <meta name="title" content="<?php echo $_SERVER['SERVER_NAME'] ?> | <?php __($la,$l,'title') ?>"/>
   <meta name="author" content="Timo Bilhöfer"/>
   <meta name="publisher" content="Timo Bilhöfer"/>
   <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
@@ -60,9 +67,9 @@ if (isset($_COOKIE['layers'])){
   <link rel="manifest" href="/meta/site.webmanifest">
   <link rel="mask-icon" href="/meta/safari-pinned-tab.svg" color="#000000">
   <link rel="shortcut icon" href="/meta/favicon.ico">
-  <link rel="canonical" href="https://swzpln.de">
-  <meta name="apple-mobile-web-app-title" content="swzpln.de">
-  <meta name="application-name" content="swzpln.de">
+  <link rel="canonical" href="https://<?php echo $_SERVER['SERVER_NAME'] ?>">
+  <meta name="apple-mobile-web-app-title" content="<?php echo $_SERVER['SERVER_NAME'] ?>">
+  <meta name="application-name" content="<?php echo $_SERVER['SERVER_NAME'] ?>">
   <meta name="msapplication-TileColor" content="#000000">
   <meta name="msapplication-config" content="/meta/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
@@ -70,9 +77,9 @@ if (isset($_COOKIE['layers'])){
   <meta property="og:image:height" content="1257">
   <meta property="og:image:width" content="2400">
   <meta property="og:description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!">
-  <meta property="og:url" content="https://swzpln.de">
-  <meta property="og:image" content="https://swzpln.de/meta/og-image.jpg">
-  <meta property="og:title" content="swzpln.de | Schwarzplan - Generator">
+  <meta property="og:url" content="https://<?php echo $_SERVER['SERVER_NAME'] ?>">
+  <meta property="og:image" content="https://<?php echo $_SERVER['SERVER_NAME'] ?>/meta/og-image.jpg">
+  <meta property="og:title" content="<?php echo $_SERVER['SERVER_NAME'] ?> | Schwarzplan - Generator">
 
   <link rel="stylesheet" href="/css/reset.css">
   <?php
@@ -97,7 +104,7 @@ if (isset($_COOKIE['layers'])){
     <header>
       <div id="burger_b_menu"><?php echo file_get_contents("img/menu_close.svg"); ?></div>
       <div id="burger_b"><?php echo file_get_contents("img/menu.svg"); ?></div>
-      <div id="logoCont"><h1 id="logo">SWZPLN</h1></div>
+      <div id="logoCont"><h1 id="logo"><?php echo $main_title; ?></h1></div>
       <div id="search_c">
         <div id="search_b"><?php echo file_get_contents("img/search.svg"); ?></div>
         <form id="search_form">
@@ -167,7 +174,7 @@ if (isset($_COOKIE['layers'])){
     
     <div id="menu_footer">
       <p id="counter"><span id="counter_no"></span> <?php __($la,$l,'m_counter'); ?></p>
-      <p>&copy; <?php echo date("Y")." "; __($la,$l,'m_footer'); ?>
+      <p>&copy; <?php echo date("Y")." "; echo "<span class='logo'>".$main_title."</span>"; __($la,$l,'m_footer'); ?>
     </div>
   </div>
   <div id="menu_shadow"></div>
