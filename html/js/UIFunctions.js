@@ -21,9 +21,6 @@ export function initUI() {
             $('header').removeClass('inactive');
             $('header').addClass('active');
             $('#search').focus();
-            if ($('#logo').text() == "OPENCITYPLANS") {
-                $('#logo').text("OCP");
-            }
         }
     })
 
@@ -31,9 +28,6 @@ export function initUI() {
     $('#search_exit_b').click(() => {
         $('header').removeClass('active');
         $('header').addClass('inactive');
-        if ($('#logo').text() == "OCP") {
-            $('#logo').text("OPENCITYPLANS");
-        }
     })
 
     //open file-format chooser
@@ -91,9 +85,9 @@ export function initUI() {
         $('body').removeClass('menu_inactive');
         $('body').addClass('menu_active');
         //init counter ajax
-        $('#counter_no').load('/counter');
+        $('#counter_no').load('/c');
         counterInt = setInterval(() => {
-            $('#counter_no').load('/counter/');
+            $('#counter_no').load('/c');
         },500);
     })
 
@@ -109,6 +103,15 @@ export function initUI() {
     $(".menu_item").click((event) => {
         const id = $(event.currentTarget).attr("id");
         switch (id) {
+            case "m_lang":
+                if ($('html').attr('lang') == 'en') {
+                    setCookie('lang','de',30);
+                    window.location.reload(true);
+                } else {
+                    setCookie('lang','en',30);
+                    window.location.reload(true);
+                }
+                break;
             case "m_help":
                 
                 break;
