@@ -10,8 +10,8 @@ services:
             - ./html:/var/www/html
         restart: unless-stopped
         environment:
-            VIRTUAL_HOST: alpha.swzpln.de
-            LETSENCRYPT_HOST: alpha.swzpln.de
+            VIRTUAL_HOST: alpha.swzpln.de,alpha.opencityplans.com
+            LETSENCRYPT_HOST: alpha.swzpln.de,alpha.opencityplans.com
 
 networks:
   default:

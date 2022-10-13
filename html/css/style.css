@@ -61,6 +61,7 @@ sup {
     flex-direction: column;
     height: 100%;
     grid-column: 2 / 2;
+    max-width: 100vw;
 }
 
 header {
@@ -139,6 +140,7 @@ body.menu_active #burger_b_menu {
     margin: 0 1.3rem 0 2rem;
     display: flex;
     align-content: flex-end;
+    right:0;
 }
 
 #search_form {
