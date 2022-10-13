@@ -35,8 +35,10 @@ if (isset($_COOKIE['layers'])){
 $main_title_array = explode(".",$_SERVER['SERVER_NAME']);
 if (isset($main_title_array[count($main_title_array) - 2])) {
   $main_title = strtoupper($main_title_array[count($main_title_array) - 2]);
+  $server_name = $main_title_array[count($main_title_array) - 2] . "." . $main_title_array[count($main_title_array) - 1];
 } else {
   $main_title = strtoupper($main_title_array[0]);
+  $server_name = $_SERVER['SERVER_NAME'];
 }
 
 ?>
@@ -48,9 +50,9 @@ if (isset($main_title_array[count($main_title_array) - 2])) {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <title><?php echo $_SERVER['SERVER_NAME'] ?> | <?php __($la,$l,'title'); ?></title>
+  <title><?php echo $server_name ?> | <?php __($la,$l,'title'); ?></title>
 
-  <meta name="title" content="<?php echo $_SERVER['SERVER_NAME'] ?> | <?php __($la,$l,'title') ?>"/>
+  <meta name="title" content="<?php echo $server_name ?> | <?php __($la,$l,'title') ?>"/>
   <meta name="author" content="Timo Bilhöfer"/>
   <meta name="publisher" content="Timo Bilhöfer"/>
   <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
@@ -67,9 +69,9 @@ if (isset($main_title_array[count($main_title_array) - 2])) {
   <link rel="manifest" href="/meta/site.webmanifest">
   <link rel="mask-icon" href="/meta/safari-pinned-tab.svg" color="#000000">
   <link rel="shortcut icon" href="/meta/favicon.ico">
-  <link rel="canonical" href="https://<?php echo $_SERVER['SERVER_NAME'] ?>">
-  <meta name="apple-mobile-web-app-title" content="<?php echo $_SERVER['SERVER_NAME'] ?>">
-  <meta name="application-name" content="<?php echo $_SERVER['SERVER_NAME'] ?>">
+  <link rel="canonical" href="https://<?php echo $server_name ?>">
+  <meta name="apple-mobile-web-app-title" content="<?php echo $server_name ?>">
+  <meta name="application-name" content="<?php echo $server_name ?>">
   <meta name="msapplication-TileColor" content="#000000">
   <meta name="msapplication-config" content="/meta/browserconfig.xml">
   <meta name="theme-color" content="#ffffff">
@@ -77,9 +79,9 @@ if (isset($main_title_array[count($main_title_array) - 2])) {
   <meta property="og:image:height" content="1257">
   <meta property="og:image:width" content="2400">
   <meta property="og:description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!">
-  <meta property="og:url" content="https://<?php echo $_SERVER['SERVER_NAME'] ?>">
-  <meta property="og:image" content="https://<?php echo $_SERVER['SERVER_NAME'] ?>/meta/og-image.jpg">
-  <meta property="og:title" content="<?php echo $_SERVER['SERVER_NAME'] ?> | Schwarzplan - Generator">
+  <meta property="og:url" content="https://<?php echo $server_name ?>">
+  <meta property="og:image" content="https://<?php echo $server_name ?>/meta/og-image.jpg">
+  <meta property="og:title" content="<?php echo $server_name ?> | Schwarzplan - Generator">
 
   <link rel="stylesheet" href="/css/reset.css">
   <?php
