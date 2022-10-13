@@ -109,15 +109,6 @@ export function initUI() {
     $(".menu_item").click((event) => {
         const id = $(event.currentTarget).attr("id");
         switch (id) {
-            case "m_lang":
-                if ($('html').attr('lang') == 'en') {
-                    setCookie('lang','de',30);
-                    window.location.reload(true);
-                } else {
-                    setCookie('lang','en',30);
-                    window.location.reload(true);
-                }
-                break;
             case "m_help":
                 
                 break;

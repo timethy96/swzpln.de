@@ -1,9 +1,20 @@
 <?php
 require('php/functions.php');
 
-if (isset($_COOKIE['lang'])){
-    $l = clean($_COOKIE['lang']);
-} else{
+$main_title_array = explode(".",$_SERVER['SERVER_NAME']);
+if (isset($main_title_array[count($main_title_array) - 2])) {
+  $main_title = strtoupper($main_title_array[count($main_title_array) - 2]);
+  $server_name = $main_title_array[count($main_title_array) - 2] . "." . $main_title_array[count($main_title_array) - 1];
+} else {
+  $main_title = strtoupper($main_title_array[0]);
+  $server_name = $_SERVER['SERVER_NAME'];
+}
+
+if ($main_title == "OPENCITYPLANS"){
+    $l = "en";
+} else if ($main_title == "SWZPLN") {
+    $l = "de";
+} else {
   $langs = ['de', 'en'];
   if (isset($_SERVER['HTTP_ACCEPT_LANGUAGE'])) {
     $userLang = substr($_SERVER['HTTP_ACCEPT_LANGUAGE'], 0, 2);
@@ -32,14 +43,12 @@ if (isset($_COOKIE['layers'])){
   $layers = [true,false,false,false,false,false,false];
 }
 
-$main_title_array = explode(".",$_SERVER['SERVER_NAME']);
-if (isset($main_title_array[count($main_title_array) - 2])) {
-  $main_title = strtoupper($main_title_array[count($main_title_array) - 2]);
-  $server_name = $main_title_array[count($main_title_array) - 2] . "." . $main_title_array[count($main_title_array) - 1];
+if ($l == "en") {
+  $change_lang_url = "https://swzpln.de";
 } else {
-  $main_title = strtoupper($main_title_array[0]);
-  $server_name = $_SERVER['SERVER_NAME'];
+  $change_lang_url = "https://opencityplans.com";
 }
+
 
 ?>
 <!DOCTYPE html>
@@ -167,7 +176,7 @@ if (isset($main_title_array[count($main_title_array) - 2])) {
     <h2><?php __($la,$l,'m_title'); ?></h2>
     <p id="menu_subtitle"><?php __($la,$l,'m_subtitle'); ?></p>
     
-    <div class="menu_item" id="m_lang"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></div>
+    <a class="menu_item" id="m_lang" href="<?php echo $change_lang_url; ?>"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></a>
     <!-- <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div> -->
     <a class="menu_item" id="m_donate" href="https://ko-fi.com/swzpln"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></a>
     <div class="menu_item" id="m_darkmode"><?php echo file_get_contents("img/darkmode.svg"); __($la,$l,'m_darkmode'); echo file_get_contents("img/arrow_right.svg");?></div>
