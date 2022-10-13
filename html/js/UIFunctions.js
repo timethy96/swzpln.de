@@ -21,6 +21,9 @@ export function initUI() {
             $('header').removeClass('inactive');
             $('header').addClass('active');
             $('#search').focus();
+            if ($('#logo').text() == "OPENCITYPLANS") {
+                $('#logo').text("OCP");
+            }
         }
     })
 
@@ -28,6 +31,9 @@ export function initUI() {
     $('#search_exit_b').click(() => {
         $('header').removeClass('active');
         $('header').addClass('inactive');
+        if ($('#logo').text() == "OCP") {
+            $('#logo').text("OPENCITYPLANS");
+        }
     })
 
     //open file-format chooser
