@@ -1,5 +1,5 @@
 {
-    "title":{"de":"Schwarzplan - Generator","en":"city - plan - generator"},
+    "title":{"de":"Schwarzplan - Generator","en":"plan - generator"},
     "search":{"de":"Suche","en":"search"},
     "buildings":{"de":"Gebäude","en":"buildings"},
     "green":{"de":"Grünflächen","en":"green"},
@@ -14,8 +14,8 @@
     "legal":{"de":"Impressum","en":"Legal"},
     "backToOld":{"de":"> zum alten Design","en":"> to the old design"},
 
-    "m_title":{"de":"Schwarzpläne für alle!","en":"City plans for everyone!"},
-    "m_subtitle":{"de":"Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpläne von überall erstellen. Und wir sammeln nicht einmal deine Daten!","en":"On this website, you can create as many city plans as you want from anywhere, for free, with just one click. And we don't even collect your data!"},
+    "m_title":{"de":"Schwarzpläne für alle!","en":"Ground figure plans for everyone!"},
+    "m_subtitle":{"de":"Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpläne von überall erstellen. Und wir sammeln nicht einmal deine Daten!","en":"On this website, you can create as many ground figure plans as you want from anywhere, for free, with just one click. And we don't even collect your data!"},
     "m_lang":{"de":"English","en":"Deutsch"},
     "m_help":{"de":"Hilfe (Tutorial)","en":"Help (Tutorial)"},
     "m_donate":{"de":"Spenden (Ko-fi.com)","en":"Donate (Ko-fi.com)"},
@@ -25,7 +25,7 @@
     "m_footer":{"de":" erstellt in Stuttgart von <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />unterstützt durch <a href='https://themom.studio'>The MoM Studio</a>.</p><p>Diese Webseite ist Quelloffen und unter der <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3 Lizenz</a> veröffentlicht.</p>","en":" made in Stuttgart by <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />supported by <a href='https://themom.studio'>The MoM Studio</a>.</p><p>This website is open-source, licensed under <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3</a>.</p>"},
     "m_counter":{"de":"erstellte Pläne","en":"generated plans"},
     
-    "dl_gen":{"de":"Schwarzplan generieren","en":"City plan generation"},
+    "dl_gen":{"de":"Schwarzplan generieren","en":"Ground figure plan generation"},
     "dl_donate":{"de":"Spendier' mir einen Kaffee &#9749; <a href='https://ko-fi.com/swzpln' target='_blank'>Ko-fi</a> (Download läuft weiter!)","en":"Buy me a coffee &#9749; <a href='https://ko-fi.com/swzpln' target='_blank'>Ko-fi</a> (Download continues in background!)"},
     "dl_cancel":{"de":"abbrechen","en":"cancel"},
     "dl_close":{"de":"schließen","en":"close"},
