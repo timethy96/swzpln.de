@@ -91,9 +91,9 @@ export function initUI() {
         $('body').removeClass('menu_inactive');
         $('body').addClass('menu_active');
         //init counter ajax
-        $('#counter_no').load('/counter');
+        $('#counter_no').load('/c/');
         counterInt = setInterval(() => {
-            $('#counter_no').load('/counter/');
+            $('#counter_no').load('/c/');
         },500);
     })
 
