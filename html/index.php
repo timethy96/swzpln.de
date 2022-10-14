@@ -67,7 +67,7 @@ if ($l == "en") {
   <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
   <meta name="revisit" content="After 30 days"/>
   <meta name="keywords" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf"/>
-  <meta name="description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!"/>
+  <meta name="description" content="<?php __($la,$l,'m_subtitle') ?>"/>
   <meta name="page-topic" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf"/>
   <meta name="robots" content="INDEX,FOLLOW"/>
   <meta name="language" http-equiv="content-language" content="<?php echo $l; ?>"/>
@@ -87,10 +87,10 @@ if ($l == "en") {
 
   <meta property="og:image:height" content="1257">
   <meta property="og:image:width" content="2400">
-  <meta property="og:description" content="Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpl&auml;ne von &uuml;berall erstellen. Und wir sammeln nicht einmal deine Daten!">
+  <meta property="og:description" content="<?php __($la,$l,'m_subtitle') ?>">
   <meta property="og:url" content="https://<?php echo $server_name ?>">
   <meta property="og:image" content="https://<?php echo $server_name ?>/meta/og-image.jpg">
-  <meta property="og:title" content="<?php echo $server_name ?> | Schwarzplan - Generator">
+  <meta property="og:title" content="<?php echo $server_name ?> | <?php __($la,$l,'title') ?>">
 
   <link rel="stylesheet" href="/css/reset.css">
   <?php
