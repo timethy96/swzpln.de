@@ -1,11 +1,11 @@
 [![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S3EEUDS)
 
-# swzpln | plan - generator
+# swzpln | opencityplans | plan - generator
 
 ## Abstract
 
-The webapp swzpln.de / pläne.io provides uncomplicated and permanently free access to plan material for everyone. In addition to ground figure plans, thematic layers, such as forests or water bodies, can also be added to the plan. The map data is created instantly and can be downloaded in svg, pdf and even dwg/dxf formats.
-The extensive database of openstreetmaps.org is used as the basis for the map material. This way, ground figure plans of places that are not in the general interest of the world can also be created. In this way, global justice in the archiving and documentation of city maps is also aimed for. The plans are created locally directly on the computer via JavaScript, so no data is sent to swzpln.de / pläne.io. swzpln.de / pläne.io respects the privacy of the users and does not collect any personal data.
+The webapp swzpln.de / opencityplans.com provides uncomplicated and permanently free access to plan material for everyone. In addition to ground figure plans, thematic layers, such as forests or water bodies, can also be added to the plan. The map data is created instantly and can be downloaded in svg, pdf and even dwg/dxf formats.
+The extensive database of openstreetmaps.org is used as the basis for the map material. This way, ground figure plans of places that are not in the general interest of the world can also be created. In this way, global justice in the archiving and documentation of city maps is also aimed for. The plans are created locally directly on the computer via JavaScript, so no data is sent to swzpln.de / opencityplans.com. swzpln.de / opencityplans.com respects the privacy of the users and does not collect any personal data.
 
 ## Quick Start
 
