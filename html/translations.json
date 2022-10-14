@@ -11,11 +11,12 @@
     "contours":{"de":"Höhenlinien<sup>beta</sup>","en":"contour lines<sup>beta</sup>"},
 
     "noscript":{"de":"Die Kernfunktion dieser Webseite (Pläne erstellen) ist in JavaScript geschrieben. Daher funktioniert die Webseite nur mit aktiviertem JavaScript!","en":"The core function of this website (creating plans) is written in JavaScript. Therefore, the website only works with JavaScript enabled!"},
+    "privacy":{"de":"Datenschutz","en":"Privacy"},
     "legal":{"de":"Impressum","en":"Legal"},
     "backToOld":{"de":"> zum alten Design","en":"> to the old design"},
 
     "m_title":{"de":"Schwarzpläne für alle!","en":"City plans for everyone!"},
-    "m_subtitle":{"de":"Auf dieser Webseite kannst du dir mit einem Klick kostenlos beliebig viele Schwarzpläne von überall erstellen. Und wir sammeln nicht einmal deine Daten!","en":"On this website, you can create as many city plans as you want from anywhere, for free, with just one click. And we don't even collect your data!"},
+    "m_subtitle":{"de":"Schwarzpläne. Kostenlos und von überall. Mit nur einem Klick. Und wir sammeln nicht einmal deine Daten!","en":"City plans. For free and from anywhere. With just one click. And we don't even collect your data!"},
     "m_lang":{"de":"English","en":"Deutsch"},
     "m_help":{"de":"Hilfe (Tutorial)","en":"Help (Tutorial)"},
     "m_donate":{"de":"Spenden (Ko-fi.com)","en":"Donate (Ko-fi.com)"},
