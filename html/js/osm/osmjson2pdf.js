@@ -42,7 +42,7 @@ function osmjson2pdf(osm_json, bounds, layers, zoom, scale, progressCallback) {
             pdfPath.push({op:operator,c:path[c]});
         }
 
-        if (['highway', 'railway', 'contours', 'waterway'].includes(type)) {
+        if (['highway', 'railway', 'contours', 'waterway', 'other'].includes(type)) {
             doc.setDrawColor(layerColors[type])
                 .path(pdfPath)
                 .stroke();
