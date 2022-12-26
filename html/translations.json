@@ -3,7 +3,7 @@
     "search":{"de":"Suche","en":"search"},
     "buildings":{"de":"Gebäude","en":"buildings"},
     "green":{"de":"Grünflächen","en":"green"},
-    "water":{"de":"Wasserflächen","en":"water"},
+    "water":{"de":"Gewässer","en":"water"},
     "forest":{"de":"Waldflächen","en":"forest"},
     "land":{"de":"Landwirtschaft","en":"landuse"},
     "roads":{"de":"Straßen<sup>beta</sup>","en":"roads<sup>beta</sup>"},
