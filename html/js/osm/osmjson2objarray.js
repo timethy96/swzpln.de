@@ -53,9 +53,12 @@ function filterTagsToType(tagsObj) {
             return 'railway';
         } else if (values.includes('water')) {
             return 'water';
+        } else if (keys.includes('waterway')) {
+            return 'waterway';
         } else if (values.includes('farmland')) {
             return 'farmland';
         } else {
+            console.log(values);
             return 'other';
         };
     } else {

@@ -26,6 +26,9 @@ function osmjson2dxf(osm_json, bounds, layers, zoom, progressCallback) {
     if (layers.includes('water')) {
         d.addLayer('water', 151, 'CONTINUOUS');
     }
+    if (layers.includes('waterway')) {
+        d.addLayer('waterway', 151, 'CONTINUOUS');
+    }
     if (layers.includes('forest')) {
         d.addLayer('forest', 85, 'CONTINUOUS');
     }
