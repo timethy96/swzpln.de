@@ -17,7 +17,7 @@
 }
 
 #map {
-    filter:  invert(1) grayscale(100%) contrast(1.3)!important;
+    filter:  invert(1) grayscale(100%) contrast(1.3) !important;
 }
 
 body{
@@ -25,7 +25,7 @@ body{
     color: var(--txt);
 }
 
-a {
+a, p {
     color: var(--txt);
 }
 
@@ -39,6 +39,10 @@ a {
 
 #search_b svg, #search_exit_b svg {
     fill: var(--txt);
+}
+
+#search_b.inactive svg {
+    fill: var(--bg-3);
 }
 
 .fab, .fab_large, .fab_small {

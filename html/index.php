@@ -117,7 +117,7 @@ if ($l == "en") {
       <div id="burger_b"><?php echo file_get_contents("img/menu.svg"); ?></div>
       <div id="logoCont"><h1 id="logo"><?php echo $main_title; ?></h1></div>
       <div id="search_c">
-        <div id="search_b"><?php echo file_get_contents("img/search.svg"); ?></div>
+        <div id="search_b" class="inactive"><?php echo file_get_contents("img/search.svg"); ?></div>
         <form id="search_form">
           <input id="search" name="search" type="text" />
           <label for="search" id="search_l"><?php __($la,$l,'search'); ?></label>
@@ -131,10 +131,10 @@ if ($l == "en") {
       <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings');?></label>
       <input type="checkbox" id="l_green" name="l_green" value="green" <?php echo ($layers[1]) ? 'checked' : ''; ?> >
       <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
-      <input type="checkbox" id="l_water" name="l_water" value="water" <?php echo ($layers[2]) ? 'checked' : ''; ?> >
-      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
-      <input type="checkbox" id="l_forest" name="l_forest" value="forest" <?php echo ($layers[3]) ? 'checked' : ''; ?> >
+      <input type="checkbox" id="l_forest" name="l_forest" value="forest" <?php echo ($layers[2]) ? 'checked' : ''; ?> >
       <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
+      <input type="checkbox" id="l_water" name="l_water" value="water" <?php echo ($layers[3]) ? 'checked' : ''; ?> >
+      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
       <input type="checkbox" id="l_land" name="l_land" value="farmland" <?php echo ($layers[4]) ? 'checked' : ''; ?> >
       <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
       <input type="checkbox" id="l_streets" name="l_streets" value="highway" <?php echo ($layers[5]) ? 'checked' : ''; ?> >
@@ -146,10 +146,17 @@ if ($l == "en") {
     </div>
 
     <div id="map">
+      <div id="map_p">
+        <p><?php __($la,$l,'priv_1'); ?> <a href="javascript:" class="open_privacy"><?php __($la,$l,'privacy_agreement'); ?></a> <?php __($la,$l,'priv_2'); ?> <a href="javascript:" class="open_privacy"><?php __($la,$l,'more_infos'); ?></a>.</p>
+        <p><?php __($la,$l,'priv_3'); ?></p>
+        <p><?php __($la,$l,'priv_4'); ?>. <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank"><?php __($la,$l,'privacy_agreement'); ?></a>.</p>
+        <p><?php __($la,$l,'priv_5'); ?> <a href="https://overpass.kumi.systems/" target="_blank"><?php __($la,$l,'privacy_agreement'); ?></a>.</p>
+        <div id="map_p_b"><?php __($la,$l,'priv_6'); ?></div>
+      </div>
     </div>
 
     <div id="dl_b_c">
-      <div id="dl_b" class="fab">
+      <div id="dl_b" class="fab inactive">
         <?php echo file_get_contents("img/dl.svg"); ?>
       </div>
       <div id="dl_dxf_b" class="fab_small dl_bs">

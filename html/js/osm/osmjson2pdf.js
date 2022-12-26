@@ -10,6 +10,7 @@ function osmjson2pdf(osm_json, bounds, layers, zoom, scale, progressCallback) {
         building: '#000000',
         green: '#9DBD7E',
         water: '#AAD4FF',
+        waterway: '#AAD4FF',
         forest: '#608156',
         farmland: '#FFEAAA',
         highway: '#828282',
@@ -41,7 +42,7 @@ function osmjson2pdf(osm_json, bounds, layers, zoom, scale, progressCallback) {
             pdfPath.push({op:operator,c:path[c]});
         }
 
-        if (['highway', 'railway', 'contours'].includes(type)) {
+        if (['highway', 'railway', 'contours', 'waterway'].includes(type)) {
             doc.setDrawColor(layerColors[type])
                 .path(pdfPath)
                 .stroke();

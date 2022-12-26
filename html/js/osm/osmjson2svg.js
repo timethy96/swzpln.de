@@ -12,6 +12,7 @@ function osmjson2svg(osm_json, bounds, layers, zoom, scale, progressCallback) {
         building: '#000000',
         green: '#9DBD7E',
         water: '#AAD4FF',
+        waterway: '#AAD4FF',
         forest: '#608156',
         farmland: '#FFEAAA',
         highway: '#828282',
@@ -36,7 +37,7 @@ function osmjson2svg(osm_json, bounds, layers, zoom, scale, progressCallback) {
             path[c][1] = (path[c][1] - NW[1]) * -1 * 1000 * scale; //svg has Y values from top to bottom (dxf:bottom-top) --> reverse Y values
         }
         
-        if (['highway','railway','contours'].includes(type)) {
+        if (['highway','railway','contours','waterway'].includes(type)) {
             Drawing += "<path d='M"+path.toString()+"' style='fill:none;stroke:"+layerColors[type]+"' />"
         } else {
             Drawing += "<path d='M"+path.slice(0,-1).toString()+"z' style='fill:"+layerColors[type]+"' />"

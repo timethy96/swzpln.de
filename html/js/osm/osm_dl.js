@@ -27,6 +27,8 @@ function constructUrl(bounds, layers) {
     
             case "water":
                 ajaxUrl += 'nwr["natural"="water"];';
+                ajaxUrl += 'nwr["waterway"];';
+                layers.push('waterway');
                 break;
             
             case "forest":
