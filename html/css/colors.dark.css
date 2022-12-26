@@ -29,8 +29,12 @@ a, p {
     color: var(--txt);
 }
 
-#map_p a, #map_p p {
-    color: var(--bg);
+#map_p > * {
+    filter:  invert(1);
+}
+#map_p_b:hover {
+    color: var(--fab-grey-txt);
+    filter: invert(1) drop-shadow(0px 0.05rem 0.1rem rgba(0, 0, 0, 0.3)) !important;
 }
 
 #burger_b svg, #burger_b_menu {
