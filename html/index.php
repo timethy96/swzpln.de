@@ -100,13 +100,13 @@ if ($l == "en") {
     echo '<link rel="stylesheet" href="/css/colors.light.css" id="colors">';
   }
   if ($_SERVER['SERVER_NAME'] != 'localhost') {
-    echo '<link rel="stylesheet" href="/css/style.css">'; // only use prefixed css on production servers
+    echo '<link rel="stylesheet" href="/css/style.pref.css'.filemtime('css/style.pref.css').'">'; // only use prefixed css on production servers
   } else {
     echo '<link rel="stylesheet" href="/css/style.css">';
   };
   ?>
 
-  <link rel="stylesheet" href="/js/leaflet/leaflet.css">
+  <link rel="stylesheet" href="/js/leaflet/leaflet.css?v=<?php echo filemtime('/js/leaflet/leaflet.css'); ?>">
 
 </head>
 
@@ -224,8 +224,8 @@ if ($l == "en") {
   <div id="dialog_shadow"></div>
 
   <script src="js/jquery-3.6.0.min.js"></script>
-  <script src="js/leaflet/leaflet.js"></script>
-  <script src="js/main.js" type="module"></script>
+  <script src="js/leaflet/leaflet.js?v=<?php echo filemtime('js/leaflet/leaflet.js'); ?>"></script>
+  <script src="js/main.js?v=<?php echo filemtime('js/main.js'); ?>" type="module"></script>
 </body>
 
 </html>
