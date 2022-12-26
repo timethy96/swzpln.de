@@ -131,10 +131,10 @@ if ($l == "en") {
       <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings');?></label>
       <input type="checkbox" id="l_green" name="l_green" value="green" <?php echo ($layers[1]) ? 'checked' : ''; ?> >
       <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
-      <input type="checkbox" id="l_water" name="l_water" value="water" <?php echo ($layers[2]) ? 'checked' : ''; ?> >
-      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
-      <input type="checkbox" id="l_forest" name="l_forest" value="forest" <?php echo ($layers[3]) ? 'checked' : ''; ?> >
+      <input type="checkbox" id="l_forest" name="l_forest" value="forest" <?php echo ($layers[2]) ? 'checked' : ''; ?> >
       <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
+      <input type="checkbox" id="l_water" name="l_water" value="water" <?php echo ($layers[3]) ? 'checked' : ''; ?> >
+      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
       <input type="checkbox" id="l_land" name="l_land" value="farmland" <?php echo ($layers[4]) ? 'checked' : ''; ?> >
       <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
       <input type="checkbox" id="l_streets" name="l_streets" value="highway" <?php echo ($layers[5]) ? 'checked' : ''; ?> >
