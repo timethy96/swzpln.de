@@ -37,7 +37,7 @@ function osmjson2svg(osm_json, bounds, layers, zoom, scale, progressCallback) {
             path[c][1] = (path[c][1] - NW[1]) * -1 * 1000 * scale; //svg has Y values from top to bottom (dxf:bottom-top) --> reverse Y values
         }
         
-        if (['highway','railway','contours','waterway'].includes(type)) {
+        if (['highway','railway','contours','waterway','other'].includes(type)) {
             Drawing += "<path d='M"+path.toString()+"' style='fill:none;stroke:"+layerColors[type]+"' />"
         } else {
             Drawing += "<path d='M"+path.slice(0,-1).toString()+"z' style='fill:"+layerColors[type]+"' />"
