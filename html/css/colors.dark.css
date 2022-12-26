@@ -29,6 +29,10 @@ a, p {
     color: var(--txt);
 }
 
+#map_p a, #map_p p {
+    color: var(--bg);
+}
+
 #burger_b svg, #burger_b_menu {
     fill: var(--txt);
 }
