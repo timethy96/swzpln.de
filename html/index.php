@@ -100,13 +100,13 @@ if ($l == "en") {
     echo '<link rel="stylesheet" href="/css/colors.light.css" id="colors">';
   }
   if ($_SERVER['SERVER_NAME'] != 'localhost') {
-    echo '<link rel="stylesheet" href="/css/style.pref.css'.filemtime('css/style.pref.css').'">'; // only use prefixed css on production servers
+    echo '<link rel="stylesheet" href="/css/style.pref.css?v='.filemtime('css/style.pref.css').'">'; // only use prefixed css on production servers
   } else {
     echo '<link rel="stylesheet" href="/css/style.css">';
   };
   ?>
 
-  <link rel="stylesheet" href="/js/leaflet/leaflet.css?v=<?php echo filemtime('/js/leaflet/leaflet.css'); ?>">
+  <link rel="stylesheet" href="/js/leaflet/leaflet.css?v=<?php echo filemtime('js/leaflet/leaflet.css'); ?>">
 
 </head>
 
