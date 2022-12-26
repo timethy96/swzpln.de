@@ -1,4 +1,5 @@
-import { setCookie } from "./jsCookie.js";
+import {initMap, initSearch} from "./mapFunctions.js";
+import { setCookie, getCookie } from "./jsCookie.js";
 import { genSwzpln, estimateOsmFilesize, cancelGen } from "./osm/gen_swzpln.js";
 import { progressBar } from './progressBar.js';
 import { getScales } from './osm/getScales.js';
@@ -13,6 +14,26 @@ function getLayers(){
 }
 
 export function initUI() {
+    //check if privacy agreement was accepted
+    if (getCookie('privacy_accepted') == 'true') {
+        window.map = initMap('map');
+        initSearch('#search_form'); //init search by passing search-form idy
+    } else {
+        $('#map_p').show();
+        $('#map_p_b').click(() => {
+            setCookie('privacy_accepted', 'true', 30);
+            // initialize the map view, by passing the ID of the map container to the function
+            window.map = initMap('map');
+            initSearch('#search_form'); //init search by passing search-form id
+        })    
+    }
+
+    //open legal
+    $('.open_privacy').click(() => {
+        $("#legal").addClass('active');
+        $("#legal").load("/legal/index.php");
+    })
+   
     //open search
     $('#search_b').click(() => {
         if ($('header').hasClass('active')){
@@ -40,7 +61,6 @@ export function initUI() {
     $('#dl_b').click(() => {
         $('#dl_b_c').toggleClass('active');
     })
-    map.on('zoomend', () => { $('#dl_b_c').removeClass('active'); });
 
     //run download
     function startDL(format,scale = null) {

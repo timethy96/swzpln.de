@@ -1,7 +1,7 @@
 :root {
     --bg: #fff;
     --bg-2: #eee;
-    --bg-3: #ccc;
+    --bg-3: #eee;
     --txt: #333;
     --txt-2: #555;
     --fab: #333;
@@ -34,6 +34,10 @@ a {
     fill: var(--txt);
 }
 
+#search_b.inactive svg {
+    fill: var(--bg-3);
+}
+
 .fab, .fab_large, .fab_small {
     background: var(--fab);
     color: var(--bg);
@@ -49,6 +53,10 @@ a {
 
 .fab svg, .fab_large svg , .fab_small svg {
     fill: var(--bg);
+}
+
+#map_p_b:hover {
+    background-color: var(--l_buildings);
 }
 
 #search {

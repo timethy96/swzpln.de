@@ -134,6 +134,9 @@ body.menu_active #burger_b_menu {
     display: block;
 }
 
+#search_b.inactive{
+    pointer-events: none;
+}
 
 #search_c {
     position: relative;
@@ -285,12 +288,50 @@ header.active #burger_b, header.active #burger_b_menu {
 
 #map {
     display: block;
+    position: relative;
     flex: 1 1 auto;
     margin: 0 1.3rem 1.3rem 1.3rem;
     border-radius: 1rem;
     filter: grayscale(100%) contrast(1.2);
     border: 1px solid #ddd;
     outline: none;
+}
+
+#map_p {
+    position: absolute;
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    padding: 0 20% 0 20%;
+    background: url(/img/privacy-background.jpg) no-repeat;
+    background-size: cover;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    border-radius: 1rem;
+}
+
+#map_p p {
+    margin-top: 15px;
+}
+
+#map_p_b {
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 800;
+    border: 1px solid;
+    border-radius: 100px;
+    padding: 0.5rem 1.3rem 0.5rem 1rem;
+    width: fit-content;
+    letter-spacing: 0.1px;
+    margin: 1rem 0 0.7rem auto;
+    transition: all 0.3s;
+}
+
+#map_p_b:hover {
+    box-shadow: 0px 0.1rem 0.2rem 0.15rem rgba(0, 0, 0, 0.15);
+    filter: drop-shadow(0px 0.05rem 0.1rem rgba(0, 0, 0, 0.3));
 }
 
 #dl_b_c {
@@ -646,6 +687,10 @@ p#counter {
     background-color: yellow;
     bottom: 0;
     z-index: 99;
+}
+
+#legal p, #legal h3, #legal h4 {
+    margin-bottom: 15px;
 }
 
 @media only screen and (max-width: 108.3rem) {
