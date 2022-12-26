@@ -9,6 +9,7 @@ function savePosCookie() {
 
 // - init map & load last position -
 export function initMap(elemID) {
+    $('#map_p').hide();
     let lastPos = getCookie('lastCenter');
     if (lastPos) {
         lastPos = JSON.parse(lastPos);
@@ -39,12 +40,14 @@ export function initMap(elemID) {
             $('#dl_b').removeClass('inactive');
         };
     });
+
+    map.on('zoomend', () => { $('#dl_b_c').removeClass('active'); });
+
     return map
 }
 
 export function initSearch(searchForm) {
     if ($(searchForm).attr('data-searchstate') != 'init') {
-        $(searchForm).attr('data-searchstate', 'init')
         let searchInput = $(searchForm).children('input');
         $(searchForm).on('submit', function (e) {
             e.preventDefault();
@@ -76,6 +79,8 @@ export function initSearch(searchForm) {
 
                 });
         });
+        $(searchForm).attr('data-searchstate', 'init')
+        $('#search_b').removeClass('inactive');
     }
 
 }

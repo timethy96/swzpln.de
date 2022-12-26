@@ -3,7 +3,7 @@
     "search":{"de":"Suche","en":"search"},
     "buildings":{"de":"Gebäude","en":"buildings"},
     "green":{"de":"Grünflächen","en":"green"},
-    "water":{"de":"Wasserflächen","en":"water"},
+    "water":{"de":"Gewässer","en":"water"},
     "forest":{"de":"Waldflächen","en":"forest"},
     "land":{"de":"Landwirtschaft","en":"landuse"},
     "roads":{"de":"Straßen<sup>beta</sup>","en":"roads<sup>beta</sup>"},
@@ -11,8 +11,7 @@
     "contours":{"de":"Höhenlinien<sup>beta</sup>","en":"contour lines<sup>beta</sup>"},
 
     "noscript":{"de":"Die Kernfunktion dieser Webseite (Pläne erstellen) ist in JavaScript geschrieben. Daher funktioniert die Webseite nur mit aktiviertem JavaScript!","en":"The core function of this website (creating plans) is written in JavaScript. Therefore, the website only works with JavaScript enabled!"},
-    "privacy":{"de":"Datenschutz","en":"Privacy"},
-    "legal":{"de":"Impressum","en":"Legal"},
+    "legal":{"de":"Impressum & Datenschutz","en":"Legal & privacy"},
     "backToOld":{"de":"> zum alten Design","en":"> to the old design"},
 
     "m_title":{"de":"Schwarzpläne für alle!","en":"City plans for everyone!"},
@@ -37,5 +36,15 @@
     "osm_dl":{"de":"2 / 4 - Kartendaten werden heruntergeladen...","en":"2 / 4 - Map-Data is being downloaded..."},
     "osm2obj":{"de":"3 / 4 - Kartendaten werden verarbeitet...","en":"3 / 4 - Map-Data is being processed..."},
     "osm2file":{"de":"4 / 4 - Konvertiere zu ","en":"4 / 4 - Convert to "},
-    "dl_done":{"de":"Download wird gestartet...","en":"Download is starting..."}
+    "dl_done":{"de":"Download wird gestartet...","en":"Download is starting..."},
+
+    "priv_1":{"de":"Um SWZPLN nutzen zu können, musst du unsere","en":"To use our services you must accept the"},
+    "privacy_agreement":{"de":"Datenschutzbestimmungen", "en":"privacy agreement"},
+    "priv_2":{"de":"akzeptieren. Wir sammeln keine persönlichen Daten und setzen nur essenzielle Cookies.", "en":"We do not store any personal data and only set essential cookies."},
+    "more_infos":{"de":"Mehr Informationen", "en":"More information"},
+    "priv_3":{"de":"Bei der Nutzung von SWZPLN werden Daten von externen Servern übertragen:", "en":"When using the service, data is transferred from external servers:"},
+    "priv_4":{"de":"Die Vorschaukarte wird von <b>openstreetmaps.org</b> heruntergeladen. Die Suchfunktion nutzt die <b>Nominatim API</b>", "en":"The preview map is downloaded from <b>openstreetmaps.org</b>. The search function uses the <b>Nominatim API</b>"},
+    "priv_5":{"de":"Die verarbeiteten Kartendaten werden von der <b>Overpass-API von kumi.systems</b> geladen.", "en":"The processed map data is downloaded from the <b>Overpass API from kumi.systems</b>."},
+    "priv_6":{"de":"Akzeptieren und Karte laden", "en":"Accept and load map"}
+
 }
