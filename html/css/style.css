@@ -441,6 +441,17 @@ header.active #burger_b, header.active #burger_b_menu {
     transform: none;
 }
 
+#menu_scroll_cont {
+    max-height: 70%;
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
+    overflow-scrolling: touch;
+    /* scroll-shadows */
+    background-repeat: no-repeat;
+    background-size: 100% 40px, 100% 40px, 100% 14px, 100% 14px;
+    background-attachment: local, local, scroll, scroll;
+}
+
 #menu h2 {
     padding: 0.7rem 0.7rem 0.7rem 1.3rem;
     height: 4.7rem;
