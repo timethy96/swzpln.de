@@ -186,6 +186,7 @@ if ($l == "en") {
     <a class="menu_item" id="m_lang" href="<?php echo $change_lang_url; ?>"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></a>
     <!-- <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div> -->
     <a class="menu_item" id="m_donate" href="https://ko-fi.com/swzpln"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></a>
+    <a class="menu_item" id="m_shop" href="https://shop.swzpln.de"><?php echo file_get_contents("img/shop.svg"); __($la,$l,'m_shop'); echo file_get_contents("img/arrow_right.svg");?></a>
     <div class="menu_item" id="m_darkmode"><?php echo file_get_contents("img/darkmode.svg"); __($la,$l,'m_darkmode'); echo file_get_contents("img/arrow_right.svg");?></div>
     <a class="menu_item" id="m_github" href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __($la,$l,'m_source'); echo file_get_contents("img/arrow_right.svg");?></a>
     <div class="menu_item" id="m_legal"><?php echo file_get_contents("img/imprint.svg"); __($la,$l,'legal'); echo file_get_contents("img/arrow_right.svg");?></div>
