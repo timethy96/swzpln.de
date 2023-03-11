@@ -24,3 +24,8 @@ function _n($la,$l,$str){
 function __($la,$l,$str){
     echo _n($la,$l,$str);
 }
+
+function getPartFile($partName){
+    $filename = dirname(__FILE__).'/'.$partName.'.php';
+    return $filename;
+}
