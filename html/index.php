@@ -40,7 +40,7 @@ if (isset($_COOKIE['darkmode'])){
 if (isset($_COOKIE['layers'])){
   $layers = json_decode(clean($_COOKIE['layers']));
 } else {
-  $layers = [true,false,false,false,false,false,false];
+  $layers = [true,false,false,false,false,false,false,false];
 }
 
 if ($l == "en") {
@@ -128,21 +128,21 @@ if ($l == "en") {
 
     <div id="layers">
       <input type="checkbox" id="l_buildings" name="l_buildings" value="building" <?php echo ($layers[0]) ? 'checked' : ''; ?> >
-      <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings');?></label>
+        <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings');?></label>
       <input type="checkbox" id="l_green" name="l_green" value="green" <?php echo ($layers[1]) ? 'checked' : ''; ?> >
-      <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
+        <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
       <input type="checkbox" id="l_forest" name="l_forest" value="forest" <?php echo ($layers[2]) ? 'checked' : ''; ?> >
-      <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
+        <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
       <input type="checkbox" id="l_water" name="l_water" value="water" <?php echo ($layers[3]) ? 'checked' : ''; ?> >
-      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
+        <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
       <input type="checkbox" id="l_land" name="l_land" value="farmland" <?php echo ($layers[4]) ? 'checked' : ''; ?> >
-      <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
+        <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
       <input type="checkbox" id="l_streets" name="l_streets" value="highway" <?php echo ($layers[5]) ? 'checked' : ''; ?> >
-      <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la,$l,'roads'); ?></label>
+        <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la,$l,'roads'); ?></label>
       <input type="checkbox" id="l_rails" name="l_rails" value="railway" <?php echo ($layers[6]) ? 'checked' : ''; ?> >
-      <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
-      <!-- <input type="checkbox" id="l_contours" name="l_contours" value="contours" <?php echo ($layers[7]) ? 'checked' : ''; ?> >
-      <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label> -->
+        <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
+      <input type="checkbox" id="l_contours" name="l_contours" value="contours" <?php echo ($layers[7]) ? 'checked' : ''; ?> >
+        <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label>
     </div>
 
     <div id="map">
@@ -226,6 +226,7 @@ if ($l == "en") {
 
   <script src="js/jquery-3.6.3.min.js"></script>
   <script src="js/leaflet/leaflet.js?v=<?php echo filemtime('js/leaflet/leaflet.js'); ?>"></script>
+  <script src="js/conrec/conrec.js?v=<?php echo filemtime('js/conrec/conrec.js'); ?>" type="module"></script>
   <script src="js/main.js?v=<?php echo filemtime('js/main.js'); ?>" type="module"></script>
 </body>
 

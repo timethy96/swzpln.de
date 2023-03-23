@@ -43,6 +43,9 @@ export function estimateOsmFilesize(zoom) {
 export async function genSwzpln(format, bounds, layers, zoom, scale, progressCallback) {
     bounds = bounds2array(bounds);
     const osm_json = await osm_dl(bounds, layers, progressCallback);
+    if (layers.includes('contours')) {
+        const hm_matrix = await hm_dl(bounds, progressCallback);
+    }
     swzplnWorker.postMessage([format, osm_json, bounds, layers, zoom, scale]);
     swzplnWorker.onmessage = function (e) {
         if (e.data[0] == 'result') {
