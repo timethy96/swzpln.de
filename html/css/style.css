@@ -521,6 +521,10 @@ p#counter {
     display: none;
 }
 
+#m_shop {
+    display: none;
+}
+
 .dialog {
     position: absolute;
     display: flex;

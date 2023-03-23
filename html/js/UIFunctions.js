@@ -155,6 +155,17 @@ export function initUI() {
         }
     })
 
+    //show shop if available
+    var shopUrl = "https://shop.swzpln.de";
+    /* $.ajax({
+        type: "GET",
+        url: shopUrl
+    }).done(function (result) {
+        console.log('shop show')
+        $('#m_shop').show();
+    });
+    --> TODO: not working bc of CORS */
+
     //close dialogs
     $("#dialog_shadow").click(() => {
         $('.dialog.active.closable').removeClass('active');
