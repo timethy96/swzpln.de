@@ -66,9 +66,9 @@
  * MODIFICATIONS.
  */
 
-import { ContourBuilder } from './ContourBuilder.js';
+importScripts('/js/conrec/ContourBuilder.js');
 
-export class ShapeContourDrawer {
+class ShapeContourDrawer {
   constructor(levels, swapAxes) {
     this.contours = new Array(levels.length);
     for (let i = 0; i < levels.length; i++) {

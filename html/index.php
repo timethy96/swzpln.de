@@ -142,7 +142,7 @@ if ($l == "en") {
       <input type="checkbox" id="l_rails" name="l_rails" value="railway" <?php echo ($layers[6]) ? 'checked' : ''; ?> >
         <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
       <input type="checkbox" id="l_contours" name="l_contours" value="contours" <?php echo ($layers[7]) ? 'checked' : ''; ?> >
-        <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label>
+        <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?>&nbsp;<span id="cl_interval">10</span>m&nbsp;<sup>beta</sup></label>
     </div>
 
     <div id="map">
@@ -226,7 +226,6 @@ if ($l == "en") {
 
   <script src="js/jquery-3.6.3.min.js"></script>
   <script src="js/leaflet/leaflet.js?v=<?php echo filemtime('js/leaflet/leaflet.js'); ?>"></script>
-  <script src="js/conrec/conrec.js?v=<?php echo filemtime('js/conrec/conrec.js'); ?>" type="module"></script>
   <script src="js/main.js?v=<?php echo filemtime('js/main.js'); ?>" type="module"></script>
 </body>
 

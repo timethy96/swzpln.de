@@ -7,6 +7,29 @@ function savePosCookie() {
     setCookie('lastCenter', JSON.stringify([curPos.lat, curPos.lng, curZoom]), 30);
 }
 
+// - calc contour lines interval on zoom -
+function getInterval(zoomLevel) {
+    let interval;
+    if (zoomLevel >= 18) {
+        interval = 1;
+    } else if (zoomLevel >= 17) {
+        interval = 2;
+    } else if (zoomLevel >= 16) {
+        interval = 5;
+    } else if (zoomLevel >= 15) {
+        interval = 10;
+    } else if (zoomLevel >= 14) {
+        interval = 20;
+    } else if (zoomLevel >= 13) {
+        interval = 50;
+    } else if (zoomLevel >= 12) {
+        interval = 100;
+    } else {
+        interval = 200;
+    }
+    return interval;
+}
+
 // - init map & load last position -
 export function initMap(elemID) {
     $('#map_p').hide();
@@ -39,9 +62,14 @@ export function initMap(elemID) {
         } else if (map.getZoom() >= 11) {
             $('#dl_b').removeClass('inactive');
         };
+        let interval = getInterval(map.getZoom());
+        $('#cl_interval').html(interval);
     });
 
     map.on('zoomend', () => { $('#dl_b_c').removeClass('active'); });
+
+    let interval = getInterval(map.getZoom());
+    $('#cl_interval').html(interval);
 
     return map
 }

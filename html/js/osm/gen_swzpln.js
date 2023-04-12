@@ -1,4 +1,5 @@
 import { osm_dl } from './osm_dl.js'
+import { hm_dl } from './hm_dl.js'
 
 var swzplnWorker = new Worker('/js/osm/gen_swzpln_worker.js');
 
@@ -43,11 +44,15 @@ export function estimateOsmFilesize(zoom) {
 export async function genSwzpln(format, bounds, layers, zoom, scale, progressCallback) {
     bounds = bounds2array(bounds);
     const osm_json = await osm_dl(bounds, layers, progressCallback);
+    let hm_matrix;
     if (layers.includes('contours')) {
-        const hm_matrix = await hm_dl(bounds, progressCallback);
+        hm_matrix = await hm_dl(bounds, progressCallback);
+    } else {
+        hm_matrix = null;
     }
-    swzplnWorker.postMessage([format, osm_json, bounds, layers, zoom, scale]);
-    swzplnWorker.onmessage = function (e) {
+    swzplnWorker.postMessage([format, osm_json, hm_matrix, bounds, layers, zoom, scale]);
+
+        swzplnWorker.onmessage = function (e) {
         if (e.data[0] == 'result') {
             let result = e.data[1];
             progressCallback(7);

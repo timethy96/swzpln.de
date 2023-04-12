@@ -101,7 +101,7 @@ const MINUSEPSILON = 0 - EPSILON;
  * @param {number} [options.jub] - index bounds of data matrix
  * @returns {boolean} - Whether contour generation had to stop early because it reached the timeout
  */
-export function calculateContour(matrix, x, y, z, contourDrawer, options = {}) {
+function calculateContour(matrix, x, y, z, contourDrawer, options = {}) {
   const {
     timeout,
     ilb = 0,

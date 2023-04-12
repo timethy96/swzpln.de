@@ -1,11 +1,4 @@
-import { BasicContourDrawer } from './BasicContourDrawer.js';
-import { ShapeContourDrawer } from './ShapeContourDrawer.js';
-import { calculateContour } from './calculateContour.js';
-
-const defaultOptions = {
-  nbLevels: 10,
-  timeout: 0,
-};
+importScripts('/js/conrec/BasicContourDrawer.js','/js/conrec/ShapeContourDrawer.js','/js/conrec/calculateContour.js');
 
 /**
  *
@@ -15,7 +8,7 @@ const defaultOptions = {
  * @param {number[]} [options.ys]
  * @param {boolean} [options.swapAxes]
  */
-export class Conrec {
+class Conrec {
   constructor(matrix, options = {}) {
     const { swapAxes = false } = options;
     this.matrix = matrix;
@@ -54,12 +47,16 @@ export class Conrec {
    * @param {number} [options.timeout=0]
    * @return {Output}
    */
-  drawContour(options) {
-    options = { ...defaultOptions, ...options };
+  drawContour(options = {levels:null,interval:null,nbLevels:10,contourDrawer:'shape',timeout:0}) {
+    options = {...options };
 
     let levels;
     if (options.levels) {
       levels = options.levels.slice();
+    } else if (options.interval) {
+      this._computeMinMax();
+      const interval = options.interval
+      levels = range(this.min, this.max + interval, interval);
     } else {
       this._computeMinMax();
       const interval = (this.max - this.min) / (options.nbLevels - 1);
@@ -105,6 +102,9 @@ export class Conrec {
 
 function range(from, to, step) {
   const result = [];
+  from = parseFloat(from);
+  to = parseFloat(to);
+  step = parseFloat(step);
   for (let i = from; i < to; i += step) result.push(i);
   return result;
 }

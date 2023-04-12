@@ -2,7 +2,7 @@ importScripts('./osmjson2objarray.js', '/js/osm/dxf.js');
 //import { osmjson2objarray, deg2XY } from './osmjson2objarray.js'; //-> module webworkers not yet implemented in Firefox
 
 //export function osmjson2dxf(osm_json, bounds, layers, progressCallback) { //-> module webworkers not yet implemented in Firefox
-function osmjson2dxf(osm_json, bounds, layers, zoom, progressCallback) {
+function osmjson2dxf(osm_json, contours, bounds, layers, zoom, progressCallback) {
 
     let objects = osmjson2objarray(osm_json, bounds, progressCallback);
 
@@ -10,6 +10,7 @@ function osmjson2dxf(osm_json, bounds, layers, zoom, progressCallback) {
     i=0;
 
     let txtXY = deg2XY(bounds, bounds[0], bounds[1]);
+    let maxXY = deg2XY(bounds, bounds[2], bounds[1]);
     let txtSize = (19 - zoom) * 10
 
     var Drawing = require('Drawing');
@@ -55,7 +56,7 @@ function osmjson2dxf(osm_json, bounds, layers, zoom, progressCallback) {
         let type = obj['type'];
         let path = obj['path'];
         let closeLine = false;
-        if (['building', 'contours'].includes(type)) {
+        if (['building'].includes(type)) {
             closeLine = true;
         }
         if (layers.includes(type)) {
@@ -70,8 +71,21 @@ function osmjson2dxf(osm_json, bounds, layers, zoom, progressCallback) {
         if (i % 10 == 0){
             progressCallback(6,10);
         } 
-
     })
+    
+    //optionally generate contours
+    if (layers.includes('contours')) {
+        d.setActiveLayer('contours');
+        contours.contours.forEach((cont) => {
+            let path = [];
+            cont.forEach((coordinate) => {
+                let x = coordinate.x * maxXY[0] / contours.sizeX;
+                let y = coordinate.y * maxXY[1] / contours.sizeY;
+                path.push([x,y]);
+            })
+            d.drawPolyline(path, false);
+        })
+    }
 
     let dxf = d.toDxfString();
 
