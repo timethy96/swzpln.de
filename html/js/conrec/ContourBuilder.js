@@ -128,7 +128,7 @@
  * OBLIGATION TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR
  * MODIFICATIONS.
  */
-export class ContourBuilder {
+class ContourBuilder {
   constructor(level) {
     this.level = level;
     this.s = null;

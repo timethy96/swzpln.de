@@ -8,7 +8,7 @@
     "land":{"de":"Landwirtschaft","en":"landuse"},
     "roads":{"de":"Straßen<sup>beta</sup>","en":"roads<sup>beta</sup>"},
     "rails":{"de":"Schienen<sup>beta</sup>","en":"rails<sup>beta</sup>"},
-    "contours":{"de":"Höhenlinien<sup>beta</sup>","en":"contour lines<sup>beta</sup>"},
+    "contours":{"de":"Höhenlinien","en":"contour lines"},
 
     "noscript":{"de":"Die Kernfunktion dieser Webseite (Pläne erstellen) ist in JavaScript geschrieben. Daher funktioniert die Webseite nur mit aktiviertem JavaScript!","en":"The core function of this website (creating plans) is written in JavaScript. Therefore, the website only works with JavaScript enabled!"},
     "legal":{"de":"Impressum & Datenschutz","en":"Legal & privacy"},
@@ -35,6 +35,7 @@
 
     "init":{"de":"1 / 4 - Initialisieren...","en":"1 / 4 - Initialize..."},
     "osm_dl":{"de":"2 / 4 - Kartendaten werden heruntergeladen...","en":"2 / 4 - Map-Data is being downloaded..."},
+    "hm_dl":{"de":"2 / 4 - Höhendaten werden heruntergeladen...","en":"2 / 4 - Height-Data is being downloaded..."},
     "osm2obj":{"de":"3 / 4 - Kartendaten werden verarbeitet...","en":"3 / 4 - Map-Data is being processed..."},
     "osm2file":{"de":"4 / 4 - Konvertiere zu ","en":"4 / 4 - Convert to "},
     "dl_done":{"de":"Download wird gestartet...","en":"Download is starting..."},

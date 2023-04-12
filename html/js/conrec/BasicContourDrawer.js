@@ -1,4 +1,4 @@
-export class BasicContourDrawer {
+class BasicContourDrawer {
   constructor(levels, swapAxes) {
     this.contour = new Array(levels.length);
     for (let i = 0; i < levels.length; i++) {
