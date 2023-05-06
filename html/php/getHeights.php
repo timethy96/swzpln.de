@@ -21,7 +21,6 @@ $params = array(
     "outputFormat" => "AAIGrid",
     "demtype" => "COP30",
     "API_Key" => $apiKey
-    //"radius" => "0"
 );
 
 // Build the request URL

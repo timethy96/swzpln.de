@@ -33,6 +33,7 @@ onmessage = function(e) {
     //generate contours
     let contours;
     if (layers.includes('contours')) {
+        // load Conrec library if not loaded yet
         if (typeof Conrec === 'undefined') {
             importScripts('../conrec/conrec.js');
         }

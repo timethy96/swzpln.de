@@ -1,9 +1,9 @@
 function constructUrl(bounds) {
     const base = "/php/getHeights.php?";
-    const north = "north=" + bounds[2];
-    const west = "&west=" + bounds[3];
-    const south = "&south=" + bounds[0];
-    const east = "&east=" + bounds[1];
+    const north = "north=" + bounds[0];
+    const west = "&west=" + bounds[1];
+    const south = "&south=" + bounds[2];
+    const east = "&east=" + bounds[3];
     const url = base + north + west + south + east;
     return url;
 }
