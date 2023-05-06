@@ -26,8 +26,8 @@ if (!$isAjax) {
     <h2 id="imprint">Impressum</h2>
     <p>Angaben gemäß § 5 TMG</p>
     <p>Timo Bilhöfer <br>
-        Rötestraße 10B<br>
-        70197 Stuttgart <br><br />
+        Wühlischstr. 20<br>
+        10245 Berlin <br><br />
         E-Mail: swzpln ø theMoM · studio
     </p>
     <p>
@@ -58,6 +58,8 @@ if (!$isAjax) {
         <?php echo date("Y"); ?> <a target="_blank" href="https://osm.org/copyright">OpenStreetMap</a> contributors
     </p>
     <p>Overpass-API bereitgestellt von <a target="_blank" href="https://overpass.kumi.systems/">kumi.systems</a></p>
+
+    <p>Topographie-API bereitgestellt von <a target="_blank" href="https://opentopography.org">OpenTopography mit Daten vom Copernicus 30m Digital Elevation Model. EO data provided under COPERNICUS by the European Union and ESA.</a></p>
 
     <h2 id="privacy">Datenschutzbestimmungen</h2>
 
