@@ -47,6 +47,8 @@ Thanks to Nicholas Coulange aka Vestibule for contributing the search functions 
 
 [jsPDF](https://github.com/parallax/jsPDF) - MIT License
 
+[conrec](https://github.com/mljs/conrec/) - MIT License - MODIFIED to work in browser!
+
 
 
 **Map Data:**
