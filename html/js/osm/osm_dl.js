@@ -88,5 +88,6 @@ export async function osm_dl(bounds, layers, progressCallback){
         position += chunk.length;
     }
     let result = new TextDecoder("utf-8").decode(chunksAll);
+    progressCallback(2);
     return JSON.parse(result);
 }

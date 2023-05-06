@@ -1,14 +1,24 @@
-import { osm_dl } from './osm_dl.js'
-import { hm_dl } from './hm_dl.js'
+import { osm_dl } from './osm_dl.js';
+import { hm_dl } from './hm_dl.js';
 
 var swzplnWorker = new Worker('/js/osm/gen_swzpln_worker.js');
 
 function download(filename, text, mime) {
-    var element = document.getElementById("dl_start");
+    var blob = new Blob([text], {type:mime});
+    let a = document.getElementById("dl_start");
+    a.download = filename;
+    a.href = window.URL.createObjectURL(blob);
+    a.dataset.downloadurl = [mime, a.download, a.href].join(':');
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else{    
+        a.click();
+    }
+    /* var element = document.getElementById("dl_start");
     element.setAttribute('href', `data:${mime};charset=utf-8,` + encodeURIComponent(text));
     element.setAttribute('target', '_self');
     element.setAttribute('download', filename);
-    element.click();
+    element.click(); */
 }
 
 function bounds2array(bounds) {
@@ -58,6 +68,7 @@ export async function genSwzpln(format, bounds, layers, zoom, scale, progressCal
             let result = e.data[1];
             progressCallback(7);
             countUp();
+
             switch (format) {
                 case 'dxf':
                     download('swzpln.dxf', result, 'application/dxf');
