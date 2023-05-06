@@ -36,10 +36,9 @@ export async function progressBar(task, status = 0){
             break;
 
         case 2:
-            $("#dl_status_text").html(getStr('hm_dl'));
+            //$("#dl_status_text").html(getStr('hm_dl'));
             $("#dl_bar").addClass('stateless');
-            $("#dl_status_percent").html('');
-            /*--> TODO: how to get status of simultaneous dl's (map- & heightdata)*/
+            $("#dl_status_percent").html('&nbsp;');
     
         case 3:
             totalObj = status;
