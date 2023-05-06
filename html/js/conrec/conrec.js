@@ -115,8 +115,9 @@ function minMax(matrix) {
   for (let i = 0; i < matrix.length; i++) {
     const row = matrix[i];
     for (let j = 0; j < row.length; j++) {
-      if (row[j] < min) min = row[j];
-      if (row[j] > max) max = row[j];
+      let current = parseFloat(row[j]);
+      if (current < min) min = current;
+      if (current > max) max = current;
     }
   }
   return {

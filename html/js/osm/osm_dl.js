@@ -3,7 +3,7 @@ const overpassApi = "https://overpass.kumi.systems/api/";
 
 
 function constructUrl(bounds, layers) {
-    const bbox = [bounds[0],bounds[3],bounds[2],bounds[1]].toString();
+    const bbox = [bounds[2],bounds[1],bounds[0],bounds[3]].toString();
     let ajaxUrl = overpassApi + `/interpreter?data=[out:json][bbox:${bbox}];(`;
     layers.forEach((layer) => {
         switch (layer) {

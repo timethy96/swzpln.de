@@ -1,7 +1,7 @@
 //export function deg2XY(bounds, lat, lon) { //-> module webworkers not yet implemented in Firefox
 function deg2XY(bounds, lat, lon) {
-    let lat1 = bounds[0];
-    let lon1 = bounds[3];
+    let lat1 = bounds[2];
+    let lon1 = bounds[1];
     let lat2 = lat;
     let lon2 = lon;
     let XYvals = [[lat2,lat2,lon1,lon2],[lat1,lat2,lon2,lon2]];

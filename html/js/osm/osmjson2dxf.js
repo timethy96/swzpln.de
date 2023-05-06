@@ -9,8 +9,8 @@ function osmjson2dxf(osm_json, contours, bounds, layers, zoom, progressCallback)
     progressCallback(5, ['dxf', objects.length]);
     i=0;
 
-    let txtXY = deg2XY(bounds, bounds[0], bounds[1]);
-    let maxXY = deg2XY(bounds, bounds[2], bounds[1]);
+    let txtXY = deg2XY(bounds, bounds[2], bounds[3]);
+    let maxXY = deg2XY(bounds, bounds[0], bounds[3]);
     let txtSize = (19 - zoom) * 10
 
     var Drawing = require('Drawing');
@@ -80,7 +80,7 @@ function osmjson2dxf(osm_json, contours, bounds, layers, zoom, progressCallback)
             let path = [];
             cont.forEach((coordinate) => {
                 let x = coordinate.x * maxXY[0] / contours.sizeX;
-                let y = coordinate.y * maxXY[1] / contours.sizeY;
+                let y = Math.abs((coordinate.y * maxXY[1] / contours.sizeY) - maxXY[1]);
                 path.push([x,y]);
             })
             d.drawPolyline(path, false);

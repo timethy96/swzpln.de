@@ -12,10 +12,10 @@ function download(filename, text, mime) {
 }
 
 function bounds2array(bounds) {
-    let north = Object.values(Object.values(bounds)[0])[0];
-    let east = Object.values(Object.values(bounds)[0])[1];
-    let south = Object.values(Object.values(bounds)[1])[0];
-    let west = Object.values(Object.values(bounds)[1])[1];
+    let north = bounds._northEast.lat;
+    let east = bounds._northEast.lng;
+    let south = bounds._southWest.lat;
+    let west = bounds._southWest.lng;
     while (Math.abs(east) > 180){
         east = (Math.abs(east)-360)*(Math.abs(east)/east);
     }
@@ -46,6 +46,7 @@ export async function genSwzpln(format, bounds, layers, zoom, scale, progressCal
     const osm_json = await osm_dl(bounds, layers, progressCallback);
     let hm_matrix;
     if (layers.includes('contours')) {
+        progressCallback(3);
         hm_matrix = await hm_dl(bounds, progressCallback);
     } else {
         hm_matrix = null;
