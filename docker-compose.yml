@@ -10,8 +10,8 @@ services:
             - ./html:/var/www/html
         restart: unless-stopped
         environment:
-            VIRTUAL_HOST: swzpln.de,www.swzpln.de,xn--plne-moa.io,www.xn--plne-moa.io,opencityplans.com,www.opencityplans.com
-            LETSENCRYPT_HOST: swzpln.de,www.swzpln.de,xn--plne-moa.io,www.xn--plne-moa.io,opencityplans.com,www.opencityplans.com
+            VIRTUAL_HOST: swzpln.de,www.swzpln.de,opencityplans.com,www.opencityplans.com
+            LETSENCRYPT_HOST: swzpln.de,www.swzpln.de,opencityplans.com,www.opencityplans.com
 
 networks:
   default:
