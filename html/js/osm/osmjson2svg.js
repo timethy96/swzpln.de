@@ -21,8 +21,8 @@ function osmjson2svg(osm_json, contours, bounds, layers, zoom, scale, progressCa
         contours: '#CCCCCC'
     }
     
-    let SE = deg2XY(bounds, bounds[0], bounds[1]);
-    let NW = deg2XY(bounds, bounds[2], bounds[3]);
+    let SE = deg2XY(bounds, bounds[2], bounds[3]);
+    let NW = deg2XY(bounds, bounds[0], bounds[1]);
     let txtSize = (19 - zoom) * 10;
 
     var Drawing = "<svg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' width='"+(SE[0]*1000*scale)+"mm' height='"+((NW[1]+txtSize+5)*1000*scale)+"mm' viewBox='0 0 "+(SE[0]*1000*scale)+" "+((NW[1]+txtSize+5)*1000*scale)+"'>"
@@ -55,8 +55,8 @@ function osmjson2svg(osm_json, contours, bounds, layers, zoom, scale, progressCa
         contours.contours.forEach((cont) => {
             let path = [];
             cont.forEach((coordinate) => {
-                let x = coordinate.x * maxXY[0] / contours.sizeX;
-                let y = coordinate.y * maxXY[1] / contours.sizeY;
+                let x = (coordinate.x * SE[0] / contours.sizeX) * 1000 * scale;
+                let y = (coordinate.y * NW[1] / contours.sizeY) * 1000 * scale;
                 path.push([x,y]);
             })
             Drawing += "<path d='M"+path.toString()+"' style='fill:none;stroke:"+layerColors['contours']+"' />"
