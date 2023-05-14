@@ -314,6 +314,7 @@ header.active #burger_b, header.active #burger_b_menu {
 
 #map_p p {
     margin-top: 15px;
+    display: none;
 }
 
 #map_p_b {
@@ -327,6 +328,7 @@ header.active #burger_b, header.active #burger_b_menu {
     letter-spacing: 0.1px;
     margin: 1rem 0 0.7rem auto;
     transition: all 0.3s;
+    display: none;
 }
 
 #map_p_b:hover {

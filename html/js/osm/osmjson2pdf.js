@@ -1,6 +1,6 @@
 importScripts('./osmjson2objarray.js', './jspdf.umd.min.js');
 
-function osmjson2pdf(osm_json, bounds, layers, zoom, scale, progressCallback) {
+function osmjson2pdf(osm_json, contours, bounds, layers, zoom, scale, progressCallback) {
 
     let objects = osmjson2objarray(osm_json, bounds, progressCallback);
 
@@ -16,11 +16,11 @@ function osmjson2pdf(osm_json, bounds, layers, zoom, scale, progressCallback) {
         highway: '#828282',
         railway: '#BEBEBE',
         other: '#FF0000',
-        contours: 'none'
+        contours: '#CCCCCC'
     }
 
-    let SE = deg2XY(bounds, bounds[0], bounds[1]);
-    let NW = deg2XY(bounds, bounds[2], bounds[3]);
+    let SE = deg2XY(bounds, bounds[2], bounds[3]);
+    let NW = deg2XY(bounds, bounds[0], bounds[1]);
     let txtSize = (19 - zoom) * 10;
     let o = (SE[0] > NW[1]) ? 'l' : 'p';
 
@@ -29,6 +29,24 @@ function osmjson2pdf(osm_json, bounds, layers, zoom, scale, progressCallback) {
         unit: "mm",
         format: [(SE[0]*1000*scale), ((NW[1] + txtSize + 5)*1000*scale)]
     });
+
+    //optionally generate contours
+    if (layers.includes('contours')) {
+        contours.contours.forEach((cont) => {
+            let path = [];
+            let i = 0;
+            cont.forEach((coordinate) => {
+                let x = (coordinate.x * SE[0] / contours.sizeX) * 1000 * scale;
+                let y = (coordinate.y * NW[1] / contours.sizeY) * 1000 * scale;
+                var operator = (i == 0) ? 'm' : 'l';
+                path.push({op:operator,c:[x,y]});
+                i += 1;
+            })
+            doc.setDrawColor(layerColors['contours'])
+                .path(path)
+                .stroke();
+        })
+    }
 
     i = 0;
     objects.forEach((obj) => {
@@ -61,6 +79,8 @@ function osmjson2pdf(osm_json, bounds, layers, zoom, scale, progressCallback) {
             progressCallback(6, 10);
         }
     })
+
+    
 
     doc.setTextColor('#FF0000')
         .setFontSize(txtSize*1000*scale)
