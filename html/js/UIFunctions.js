@@ -74,7 +74,7 @@ export function initUI() {
     }
     
     $('.dl_bs').click((event) => {
-        const format = $(event.currentTarget).html().replaceAll(" ","").replaceAll("\n","");
+        let format = $(event.currentTarget).html().replaceAll(" ","").replaceAll("\n","");
         if (format == "dxf") {
             startDL(format);
         } else {
