@@ -71,6 +71,7 @@ export function initUI() {
         progressBar(0, estTotalSize)
         genSwzpln(format,bounds,layers,zoom,scale,progressBar);
     }
+    
     $('.dl_bs').click((event) => {
         const format = $(event.currentTarget).html().replaceAll(" ","").replaceAll("\n","");
         if (format == "dxf") {
@@ -182,6 +183,11 @@ export function initUI() {
     $("#dl_cancel").click(() => {
         cancelGen();
         $('#dl_progress').removeClass('active');
+    })
+
+    //close err dialog
+    $("#err_close").click(() => {
+        $('#dl_err').removeClass('active');
     })
 
 }

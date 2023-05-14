@@ -32,6 +32,10 @@
     "dl_close":{"de":"schließen","en":"close"},
     "dl_scales":{"de":"Maßstab auswählen","en":"Choose scale"},
     "dl_scales_info":{"de":"SVG- und PDF-Formate haben eine Maximalgröße und können daher nicht in 1 zu 1 exportiert werden. Nachfolgend werden drei passende Maßstäbe zur Skalierung angeboten.","en":"SVG and PDF formats have a maximum size and therefore cannot be exported in 1 to 1. Three suitable scales for scaling are offered below."},
+    "dl_send":{"de":"Bericht senden","en":"send report"},
+    "dl_err":{"de":"Ein Fehler ist aufgetreten!","en":"An error has occured!"},
+    "err_main":{"de":"Bitte versuche die Seite neu zu laden. <br /> <span id='err_help'>Um mich bei der Fehlersuche zu unterstützen, kannst du mir den unten stehenden Fehlercode per E-Mail zukommen lassen, indem du auf den Button \"Senden\" klickst. Die gesendeten Informationen beinhalten: Fehlermeldung, Fehlerpunkt im Code, genutzter Browser und Betriebssystem.</span>","en":"Please try to reload the page. <br /> <span id='err_help'>To help me troubleshoot, you can email me the error code below by clicking the \"send\" button. The information sent includes: Error message, error point in the code, browser and operating system.</span>"},
+
 
     "init":{"de":"1 / 4 - Initialisieren...","en":"1 / 4 - Initialize..."},
     "osm_dl":{"de":"2 / 4 - Kartendaten werden heruntergeladen...","en":"2 / 4 - Map-Data is being downloaded..."},
