@@ -2,6 +2,7 @@
     --bg: #000;
     --bg-2: #111;
     --bg-3: #333;
+    --bg-err: hwb(0 7% 90%);
     --txt: #eee;
     --fab: #eee;
     --fab-grey-txt: #888;
@@ -138,6 +139,10 @@ a, p {
 }
 #dl_bar div {
     background-color: var(--txt);
+}
+
+#dl_err {
+    background-color: var(--bg-err);
 }
 
 /* Layer colors */

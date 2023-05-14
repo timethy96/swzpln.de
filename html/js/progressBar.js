@@ -13,7 +13,7 @@ function getStr(str){
     return langArray[str][l];
 }
 
-export async function progressBar(task, status){
+export async function progressBar(task, status = 0){
     $('#dl_progress').addClass('active');
     switch (task) {
         case 0:
@@ -34,6 +34,11 @@ export async function progressBar(task, status){
             $("#dl_status_percent").html(percent+'%');
             $("#dl_bar div").css({"width": percent+"%"});
             break;
+
+        case 2:
+            //$("#dl_status_text").html(getStr('hm_dl'));
+            $("#dl_bar").addClass('stateless');
+            $("#dl_status_percent").html('&nbsp;');
     
         case 3:
             totalObj = status;
@@ -41,6 +46,7 @@ export async function progressBar(task, status){
             break;
 
         case 4:
+            $("#dl_bar").removeClass('stateless');
             $("#dl_status_text").html(getStr('osm2obj'));  
             doneObj += status;
             var percent = Math.round(100 * doneObj / totalObj);

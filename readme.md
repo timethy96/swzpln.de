@@ -47,6 +47,8 @@ Thanks to Nicholas Coulange aka Vestibule for contributing the search functions 
 
 [jsPDF](https://github.com/parallax/jsPDF) - MIT License
 
+[conrec](https://github.com/mljs/conrec/) - MIT License - MODIFIED to work in browser on client-side!
+
 
 
 **Map Data:**
@@ -54,3 +56,5 @@ Thanks to Nicholas Coulange aka Vestibule for contributing the search functions 
 Overpass-Server: [overpass.kumi.systems](https://overpass.kumi.systems/)
 
 Map Data: [(c) OpenStreetMaps contributors](https://www.openstreetmap.org/copyright)
+
+Height Data: [OpenTopography-API](https://opentopography.org) & [EO data provided under COPERNICUS by the European Union and ESA.](https://spacedata.copernicus.eu/en/web/guest/collections/copernicus-digital-elevation-model)

@@ -2,6 +2,7 @@
     --bg: #fff;
     --bg-2: #eee;
     --bg-3: #eee;
+    --bg-err: hwb(0 90% 7%);
     --txt: #333;
     --txt-2: #555;
     --fab: #333;
@@ -148,6 +149,10 @@ a {
 
 .dialog_b {
     color: var(--txt-2);
+}
+
+#dl_err {
+    background-color: var(--bg-err);
 }
 
 @media (hover: hover) {
