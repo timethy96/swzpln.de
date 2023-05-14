@@ -17,9 +17,10 @@ export function initUI() {
     //check if privacy agreement was accepted
     if (getCookie('privacy_accepted') == 'true') {
         window.map = initMap('map');
-        initSearch('#search_form'); //init search by passing search-form idy
+        initSearch('#search_form'); //init search by passing search-form id
     } else {
-        $('#map_p').show();
+        $('#map_p p').show();
+        $('#map_p_b').show();
         $('#map_p_b').click(() => {
             setCookie('privacy_accepted', 'true', 30);
             // initialize the map view, by passing the ID of the map container to the function
