@@ -87,7 +87,7 @@ function osmjson2dxf(osm_json, contours, bounds, layers, zoom, progressCallback)
         })
     }
 
-    let dxf = d.toDxfStr(ing();
+    let dxf = d.toDxfString();
 
     return dxf;
 
