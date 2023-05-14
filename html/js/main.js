@@ -1,4 +1,6 @@
-import {initUI} from "./UIFunctions.js";
+import {initUI} from "./UIFunctions.js?v=1.0.0-rc2";
+
+// Error handling
 
 window.onerror = function(message, source, lineno, colno, error) {
     $('#dl_err').addClass('active');
