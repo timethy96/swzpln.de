@@ -1,5 +1,5 @@
-importScripts('./osmjson2objarray.js', '/js/osm/dxf.js');
-//import { osmjson2objarray, deg2XY } from './osmjson2objarray.js'; //-> module webworkers not yet implemented in Firefox
+importScripts('./osmjson2objarray.js?v=1.0.0-rc2', '/js/osm/dxf.js?v=1.0.0-rc2');
+//import { osmjson2objarray, deg2XY } from './osmjson2objarray.js?v=1.0.0-rc2'; //-> module webworkers not yet implemented in Firefox
 
 //export function osmjson2dxf(osm_json, bounds, layers, progressCallback) { //-> module webworkers not yet implemented in Firefox
 function osmjson2dxf(osm_json, contours, bounds, layers, zoom, progressCallback) {
