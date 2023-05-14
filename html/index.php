@@ -235,7 +235,7 @@ if ($l == "en") {
   </div>
   <div id="dialog_shadow"></div>
 
-  <script src="js/jquery-3.6.3.min.js"></script>
+  <script src="js/jquery-3.7.0.min.js"></script>
   <script src="js/leaflet/leaflet.js?v=<?php echo filemtime('js/leaflet/leaflet.js'); ?>"></script>
   <script src="js/main.js?v=<?php echo filemtime('js/main.js'); ?>" type="module"></script>
 </body>
