@@ -79,10 +79,17 @@ export async function genSwzpln(format, bounds, layers, zoom, scale, progressCal
                     break;
 
                 case 'pdf':
-                    var element = document.getElementById("dl_start");
-                    element.setAttribute('href', result);
-                    element.setAttribute('target', '_blank');
-                    element.click();
+                    console.log(result);
+                    let a = document.getElementById("dl_start");
+                    a.download = 'swzpln.pdf';
+                    a.href = result;
+                    let mime = 'application/pdf';
+                    a.dataset.downloadurl = [mime, a.download, a.href].join(':');
+                    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                        window.navigator.msSaveOrOpenBlob(result, filename);
+                    } else{    
+                        a.click();
+                    }
                     break;
                 
                 default:
