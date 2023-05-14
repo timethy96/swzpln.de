@@ -8,7 +8,7 @@
     "land":{"de":"Landwirtschaft","en":"landuse"},
     "roads":{"de":"Straßen<sup>beta</sup>","en":"roads<sup>beta</sup>"},
     "rails":{"de":"Schienen<sup>beta</sup>","en":"rails<sup>beta</sup>"},
-    "contours":{"de":"Höhenlinien<sup>beta</sup>","en":"contour lines<sup>beta</sup>"},
+    "contours":{"de":"Höhenlinien","en":"contour lines"},
 
     "noscript":{"de":"Die Kernfunktion dieser Webseite (Pläne erstellen) ist in JavaScript geschrieben. Daher funktioniert die Webseite nur mit aktiviertem JavaScript!","en":"The core function of this website (creating plans) is written in JavaScript. Therefore, the website only works with JavaScript enabled!"},
     "legal":{"de":"Impressum & Datenschutz","en":"Legal & privacy"},
@@ -19,6 +19,7 @@
     "m_lang":{"de":"English","en":"Deutsch"},
     "m_help":{"de":"Hilfe (Tutorial)","en":"Help (Tutorial)"},
     "m_donate":{"de":"Spenden (Ko-fi.com)","en":"Donate (Ko-fi.com)"},
+    "m_shop":{"de":"Fanshop","en":"Fanshop"},
     "m_source":{"de":"Quellcode (GitHub)","en":"Source Code (GitHub)"},
     "m_darkmode":{"de":"Dunkel-Modus","en":"Dark-Mode"},
     
@@ -31,9 +32,14 @@
     "dl_close":{"de":"schließen","en":"close"},
     "dl_scales":{"de":"Maßstab auswählen","en":"Choose scale"},
     "dl_scales_info":{"de":"SVG- und PDF-Formate haben eine Maximalgröße und können daher nicht in 1 zu 1 exportiert werden. Nachfolgend werden drei passende Maßstäbe zur Skalierung angeboten.","en":"SVG and PDF formats have a maximum size and therefore cannot be exported in 1 to 1. Three suitable scales for scaling are offered below."},
+    "dl_send":{"de":"Bericht senden","en":"send report"},
+    "dl_err":{"de":"Ein Fehler ist aufgetreten!","en":"An error has occured!"},
+    "err_main":{"de":"Bitte versuche die Seite neu zu laden. <br /> <span id='err_help'>Um mich bei der Fehlersuche zu unterstützen, kannst du mir den unten stehenden Fehlercode per E-Mail zukommen lassen, indem du auf den Button \"Senden\" klickst. Die gesendeten Informationen beinhalten: Fehlermeldung, Fehlerpunkt im Code, genutzter Browser und Betriebssystem.</span>","en":"Please try to reload the page. <br /> <span id='err_help'>To help me troubleshoot, you can email me the error code below by clicking the \"send\" button. The information sent includes: Error message, error point in the code, browser and operating system.</span>"},
+
 
     "init":{"de":"1 / 4 - Initialisieren...","en":"1 / 4 - Initialize..."},
     "osm_dl":{"de":"2 / 4 - Kartendaten werden heruntergeladen...","en":"2 / 4 - Map-Data is being downloaded..."},
+    "hm_dl":{"de":"2 / 4 - Höhendaten werden heruntergeladen...","en":"2 / 4 - Height-Data is being downloaded..."},
     "osm2obj":{"de":"3 / 4 - Kartendaten werden verarbeitet...","en":"3 / 4 - Map-Data is being processed..."},
     "osm2file":{"de":"4 / 4 - Konvertiere zu ","en":"4 / 4 - Convert to "},
     "dl_done":{"de":"Download wird gestartet...","en":"Download is starting..."},
@@ -45,6 +51,7 @@
     "priv_3":{"de":"Bei der Nutzung von SWZPLN werden Daten von externen Servern übertragen:", "en":"When using the service, data is transferred from external servers:"},
     "priv_4":{"de":"Die Vorschaukarte wird von <b>openstreetmaps.org</b> heruntergeladen. Die Suchfunktion nutzt die <b>Nominatim API</b>", "en":"The preview map is downloaded from <b>openstreetmaps.org</b>. The search function uses the <b>Nominatim API</b>"},
     "priv_5":{"de":"Die verarbeiteten Kartendaten werden von der <b>Overpass-API von kumi.systems</b> geladen.", "en":"The processed map data is downloaded from the <b>Overpass API from kumi.systems</b>."},
+    "priv_7":{"de":"Die Höhendaten werden von der <b>OpenTopography-API</b> geladen.", "en":"The height data is downloaded from the <b>OpenTopography API</b>."},
     "priv_6":{"de":"Akzeptieren und Karte laden", "en":"Accept and load map"}
 
 }

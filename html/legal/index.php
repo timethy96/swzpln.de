@@ -26,8 +26,8 @@ if (!$isAjax) {
     <h2 id="imprint">Impressum</h2>
     <p>Angaben gemäß § 5 TMG</p>
     <p>Timo Bilhöfer <br>
-        Rötestraße 10B<br>
-        70197 Stuttgart <br><br />
+        Wühlischstr. 20<br>
+        10245 Berlin <br><br />
         E-Mail: swzpln ø theMoM · studio
     </p>
     <p>
@@ -58,6 +58,8 @@ if (!$isAjax) {
         <?php echo date("Y"); ?> <a target="_blank" href="https://osm.org/copyright">OpenStreetMap</a> contributors
     </p>
     <p>Overpass-API bereitgestellt von <a target="_blank" href="https://overpass.kumi.systems/">kumi.systems</a></p>
+
+    <p>Topographie-API bereitgestellt von <a target="_blank" href="https://opentopography.org">OpenTopography</a> mit Daten vom Copernicus 30m Digital Elevation Model. EO data provided under COPERNICUS by the European Union and ESA.</a></p>
 
     <h2 id="privacy">Datenschutzbestimmungen</h2>
 
@@ -115,9 +117,10 @@ if (!$isAjax) {
 <p>Entfällt der Speicherungszweck oder läuft eine vom Europäischen Richtlinien- und Verordnungsgeber oder einem anderen zuständigen Gesetzgeber vorgeschriebene Speicherfrist ab, werden die personenbezogenen Daten routinemäßig und entsprechend den gesetzlichen Vorschriften gesperrt oder gelöscht.</p>
 
 <h4>7. Externe Diensteanbieter</h4>
-<p>Bei der Nutzung von SWZPLN werden Daten von externen Servern übertragen. Es gelten die jeweiligen Datenschutzbestimmungen der Unternehmen. Bei der Auswahl der Unternehmen wurde auf einen rigorose Datenschutz geachtet.</p>
+<p>Bei der Nutzung von SWZPLN werden Daten von externen Servern übertragen. Es gelten die jeweiligen Datenschutzbestimmungen der Unternehmen. Bei der Auswahl der Unternehmen wurde auf einen rigorosen Datenschutz geachtet.</p>
 <p>Die Vorschaukarte wird von <b>openstreetmaps.org</b> heruntergeladen. Die Suchfunktion nutzt die <b>Nominatim API</b>. <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank">Datenschutzbestimmungen. (extern)</a></p>
 <p>Die verarbeiteten Kartendaten werden von der <b>Overpass-API von kumi.systems</b> geladen. <a href="https://overpass.kumi.systems/" target="_blank">Datenschutzbestimmungen. (extern)</a></p>
+<p>Topographie-API bereitgestellt von <a target="_blank" href="https://opentopography.org">OpenTopography </a> mit Daten vom Copernicus 30m Digital Elevation Model. EO data provided under COPERNICUS by the European Union and ESA.</a></p>
 
 
 <p>Teilweise entwickelt von den <a href="https://willing-able.com/">Legal Tech</a> Spezialisten von Willing & Able, die auch das System für datenschutzrechtlich durchdachte und  <a href="https://abletotrack.com/">gesetzeskonforme Zeiterfassung</a> entwickelt haben. Die Texte des Datenschutzerklärungs-Generators wurden von <a href="https://dg-datenschutz.de/">Prof. Dr. h.c. Heiko Jonny Maniero</a> und Rechtsanwalt <a href="https://www.wbs-law.de/" rel="nofollow">Christian Solmecke</a> erstellt und publiziert.</p>

@@ -40,7 +40,7 @@ if (isset($_COOKIE['darkmode'])){
 if (isset($_COOKIE['layers'])){
   $layers = json_decode(clean($_COOKIE['layers']));
 } else {
-  $layers = [true,false,false,false,false,false,false];
+  $layers = [true,false,false,false,false,false,false,false];
 }
 
 if ($l == "en") {
@@ -128,21 +128,21 @@ if ($l == "en") {
 
     <div id="layers">
       <input type="checkbox" id="l_buildings" name="l_buildings" value="building" <?php echo ($layers[0]) ? 'checked' : ''; ?> >
-      <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings');?></label>
+        <label for="l_buildings"><?php echo file_get_contents("img/layers/buildings.svg"); ?><?php __($la,$l,'buildings');?></label>
       <input type="checkbox" id="l_green" name="l_green" value="green" <?php echo ($layers[1]) ? 'checked' : ''; ?> >
-      <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
+        <label for="l_green"><?php echo file_get_contents("img/layers/green.svg"); ?><?php __($la,$l,'green'); ?></label>
       <input type="checkbox" id="l_forest" name="l_forest" value="forest" <?php echo ($layers[2]) ? 'checked' : ''; ?> >
-      <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
+        <label for="l_forest"><?php echo file_get_contents("img/layers/forest.svg"); ?><?php __($la,$l,'forest'); ?></label>
       <input type="checkbox" id="l_water" name="l_water" value="water" <?php echo ($layers[3]) ? 'checked' : ''; ?> >
-      <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
+        <label for="l_water"><?php echo file_get_contents("img/layers/water.svg"); ?><?php __($la,$l,'water'); ?></label>
       <input type="checkbox" id="l_land" name="l_land" value="farmland" <?php echo ($layers[4]) ? 'checked' : ''; ?> >
-      <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
+        <label for="l_land"><?php echo file_get_contents("img/layers/land.svg"); ?><?php __($la,$l,'land'); ?></label>
       <input type="checkbox" id="l_streets" name="l_streets" value="highway" <?php echo ($layers[5]) ? 'checked' : ''; ?> >
-      <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la,$l,'roads'); ?></label>
+        <label for="l_streets"><?php echo file_get_contents("img/layers/streets.svg"); ?><?php __($la,$l,'roads'); ?></label>
       <input type="checkbox" id="l_rails" name="l_rails" value="railway" <?php echo ($layers[6]) ? 'checked' : ''; ?> >
-      <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
-      <!-- <input type="checkbox" id="l_contours" name="l_contours" value="contours" <?php echo ($layers[7]) ? 'checked' : ''; ?> >
-      <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?></label> -->
+        <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
+      <input type="checkbox" id="l_contours" name="l_contours" value="contours" <?php echo ($layers[7]) ? 'checked' : ''; ?> >
+        <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?>&nbsp;<span id="cl_interval">10</span>m<sup>beta</sup></label>
     </div>
 
     <div id="map">
@@ -151,6 +151,7 @@ if ($l == "en") {
         <p><?php __($la,$l,'priv_3'); ?></p>
         <p><?php __($la,$l,'priv_4'); ?>. <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank"><?php __($la,$l,'privacy_agreement'); ?></a>.</p>
         <p><?php __($la,$l,'priv_5'); ?> <a href="https://overpass.kumi.systems/" target="_blank"><?php __($la,$l,'privacy_agreement'); ?></a>.</p>
+        <p><?php __($la,$l,'priv_7'); ?> <a href="https://opentopography.org/privacypolicy" target="_blank"><?php __($la,$l,'privacy_agreement'); ?></a>.</p>
         <div id="map_p_b"><?php __($la,$l,'priv_6'); ?></div>
       </div>
     </div>
@@ -180,13 +181,15 @@ if ($l == "en") {
   </div>
 
   <div id="menu">
+    
     <div id="menu_scroll_cont">
       <h2><?php __($la,$l,'m_title'); ?></h2>
       <p id="menu_subtitle"><?php __($la,$l,'m_subtitle'); ?></p>
-      
+
       <a class="menu_item" id="m_lang" href="<?php echo $change_lang_url; ?>"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></a>
       <!-- <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div> -->
       <a class="menu_item" id="m_donate" href="https://ko-fi.com/swzpln"><?php echo file_get_contents("img/donate.svg"); __($la,$l,'m_donate'); echo file_get_contents("img/arrow_right.svg");?></a>
+      <a class="menu_item" id="m_shop" href="https://shop.swzpln.de"><?php echo file_get_contents("img/shop.svg"); __($la,$l,'m_shop'); echo file_get_contents("img/arrow_right.svg");?></a>
       <div class="menu_item" id="m_darkmode"><?php echo file_get_contents("img/darkmode.svg"); __($la,$l,'m_darkmode'); echo file_get_contents("img/arrow_right.svg");?></div>
       <a class="menu_item" id="m_github" href="https://github.com/TheMoMStudio/swzpln.de"><?php echo file_get_contents("img/github.svg"); __($la,$l,'m_source'); echo file_get_contents("img/arrow_right.svg");?></a>
       <div class="menu_item" id="m_legal"><?php echo file_get_contents("img/imprint.svg"); __($la,$l,'legal'); echo file_get_contents("img/arrow_right.svg");?></div>
@@ -223,11 +226,22 @@ if ($l == "en") {
       <a id="dl_start" class="dialog_b" href="javascript:">download</a>
     </div>
   </div>
+  <div id="dl_err" class="dialog closable">
+    <?php echo file_get_contents("img/error.svg");?>
+    <h2><?php __($la,$l,'dl_err'); ?></h2>
+    <div id="err_main"><?php __($la,$l,'err_main'); ?></div>
+    <code id="err_log"></code>
+    <div class="dialog_b_cont">
+      <a id="err_send" class="dialog_b" href="javascript:"><?php __($la,$l,'dl_send'); ?></a>
+      <a id="err_close" class="dialog_b" href="javascript:"><?php __($la,$l,'dl_close'); ?></a>
+    </div>
+  </div>
   <div id="dialog_shadow"></div>
 
-  <script src="/js/jquery-3.6.3.min.js"></script>
-  <script src="/js/leaflet/leaflet.js?v=<?php echo filemtime('js/leaflet/leaflet.js'); ?>"></script>
-  <script src="/js/main.js?v=<?php echo filemtime('js/main.js'); ?>" type="module"></script>
+  <script src="js/jquery-3.7.0.min.js"></script>
+  <script src="js/leaflet/leaflet.js?v=<?php echo filemtime('js/leaflet/leaflet.js'); ?>"></script>
+  <script src="js/main.js?v=<?php echo filemtime('js/main.js'); ?>" type="module"></script>
+
 </body>
 
 </html>

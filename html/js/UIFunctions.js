@@ -17,9 +17,10 @@ export function initUI() {
     //check if privacy agreement was accepted
     if (getCookie('privacy_accepted') == 'true') {
         window.map = initMap('map');
-        initSearch('#search_form'); //init search by passing search-form idy
+        initSearch('#search_form'); //init search by passing search-form id
     } else {
-        $('#map_p').show();
+        $('#map_p p').show();
+        $('#map_p_b').show();
         $('#map_p_b').click(() => {
             setCookie('privacy_accepted', 'true', 30);
             // initialize the map view, by passing the ID of the map container to the function
@@ -71,8 +72,9 @@ export function initUI() {
         progressBar(0, estTotalSize)
         genSwzpln(format,bounds,layers,zoom,scale,progressBar);
     }
+    
     $('.dl_bs').click((event) => {
-        const format = $(event.currentTarget).html().replaceAll(" ","").replaceAll("\n","");
+        let format = $(event.currentTarget).html().replaceAll(" ","").replaceAll("\n","");
         if (format == "dxf") {
             startDL(format);
         } else {
@@ -155,6 +157,17 @@ export function initUI() {
         }
     })
 
+    //show shop if available
+    var shopUrl = "https://shop.swzpln.de";
+    /* $.ajax({
+        type: "GET",
+        url: shopUrl
+    }).done(function (result) {
+        console.log('shop show')
+        $('#m_shop').show();
+    });
+    --> TODO: not working bc of CORS */
+
     //close dialogs
     $("#dialog_shadow").click(() => {
         $('.dialog.active.closable').removeClass('active');
@@ -171,6 +184,11 @@ export function initUI() {
     $("#dl_cancel").click(() => {
         cancelGen();
         $('#dl_progress').removeClass('active');
+    })
+
+    //close err dialog
+    $("#err_close").click(() => {
+        $('#dl_err').removeClass('active');
     })
 
 }

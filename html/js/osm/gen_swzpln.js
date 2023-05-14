@@ -1,20 +1,31 @@
-import { osm_dl } from './osm_dl.js'
+import { osm_dl } from './osm_dl.js';
+import { hm_dl } from './hm_dl.js';
 
 var swzplnWorker = new Worker('/js/osm/gen_swzpln_worker.js');
 
 function download(filename, text, mime) {
-    var element = document.getElementById("dl_start");
+    var blob = new Blob([text], {type:mime});
+    let a = document.getElementById("dl_start");
+    a.download = filename;
+    a.href = window.URL.createObjectURL(blob);
+    a.dataset.downloadurl = [mime, a.download, a.href].join(':');
+    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+        window.navigator.msSaveOrOpenBlob(blob, filename);
+    } else{    
+        a.click();
+    }
+    /* var element = document.getElementById("dl_start");
     element.setAttribute('href', `data:${mime};charset=utf-8,` + encodeURIComponent(text));
     element.setAttribute('target', '_self');
     element.setAttribute('download', filename);
-    element.click();
+    element.click(); */
 }
 
 function bounds2array(bounds) {
-    let north = Object.values(Object.values(bounds)[0])[0];
-    let east = Object.values(Object.values(bounds)[0])[1];
-    let south = Object.values(Object.values(bounds)[1])[0];
-    let west = Object.values(Object.values(bounds)[1])[1];
+    let north = bounds._northEast.lat;
+    let east = bounds._northEast.lng;
+    let south = bounds._southWest.lat;
+    let west = bounds._southWest.lng;
     while (Math.abs(east) > 180){
         east = (Math.abs(east)-360)*(Math.abs(east)/east);
     }
@@ -43,12 +54,21 @@ export function estimateOsmFilesize(zoom) {
 export async function genSwzpln(format, bounds, layers, zoom, scale, progressCallback) {
     bounds = bounds2array(bounds);
     const osm_json = await osm_dl(bounds, layers, progressCallback);
-    swzplnWorker.postMessage([format, osm_json, bounds, layers, zoom, scale]);
-    swzplnWorker.onmessage = function (e) {
+    let hm_matrix;
+    if (layers.includes('contours')) {
+        progressCallback(3);
+        hm_matrix = await hm_dl(bounds, progressCallback);
+    } else {
+        hm_matrix = null;
+    }
+    swzplnWorker.postMessage([format, osm_json, hm_matrix, bounds, layers, zoom, scale]);
+
+        swzplnWorker.onmessage = function (e) {
         if (e.data[0] == 'result') {
             let result = e.data[1];
             progressCallback(7);
             countUp();
+
             switch (format) {
                 case 'dxf':
                     download('swzpln.dxf', result, 'application/dxf');
@@ -59,10 +79,17 @@ export async function genSwzpln(format, bounds, layers, zoom, scale, progressCal
                     break;
 
                 case 'pdf':
-                    var element = document.getElementById("dl_start");
-                    element.setAttribute('href', result);
-                    element.setAttribute('target', '_blank');
-                    element.click();
+                    console.log(result);
+                    let a = document.getElementById("dl_start");
+                    a.download = 'swzpln.pdf';
+                    a.href = result;
+                    let mime = 'application/pdf';
+                    a.dataset.downloadurl = [mime, a.download, a.href].join(':');
+                    if (window.navigator && window.navigator.msSaveOrOpenBlob) {
+                        window.navigator.msSaveOrOpenBlob(result, filename);
+                    } else{    
+                        a.click();
+                    }
                     break;
                 
                 default:

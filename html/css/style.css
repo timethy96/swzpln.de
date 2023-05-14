@@ -314,6 +314,7 @@ header.active #burger_b, header.active #burger_b_menu {
 
 #map_p p {
     margin-top: 15px;
+    display: none;
 }
 
 #map_p_b {
@@ -327,6 +328,7 @@ header.active #burger_b, header.active #burger_b_menu {
     letter-spacing: 0.1px;
     margin: 1rem 0 0.7rem auto;
     transition: all 0.3s;
+    display: none;
 }
 
 #map_p_b:hover {
@@ -533,6 +535,10 @@ p#counter {
     display: none;
 }
 
+#m_shop {
+    display: none;
+}
+
 .dialog {
     position: absolute;
     display: flex;
@@ -691,6 +697,35 @@ p#counter {
 .dialog_b.active {
     display: block;
 }
+
+#dl_err {
+    align-items: center;
+    font-size: 1.2rem;
+    box-shadow: 0px 0.3rem 0.7rem 0.25rem rgba(0, 0, 0, 0.15);
+    max-width: 40rem;
+    max-height: 50vh;
+}
+
+#err_main {
+    line-height: 1.5rem;
+    font-weight: bold;
+}
+
+#err_help {
+    font-size: 1rem;
+    line-height: 0.5rem;
+    font-weight: normal;
+
+}
+
+#err_log {
+    font-family: 'Courier New', Courier, monospace;
+    margin-top: 2rem;
+    border: 2px #aaa solid;
+    
+}
+
+
 
 #noscript {
     position: absolute;
