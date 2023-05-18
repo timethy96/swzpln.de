@@ -777,6 +777,10 @@ p#counter {
     pointer-events: all;
 }
 
+.dialog a {
+    text-decoration: none;
+}
+
 #dialog_shadow {
     display: block;
     opacity: 0;
@@ -891,6 +895,7 @@ p#counter {
 
 #dl_ad {
     margin-top: 2.5rem;
+    text-align: center;
 }
 
 #dl_scale {

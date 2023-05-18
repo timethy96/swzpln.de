@@ -28,6 +28,10 @@
     
     "dl_gen":{"de":"Schwarzplan generieren","en":"City plan generation"},
     "dl_donate":{"de":"Spendier' mir einen Kaffee &#9749; <a href='https://ko-fi.com/swzpln' target='_blank'>Ko-fi</a> (Download läuft weiter!)","en":"Buy me a coffee &#9749; <a href='https://ko-fi.com/swzpln' target='_blank'>Ko-fi</a> (Download continues in background!)"},
+    "dl_donate1":{"de":"Spendier' mir einen Kaffee &#9749; <a href='https://ko-fi.com/swzpln' target='_blank'>Ko-fi</a> (Download läuft weiter!)","en":"Buy me a coffee &#9749; <a href='https://ko-fi.com/swzpln' target='_blank'>Ko-fi</a> (Download continues in background!)"},
+    "dl_donate2":{"de":"Auch dank einer kleinen Spende kann dieses Angebot weiterhin kostenlos angeboten werden. <a href='https://ko-fi.com/swzpln' target='_blank'>Spenden auf Ko-fi &#9749;</a> (Download läuft weiter!)","en":"Thanks to a small donation, this offer can continue to be offered free of charge. <a href='https://ko-fi.com/swzpln' target='_blank'>Donate on Ko-fi &#9749;</a> (Download continues in background!)"},
+    "dl_donate3":{"de":"Für Serverkosten und Entwicklung: <a href='https://ko-fi.com/swzpln' target='_blank'>Spenden auf Ko-fi &#9749;</a> (Download läuft weiter!)","en":"For server costs and development: <a href='https://ko-fi.com/swzpln' target='_blank'>Donate on Ko-fi &#9749;</a> (Download continues in background!)"},
+    "dl_donate4":{"de":"Wenn dir SWZPLN gefällt: <a href='https://ko-fi.com/swzpln' target='_blank'>Spenden auf Ko-fi &#9749;</a> (Download läuft weiter!)","en":"If you like SWZPLN/OCP please consider <a href='https://ko-fi.com/swzpln' target='_blank'>a small donation on Ko-fi &#9749;</a> (Download continues in background!)"},
     "dl_cancel":{"de":"abbrechen","en":"cancel"},
     "dl_close":{"de":"schließen","en":"close"},
     "dl_scales":{"de":"Maßstab auswählen","en":"Choose scale"},

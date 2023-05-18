@@ -17,6 +17,8 @@ export async function progressBar(task, status = 0){
     $('#dl_progress').addClass('active');
     switch (task) {
         case 0:
+            let random = Math.round((Math.random() * 3) + 1);
+            $("#dl_ad").html(getStr('dl_donate' + random.toString()));
             $("#dl_status_text").html(getStr('init'));
             $("#dl_bar").addClass('stateless');
             $("#dl_cancel").addClass('active');
