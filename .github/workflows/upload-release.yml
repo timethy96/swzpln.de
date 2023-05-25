@@ -16,4 +16,4 @@ jobs:
         username: ${{ secrets.USERNAME }}
         key: ${{ secrets.KEY }}
         port: ${{ secrets.PORT }}
-        script: "cd ~/server/swzpln.de/ && git pull && docker restart swzpln"
+        script: "cd ~/server/swzpln.de/ && git checkout main && git pull && docker compose up --build --force-recreate -d"

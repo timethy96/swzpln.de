@@ -3,11 +3,11 @@ version: '3'
 services:
     swzpln:
         container_name: swzpln
-        image: php:apache
+        build:
+            context: .
+            dockerfile: Dockerfile
         expose:
             - 80
-        volumes:
-            - ./html:/var/www/html
         restart: unless-stopped
         environment:
             VIRTUAL_HOST: swzpln.de,www.swzpln.de,opencityplans.com,www.opencityplans.com

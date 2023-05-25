@@ -1,0 +1,7 @@
+<IfModule mod_headers.c>
+        <FilesMatch "\.(php|jpg|jpeg|png|gif|js|css)$">
+            Header set Pragma "cache"
+            Header set Cache-Control "max-age=86400, public"
+        </FilesMatch>
+    </Files>
+</IfModule>

@@ -1,14 +1,4 @@
 <?php
-// Set the time to live (TTL) for caching in seconds (1 day = 86400 seconds)
-$ttl = 86400;
-
-// Set the expiration time for the cache
-$expires = gmdate('D, d M Y H:i:s', time() + $ttl) . ' GMT';
-
-// Set the cache-control headers
-header('Expires: ' . $expires);
-header('Cache-Control: max-age=' . $ttl . ', must-revalidate');
-
 require('php/functions.php');
 
 $main_title_array = explode(".",$_SERVER['SERVER_NAME']);
