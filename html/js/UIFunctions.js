@@ -1,8 +1,8 @@
-import {initMap, initSearch} from "./mapFunctions.js?v=1.0.0-rc2";
-import { setCookie, getCookie } from "./jsCookie.js?v=1.0.0-rc2";
-import { genSwzpln, estimateOsmFilesize, cancelGen } from "./osm/gen_swzpln.js?v=1.0.0-rc2";
-import { progressBar } from './progressBar.js?v=1.0.0-rc2';
-import { getScales } from './osm/getScales.js?v=1.0.0-rc2';
+import {initMap, initSearch} from "./mapFunctions.js?v=1.0.0-rc2-1";
+import { setCookie, getCookie } from "./jsCookie.js?v=1.0.0-rc2-1";
+import { genSwzpln, estimateOsmFilesize, cancelGen } from "./osm/gen_swzpln.js?v=1.0.0-rc2-1";
+import { progressBar } from './progressBar.js?v=1.0.0-rc2-1';
+import { getScales } from './osm/getScales.js?v=1.0.0-rc2-1';
 
 function getLayers(){
     let layers = [];

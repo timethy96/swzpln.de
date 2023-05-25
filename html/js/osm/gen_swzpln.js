@@ -1,5 +1,5 @@
-import { osm_dl } from './osm_dl.js?v=1.0.0-rc2';
-import { hm_dl } from './hm_dl.js?v=1.0.0-rc2';
+import { osm_dl } from './osm_dl.js?v=1.0.0-rc2-1';
+import { hm_dl } from './hm_dl.js?v=1.0.0-rc2-1';
 
 var swzplnWorker = new Worker('/js/osm/gen_swzpln_worker.js');
 
