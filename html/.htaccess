@@ -3,4 +3,10 @@
         Header set Pragma "cache"
         Header set Cache-Control "max-age=86400, public"
     </FilesMatch>
+    
+    <FilesMatch "^c/.*\.php$">
+        Header set Cache-Control "private, no-cache, no-store, proxy-revalidate, no-transform"
+        Header set Pragma "no-cache"
+        Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+    </FilesMatch>
 </IfModule>
