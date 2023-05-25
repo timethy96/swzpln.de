@@ -4,7 +4,7 @@ header("Content-Disposition: inline; filename=swzpln.csv");
 
 class countDB extends SQLite3 {
     function __construct() {
-       $this->open('counter.db');
+       $this->open('db/counter.db');
     }
 }
 

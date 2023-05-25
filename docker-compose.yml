@@ -8,6 +8,8 @@ services:
             dockerfile: Dockerfile
         expose:
             - 80
+        volumes:
+            - ./html/c/db:/var/www/html/c/db
         restart: unless-stopped
         environment:
             VIRTUAL_HOST: swzpln.de,www.swzpln.de,opencityplans.com,www.opencityplans.com

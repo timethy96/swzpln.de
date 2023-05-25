@@ -6,7 +6,7 @@ header('Access-Control-Allow-Headers: *');
 
 error_reporting(0);
 
-$db = new SQLite3('counter.db');
+$db = new SQLite3('db/counter.db');
 if (!$db) {
     echo $db->lastErrorMsg();
 } else {
