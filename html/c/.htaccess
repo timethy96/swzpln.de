@@ -1,0 +1,7 @@
+<IfModule mod_headers.c>
+    <FilesMatch "\.(php|html?)$">
+        Header set Cache-Control "private, no-cache, no-store, proxy-revalidate, no-transform"
+        Header set Pragma "no-cache"
+        Header set Expires "Wed, 11 Jan 1984 05:00:00 GMT"
+    </FilesMatch>
+</IfModule>
