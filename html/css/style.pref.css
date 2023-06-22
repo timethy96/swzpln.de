@@ -607,6 +607,7 @@ header.active #burger_b, header.active #burger_b_menu {
     min-width: 28.75rem;
     height: calc(100% - 2.7rem);
     position: absolute;
+    left:0;
     -webkit-transition: all 0.3s;
     -o-transition: all 0.3s;
     transition: all 0.3s;
@@ -619,6 +620,7 @@ header.active #burger_b, header.active #burger_b_menu {
         -ms-transform: translateX(-100%);
             transform: translateX(-100%);
     padding: 1.3rem;
+    z-index: 2;
 }
 
 #menu.active {
@@ -1005,10 +1007,6 @@ p#counter {
         grid-template-columns: 0px 2fr;
         -webkit-animation: none;
                 animation: none;
-    }
-
-    body.menu_active #menu {
-        z-index: 2;
     }
     
     body.menu_inactive {

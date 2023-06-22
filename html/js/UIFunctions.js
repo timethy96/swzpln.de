@@ -14,6 +14,9 @@ function getLayers(){
 }
 
 export function initUI() {
+    //hide SEO Tags
+    $('#menu_tags').hide();
+
     //check if privacy agreement was accepted
     if (getCookie('privacy_accepted') == 'true') {
         window.map = initMap('map');
