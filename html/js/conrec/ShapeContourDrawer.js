@@ -66,7 +66,7 @@
  * MODIFICATIONS.
  */
 
-importScripts('/js/conrec/ContourBuilder.js?v=1.0.0-rc2-1');
+importScripts('/js/conrec/ContourBuilder.js?v=1.0.0-rc2-2');
 
 class ShapeContourDrawer {
   constructor(levels, swapAxes) {

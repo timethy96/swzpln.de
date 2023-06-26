@@ -1,4 +1,4 @@
-import { getCookie, setCookie } from "./jsCookie.js?v=1.0.0-rc2-1";
+import { getCookie, setCookie } from "./jsCookie.js?v=1.0.0-rc2-2";
 
 // - save position cookie - 
 function savePosCookie() {

@@ -1,4 +1,4 @@
-//import { osmjson2dxf } from './osmjson2dxf.js?v=1.0.0-rc2-1'; //-> module webworkers not yet implemented in Firefox
+//import { osmjson2dxf } from './osmjson2dxf.js?v=1.0.0-rc2-2'; //-> module webworkers not yet implemented in Firefox
 
 function progressCallback(task, status){
     postMessage([task,status]);
@@ -35,7 +35,7 @@ onmessage = function(e) {
     if (layers.includes('contours')) {
         // load Conrec library if not loaded yet
         if (typeof Conrec === 'undefined') {
-            importScripts('../conrec/conrec.js?v=1.0.0-rc2-1');
+            importScripts('../conrec/conrec.js?v=1.0.0-rc2-2');
         }
         let conrecInstance = new Conrec(hm_matrix);
         let interval = getInterval(zoom);
@@ -48,17 +48,17 @@ onmessage = function(e) {
 
     switch (format) {
         case "dxf":
-            importScripts('./osmjson2dxf.js?v=1.0.0-rc2-1');
+            importScripts('./osmjson2dxf.js?v=1.0.0-rc2-2');
             resultString = osmjson2dxf(osm_json, contours, bounds, layers, zoom, progressCallback);
             break;
     
         case "svg":
-            importScripts('./osmjson2svg.js?v=1.0.0-rc2-1');
+            importScripts('./osmjson2svg.js?v=1.0.0-rc2-2');
             resultString = osmjson2svg(osm_json, contours, bounds, layers, zoom, scale, progressCallback);
             break;
     
         case "pdf":
-            importScripts('./osmjson2pdf.js?v=1.0.0-rc2-1');
+            importScripts('./osmjson2pdf.js?v=1.0.0-rc2-2');
             resultString = osmjson2pdf(osm_json, contours, bounds, layers, zoom, scale, progressCallback);
             break;
     
