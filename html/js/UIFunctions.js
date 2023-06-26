@@ -29,7 +29,7 @@ export function initUI() {
         $('#map_p_b').click(() => {
             setCookie('privacy_accepted', 'true', 30);
             // initialize the map view, by passing the ID of the map container to the function
-            window.map = initMap('map');
+            window.map = initMap('map', initCity);
             initSearch('#search_form'); //init search by passing search-form id
         })    
     }
