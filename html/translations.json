@@ -15,7 +15,8 @@
     "backToOld":{"de":"> zum alten Design","en":"> to the old design"},
 
     "m_title":{"de":"Schwarzpläne für alle!","en":"City plans for everyone!"},
-    "m_subtitle":{"de":"Schwarzpläne. Kostenlos und von überall. Mit nur einem Klick. Und wir sammeln nicht einmal deine Daten!","en":"City plans. For free and from anywhere. With just one click. And we don't even collect your data!"},
+    "m_subtitle1":{"de":"Schwarzpläne. Kostenlos","en":"City plans. For free"},
+    "m_subtitle2":{"de":" und von überall. Mit nur einem Klick. Und wir sammeln nicht einmal deine Daten!","en":" and from anywhere. With just one click. And we don't even collect your data!"},
     "m_tags":{"de":"schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf höhenlinien stadtplan Gebäude Gewässer Grünflächen Waldflächen Landwirtschaft Straßen Schienen","en":"architecture building urbanism technology plans nolli black contours buildings water green forest landuse streets rails"},
     "m_lang":{"de":"English","en":"Deutsch"},
     "m_help":{"de":"Hilfe (Tutorial)","en":"Help (Tutorial)"},
@@ -23,6 +24,8 @@
     "m_shop":{"de":"Fanshop","en":"Fanshop"},
     "m_source":{"de":"Quellcode (GitHub)","en":"Source Code (GitHub)"},
     "m_darkmode":{"de":"Dunkel-Modus","en":"Dark-Mode"},
+
+    "fromCity":{"de":", von ", "en":", from "},
     
     "m_footer":{"de":" erstellt in Stuttgart von <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />unterstützt durch <a href='https://themom.studio'>The MoM Studio</a>.</p><p>Diese Webseite ist Quelloffen und unter der <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3 Lizenz</a> veröffentlicht.</p>","en":" made in Stuttgart by <a href='https://timo.bilhoefer.de'>Timo Bilhöfer</a><br />supported by <a href='https://themom.studio'>The MoM Studio</a>.</p><p>This website is open-source, licensed under <a href='https://github.com/TheMoMStudio/swzpln.de/blob/main/LICENSE'>AGPL-3</a>.</p>"},
     "m_counter":{"de":"erstellte Pläne","en":"generated plans"},

@@ -31,21 +31,42 @@ function getInterval(zoomLevel) {
 }
 
 // - init map & load last position -
-export function initMap(elemID) {
+export function initMap(elemID, initCity = "") {
+    let map = L.map(elemID);
     $('#map_p').hide();
     let lastPos = getCookie('lastCenter');
-    if (lastPos) {
+    if (lastPos && ! initCity) {
         lastPos = JSON.parse(lastPos);
         let lastCenter = [lastPos[0], lastPos[1]];
         let lastZoom = lastPos[2];
-        var map = L.map(elemID).setView(lastCenter, lastZoom);
+        map.setView(lastCenter, lastZoom);
         if (lastZoom < 11) {
             $('#dl_b').addClass('inactive');
         } else if (lastZoom >= 11) {
             $('#dl_b').removeClass('inactive');
-        };
+        };        
+    } else if (initCity){
+        let query = new URLSearchParams;
+        query.append('q', initCity);
+        query.append('format', 'json');
+        fetch('https://nominatim.openstreetmap.org/search?' + query.toString())
+            .then((res) => res.json())
+            .then((json) => {
+                if (json[0]) {
+                    map.fitBounds([
+                        [json[0].boundingbox[0], json[0].boundingbox[2]],
+                        [json[0].boundingbox[1], json[0].boundingbox[3]],
+                    ]);
+                    if (map.getZoom() < 11) {
+                        $('#dl_b').addClass('inactive');
+                    } else if (map.getZoom() >= 11) {
+                        $('#dl_b').removeClass('inactive');
+                    };
+                    savePosCookie();
+                }
+            })
     } else {
-        var map = L.map(elemID).setView([48.775, 9.187], 12);
+        map.setView([48.775, 9.187], 12);
     }
 
     L.tileLayer('https://{s}.tile.osm.org/{z}/{x}/{y}.png', {

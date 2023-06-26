@@ -3,7 +3,9 @@ version: '3'
 services:  
     swzpln:
         container_name: swzpln
-        image: php:apache
+        build:
+            context: .
+            dockerfile: Dockerfile
         ports:
             - 8080:80
         volumes:

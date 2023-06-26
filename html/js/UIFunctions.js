@@ -16,10 +16,12 @@ function getLayers(){
 export function initUI() {
     //hide SEO Tags
     $('#menu_tags').hide();
+    $('#menu_city').hide();
+    let initCity = $('#menu_city').html();
 
     //check if privacy agreement was accepted
     if (getCookie('privacy_accepted') == 'true') {
-        window.map = initMap('map');
+        window.map = initMap('map', initCity);
         initSearch('#search_form'); //init search by passing search-form id
     } else {
         $('#map_p p').show();

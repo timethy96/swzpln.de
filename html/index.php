@@ -49,6 +49,14 @@ if ($l == "en") {
   $change_lang_url = "https://opencityplans.com";
 }
 
+if (isset($_GET['url'])){
+  $searchString = clean($_GET['url']);
+  $searchSubtitle = _n($la,$l,'fromCity') . $searchString;
+} else {
+  $searchString = "";
+  $searchSubtitle = "";
+}
+
 
 ?>
 <!DOCTYPE html>
@@ -59,16 +67,16 @@ if ($l == "en") {
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <meta http-equiv="X-UA-Compatible" content="ie=edge">
 
-  <title><?php echo $server_name ?> | <?php __($la,$l,'title'); ?></title>
+  <title><?php echo $server_name; ?> | <?php __($la,$l,'title'); ?> | <?php echo $searchString; ?></title>
 
-  <meta name="title" content="<?php echo $server_name ?> | <?php __($la,$l,'title') ?>"/>
+  <meta name="title" content="<?php echo $server_name; ?> | <?php __($la,$l,'title'); ?> | <?php echo $searchString; ?>"/>
   <meta name="author" content="Timo Bilhöfer"/>
   <meta name="publisher" content="Timo Bilhöfer"/>
   <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>"/>
   <meta name="revisit" content="After 30 days"/>
-  <meta name="keywords" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf contours höhenlinien"/>
-  <meta name="description" content="<?php __($la,$l,'m_subtitle') ?>"/>
-  <meta name="page-topic" content="architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf contours höhenlinien"/>
+  <meta name="keywords" content="<?php echo $searchString ?> architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf contours höhenlinien"/>
+  <meta name="description" content="<?php __($la,$l,'m_subtitle1'); ?> <?php echo $searchSubtitle ?> <?php __($la,$l,'m_subtitle2'); ?>"/>
+  <meta name="page-topic" content="<?php echo $searchString ?> architecture building urbanism technology plans nolli black schwarz schwarzpläne architektur gebäude schwarzplan stadtplanung generieren generator technologie dwg dxf svg pdf contours höhenlinien"/>
   <meta name="robots" content="INDEX,FOLLOW"/>
   <meta name="language" http-equiv="content-language" content="<?php echo $l; ?>"/>
 
@@ -87,7 +95,7 @@ if ($l == "en") {
 
   <meta property="og:image:height" content="1257">
   <meta property="og:image:width" content="2400">
-  <meta property="og:description" content="<?php __($la,$l,'m_subtitle') ?>">
+  <meta property="og:description" content="<?php __($la,$l,'m_subtitle1'); ?> <?php echo $searchSubtitle; ?> <?php __($la,$l,'m_subtitle2'); ?>">
   <meta property="og:url" content="https://<?php echo $server_name ?>">
   <meta property="og:image" content="https://<?php echo $server_name ?>/meta/og-image.jpg">
   <meta property="og:title" content="<?php echo $server_name ?> | <?php __($la,$l,'title') ?>">
@@ -130,8 +138,9 @@ if ($l == "en") {
 
       <div id="menu_scroll_cont">
         <h2><?php __($la,$l,'m_title'); ?></h2>
-        <h3 id="menu_subtitle"><?php __($la,$l,'m_subtitle'); ?></h3>
+        <h3 id="menu_subtitle"><?php __($la,$l,'m_subtitle1'); ?><?php echo $searchSubtitle; ?> <?php __($la,$l,'m_subtitle2'); ?></h3>
         <h4 id="menu_tags"><?php __($la,$l,'m_tags'); ?></h4>
+        <h4 id="menu_city"><?php echo $searchString; ?></h4>
 
         <a class="menu_item" id="m_lang" href="<?php echo $change_lang_url; ?>"><?php echo file_get_contents("img/lang.svg"); __($la,$l,'m_lang'); echo file_get_contents("img/arrow_right.svg");?></a>
         <!-- <div class="menu_item" id="m_help"><?php echo file_get_contents("img/help.svg"); __($la,$l,'m_help'); echo file_get_contents("img/arrow_right.svg");?></div> -->
