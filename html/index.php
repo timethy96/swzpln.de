@@ -86,7 +86,7 @@ if (isset($_GET['url'])){
   <link rel="manifest" href="/meta/site.webmanifest">
   <link rel="mask-icon" href="/meta/safari-pinned-tab.svg" color="#000000">
   <link rel="shortcut icon" href="/meta/favicon.ico">
-  <link rel="canonical" href="https://<?php echo $server_name ?>">
+  <link rel="canonical" href="https://<?php echo $server_name."/".$searchString ?>">
   <meta name="apple-mobile-web-app-title" content="<?php echo $server_name ?>">
   <meta name="application-name" content="<?php echo $server_name ?>">
   <meta name="msapplication-TileColor" content="#000000">
