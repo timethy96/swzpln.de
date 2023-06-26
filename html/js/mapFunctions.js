@@ -63,6 +63,8 @@ export function initMap(elemID, initCity = "") {
                         $('#dl_b').removeClass('inactive');
                     };
                     savePosCookie();
+                } else {
+                    map.setView([48.775, 9.187], 12);
                 }
             })
     } else {
