@@ -1,5 +1,6 @@
 
-const overpassApi = "https://overpass.kumi.systems/api/";
+let overpassApi = "https://overpass.kumi.systems/api/";
+const overpassApiFallback = "https://overpass-api.de/api/";
 
 
 function constructUrl(bounds, layers) {
@@ -64,7 +65,24 @@ function constructUrl(bounds, layers) {
     return ajaxUrl;
 }
 
-export async function osm_dl(bounds, layers, progressCallback){
+export async function osm_dl(bounds, layers, progressCallback) {
+    // Check if overpass API is available and use fallback if not
+    await new Promise((resolve) => {
+        $.ajax({
+            url: overpassApi,
+            timeout: 5000, // Set a timeout (e.g., 5 seconds)
+            success: function() {
+                resolve();
+            },
+            error: function() {
+                console.log("Overpass API not available. Using fallback.");
+                overpassApi = overpassApiFallback;
+                alert("The primary Overpass API is not available. Switching to a fallback API (overpass-api.de). Please note that you might experience slower downloads and may be subject to additional usage restrictions. More information on overpass-api.de");
+                resolve();
+            }
+        });
+    });
+
     const ajaxUrl = constructUrl(bounds, layers);
     let response = await fetch(ajaxUrl);
     const reader = response.body.getReader();
