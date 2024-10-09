@@ -1,4 +1,4 @@
-importScripts('/js/conrec/BasicContourDrawer.js?v=1.0.0-rc2-2','/js/conrec/ShapeContourDrawer.js?v=1.0.0-rc2-2','/js/conrec/calculateContour.js?v=1.0.0-rc2-2');
+importScripts('/js/conrec/BasicContourDrawer.js?v=1.0.0-rc2-3','/js/conrec/ShapeContourDrawer.js?v=1.0.0-rc2-3','/js/conrec/calculateContour.js?v=1.0.0-rc2-3');
 
 /**
  *
