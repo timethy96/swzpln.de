@@ -1,4 +1,4 @@
-importScripts('./osmjson2objarray.js?v=1.0.0-rc2-2', './jspdf.umd.min.js?v=1.0.0-rc2-2');
+importScripts('./osmjson2objarray.js?v=1.0.0-rc2-3', './jspdf.umd.min.js?v=1.0.0-rc2-3');
 
 function osmjson2pdf(osm_json, contours, bounds, layers, zoom, scale, progressCallback) {
 
@@ -31,7 +31,7 @@ function osmjson2pdf(osm_json, contours, bounds, layers, zoom, scale, progressCa
     });
 
     //optionally generate contours
-    if (layers.includes('contours')) {
+    if (layers.includes('contours') && contours !== null) {
         contours.contours.forEach((cont) => {
             let path = [];
             let i = 0;

@@ -1,5 +1,5 @@
-importScripts('./osmjson2objarray.js?v=1.0.0-rc2-2');
-//import { osmjson2objarray, deg2XY } from './osmjson2objarray.js?v=1.0.0-rc2-2'; //-> module webworkers not yet implemented in Firefox
+importScripts('./osmjson2objarray.js?v=1.0.0-rc2-3');
+//import { osmjson2objarray, deg2XY } from './osmjson2objarray.js?v=1.0.0-rc2-3'; //-> module webworkers not yet implemented in Firefox
 
 //export function osmjson2dxf(osm_json, bounds, layers, progressCallback) { //-> module webworkers not yet implemented in Firefox
 function osmjson2svg(osm_json, contours, bounds, layers, zoom, scale, progressCallback) {
@@ -51,7 +51,7 @@ function osmjson2svg(osm_json, contours, bounds, layers, zoom, scale, progressCa
     })
 
     //optionally generate contours
-    if (layers.includes('contours')) {
+    if (layers.includes('contours') && contours !== null) {
         contours.contours.forEach((cont) => {
             let path = [];
             cont.forEach((coordinate) => {

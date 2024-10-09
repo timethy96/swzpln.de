@@ -1,4 +1,4 @@
-import {initUI} from "./UIFunctions.js?v=1.0.0-rc2-2";
+import {initUI} from "./UIFunctions.js?v=1.0.0-rc2-3";
 
 // Error handling
 
