@@ -1,5 +1,5 @@
 
-let overpassApi = "https://overpass.kumi.systems/api/";
+let overpassApi = "https://overpass.private.coffee/api/";
 const overpassApiFallback = "https://overpass-api.de/api/";
 
 
@@ -69,7 +69,7 @@ export async function osm_dl(bounds, layers, progressCallback) {
     // Check if overpass API is available and use fallback if not
     await new Promise((resolve) => {
         $.ajax({
-            url: overpassApi,
+            url: overpassApi + "interpreter",
             timeout: 5000, // Set a timeout (e.g., 5 seconds)
             success: function() {
                 resolve();
