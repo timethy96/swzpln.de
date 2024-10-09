@@ -1,4 +1,4 @@
-importScripts('./osmjson2objarray.js?v=1.0.0-rc2-3', './jspdf.umd.min.js?v=1.0.0-rc2-3');
+importScripts('./osmjson2objarray.js?v=1.0.0-rc2-3', './jspdf.umd.min.js?v=1.0.0-rc2-3a');
 
 function osmjson2pdf(osm_json, contours, bounds, layers, zoom, scale, progressCallback) {
 
