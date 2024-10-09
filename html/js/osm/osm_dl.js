@@ -69,7 +69,7 @@ export async function osm_dl(bounds, layers, progressCallback) {
     // Check if overpass API is available and use fallback if not
     await new Promise((resolve) => {
         $.ajax({
-            url: overpassApi.replace('api/',''),
+            url: overpassApi + "/status",
             timeout: 5000, // Set a timeout (e.g., 5 seconds)
             success: function() {
                 resolve();
