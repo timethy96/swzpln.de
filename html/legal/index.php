@@ -28,7 +28,7 @@ if (!$isAjax) {
     <p>Timo Bilhöfer <br>
         Wühlischstr. 20<br>
         10245 Berlin <br><br />
-        E-Mail: swzpln ø theMoM · studio
+        E-Mail: timo ø swzpln · de
     </p>
     <p>
         <br><br><h3>Haftung für Inhalte</h3><br><br>
