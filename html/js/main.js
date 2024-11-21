@@ -17,7 +17,7 @@ window.onerror = function(message, source, lineno, colno, error) {
     $("#err_log").html(cLog);
     
     let email1 = "error1";
-    let email2 = "themom.studio";
+    let email2 = "swzpln.de";
     let subject = "Error report swzpln.de";
     let body = encodeURIComponent(cLog);
 
