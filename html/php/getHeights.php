@@ -1,7 +1,7 @@
 <?php
 
-// Replace YOUR_API_KEY with your actual OpenTopography API key
-$apiKey = "OPENTOPO_API_KEY";
+// Get API key from environment variable
+$apiKey = getenv('OPENTOPOGRAPHY_API_KEY');
 
 // Set the API URL
 $apiUrl = "https://portal.opentopography.org/API/globaldem";

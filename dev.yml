@@ -11,3 +11,5 @@ services:
         volumes:
             - ./html:/var/www/html
         restart: unless-stopped
+        environment:
+            OPENTOPOGRAPHY_API_KEY: ${OPENTOPOGRAPHY_API_KEY}
