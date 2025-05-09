@@ -175,7 +175,7 @@ if (isset($_GET['url'])){
       <input type="checkbox" id="l_rails" name="l_rails" value="railway" <?php echo ($layers[6]) ? 'checked' : ''; ?> >
         <label for="l_rails"><?php echo file_get_contents("img/layers/rails.svg"); ?><?php __($la,$l,'rails'); ?></label>
       <input type="checkbox" id="l_contours" name="l_contours" value="contours" <?php echo ($layers[7]) ? 'checked' : ''; ?> >
-        <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?>&nbsp;<span id="cl_interval">10</span>m<sup>beta</sup></label>
+        <label for="l_contours"><?php echo file_get_contents("img/layers/contours.svg"); ?><?php __($la,$l,'contours'); ?>&nbsp;<span id="cl_interval">10</span>m<sup style="color: darkgreen;">fixed</sup></label>
     </div>
 
     <div id="map">
