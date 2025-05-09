@@ -1,52 +1,77 @@
 <?php
 
 // Get API key from environment variable
-$apiKey = getenv('OPENTOPOGRAPHY_API_KEY');
+$apiKey = getenv('OPENTOPODATA_API_KEY');
 
-// Set the API URL
-$apiUrl = "https://portal.opentopography.org/API/globaldem";
+// Set the API URL for Open Topo Data
+$apiUrl = "https://api.opentopodata.org/v1/mapzen";
 
-// Set the location bounds (in decimal degrees)
+// Get the location bounds (in decimal degrees)
 $north = $_GET["north"];
 $south = $_GET["south"];
 $east = $_GET["east"];
 $west = $_GET["west"];
 
+// Create a grid of points to sample the elevation data
+$latStep = ($north - $south) / 9; // Sample 10 points in each direction (9 intervals)
+$lngStep = ($east - $west) / 9;
+
+$locations = array();
+for ($lat = $south; $lat <= $north; $lat += $latStep) {
+    for ($lng = $west; $lng <= $east; $lng += $lngStep) {
+        $locations[] = $lat . "," . $lng;
+    }
+}
+
+// Build the locations string for the API request
+$locationsString = implode("|", $locations);
+
 // Set the request parameters
 $params = array(
-    "south" => $south,
-    "west" => $west,
-    "north" => $north,
-    "east" => $east,
-    "outputFormat" => "AAIGrid",
-    "demtype" => "COP30",
-    "API_Key" => $apiKey
+    "locations" => $locationsString,
+    "interpolation" => "bilinear"
 );
 
 // Build the request URL
 $url = $apiUrl . "?" . http_build_query($params);
 
-// Make the request to OpenTopography to download the data
+// Make the request to Open Topo Data
 $ch = curl_init();
 curl_setopt($ch, CURLOPT_URL, $url);
 curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
 curl_setopt($ch, CURLOPT_CUSTOMREQUEST, "GET");
-$data = curl_exec($ch);
+curl_setopt($ch, CURLOPT_HTTPHEADER, array(
+    "x-api-key: " . $apiKey
+));
+$response = curl_exec($ch);
 curl_close($ch);
 
-// Remove the header lines from the Arc ASCII file
-$lines = explode("\n", trim($data));
-$matrix = array();
-for ($i = 6; $i < count($lines); $i++) {
-    $row = explode(" ", trim($lines[$i]));
-    $matrix[] = $row;
+// Parse the JSON response
+$data = json_decode($response, true);
+
+// Check for errors
+if (isset($data['error'])) {
+    header("Content-Type: application/json");
+    http_response_code(400);
+    echo json_encode(array('error' => $data['error']));
+    exit;
 }
 
-// Convert the matrix to a JSON array
-$jsonArray = json_encode($matrix);
+// Extract elevations into a matrix
+$matrix = array();
+$row = array();
+$count = 0;
+foreach ($data['results'] as $result) {
+    $row[] = $result['elevation'];
+    $count++;
+    if ($count % 10 == 0) { // 10 points per row
+        $matrix[] = $row;
+        $row = array();
+    }
+}
 
 // Return the JSON array
 header("Content-Type: application/json");
-echo $jsonArray;
+echo json_encode($matrix);
 
 ?>
