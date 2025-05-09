@@ -184,7 +184,7 @@ if (isset($_GET['url'])){
         <p><?php __($la,$l,'priv_3'); ?></p>
         <p><?php __($la,$l,'priv_4'); ?>. <a href="https://wiki.osmfoundation.org/wiki/Privacy_Policy" target="_blank"><?php __($la,$l,'privacy_agreement'); ?></a>.</p>
         <p><?php __($la,$l,'priv_5'); ?> <a href="https://overpass.kumi.systems/" target="_blank"><?php __($la,$l,'privacy_agreement'); ?></a>.</p>
-        <p><?php __($la,$l,'priv_7'); ?> <a href="https://opentopography.org/privacypolicy" target="_blank"><?php __($la,$l,'privacy_agreement'); ?></a>.</p>
+        <p><?php __($la,$l,'priv_7'); ?> <a href="https://www.opentopodata.org" target="_blank"><?php __($la,$l,'privacy_agreement'); ?></a>.</p>
         <div id="map_p_b"><?php __($la,$l,'priv_6'); ?></div>
       </div>
     </div>

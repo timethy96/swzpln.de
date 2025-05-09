@@ -59,7 +59,7 @@
     "priv_3":{"de":"Bei der Nutzung von SWZPLN werden Daten von externen Servern übertragen:", "en":"When using the service, data is transferred from external servers:"},
     "priv_4":{"de":"Die Vorschaukarte wird von <b>openstreetmaps.org</b> heruntergeladen. Die Suchfunktion nutzt die <b>Nominatim API</b>", "en":"The preview map is downloaded from <b>openstreetmaps.org</b>. The search function uses the <b>Nominatim API</b>"},
     "priv_5":{"de":"Die verarbeiteten Kartendaten werden von der <b>Overpass-API von kumi.systems</b> geladen.", "en":"The processed map data is downloaded from the <b>Overpass API from kumi.systems</b>."},
-    "priv_7":{"de":"Die Höhendaten werden von der <b>OpenTopography-API</b> geladen.", "en":"The height data is downloaded from the <b>OpenTopography API</b>."},
+    "priv_7":{"de":"Die Höhendaten werden von der <b>Open Topo Data API</b> mit <b>Mapzen</b> Daten geladen.", "en":"The height data is downloaded from the <b>Open Topo Data API</b> using <b>Mapzen</b> data."},
     "priv_6":{"de":"Akzeptieren und Karte laden", "en":"Accept and load map"}
 
 }
