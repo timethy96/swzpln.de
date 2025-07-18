@@ -2,7 +2,7 @@ version: '3'
   
 services:
     swzpln:
-        container_name: swzpln
+        container_name: swzplnde
         build:
             context: .
             dockerfile: Dockerfile
@@ -12,11 +12,9 @@ services:
             - ./html/c/db:/var/www/html/c/db
         restart: unless-stopped
         environment:
-            VIRTUAL_HOST: swzpln.de,www.swzpln.de,opencityplans.com,www.opencityplans.com
-            LETSENCRYPT_HOST: swzpln.de,www.swzpln.de,opencityplans.com,www.opencityplans.com
             OPENTOPODATA_API_KEY: ${OPENTOPODATA_API_KEY}
 
 networks:
   default:
-    external:
-      name: nginx-proxy
+    name: caddy
+    external: true
