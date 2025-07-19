@@ -43,7 +43,11 @@
 		"vitest-browser-svelte": "^0.1.0"
 	},
 	"dependencies": {
-		"@inlang/paraglide-js": "^2.0.0"
+		"@inlang/paraglide-js": "^2.0.0",
+		"leaflet": "^1.9.4",
+		"jspdf": "^2.5.1",
+		"js-cookie": "^3.0.5",
+		"lucide-svelte": "^0.460.0"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [
