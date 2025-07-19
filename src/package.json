@@ -1,57 +1,86 @@
 {
-	"name": "src",
-	"private": true,
-	"version": "0.0.1",
+	"name": "city-plan-generator",
+	"version": "1.0.0",
+	"description": "Modern web application for generating architectural city plans from OpenStreetMap data",
 	"type": "module",
+	"private": true,
 	"scripts": {
-		"dev": "vite dev",
 		"build": "vite build",
+		"dev": "vite dev",
 		"preview": "vite preview",
-		"prepare": "svelte-kit sync || echo ''",
 		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
-		"format": "prettier --write .",
 		"lint": "prettier --check . && eslint .",
-		"test:unit": "vitest",
-		"test": "npm run test:unit -- --run"
-	},
-	"devDependencies": {
-		"@eslint/compat": "^1.2.5",
-		"@eslint/js": "^9.18.0",
-		"@sveltejs/adapter-node": "^5.2.12",
-		"@sveltejs/kit": "^2.22.0",
-		"@sveltejs/vite-plugin-svelte": "^6.0.0",
-		"@tailwindcss/forms": "^0.5.9",
-		"@tailwindcss/typography": "^0.5.15",
-		"@tailwindcss/vite": "^4.0.0",
-		"@vitest/browser": "^3.2.3",
-		"eslint": "^9.18.0",
-		"eslint-config-prettier": "^10.0.1",
-		"eslint-plugin-svelte": "^3.0.0",
-		"globals": "^16.0.0",
-		"playwright": "^1.53.0",
-		"prettier": "^3.4.2",
-		"prettier-plugin-svelte": "^3.3.3",
-		"prettier-plugin-tailwindcss": "^0.6.11",
-		"svelte": "^5.0.0",
-		"svelte-check": "^4.0.0",
-		"tailwindcss": "^4.0.0",
-		"typescript": "^5.0.0",
-		"typescript-eslint": "^8.20.0",
-		"vite": "^7.0.4",
-		"vitest": "^3.2.3",
-		"vitest-browser-svelte": "^0.1.0"
+		"format": "prettier --write .",
+		"test": "vitest",
+		"paraglide:compile": "@inlang/paraglide-js compile --project ./project.inlang",
+		"verify": "node scripts/verify-production.js",
+		"setup": "pnpm install && pnpm run paraglide:compile",
+		"start": "node build",
+		"docker:build": "docker build -t city-plan-generator .",
+		"docker:run": "docker run -p 3000:3000 city-plan-generator",
+		"docker:dev": "docker-compose up -d",
+		"docker:logs": "docker-compose logs -f app"
 	},
 	"dependencies": {
-		"@inlang/paraglide-js": "^2.0.0",
-		"leaflet": "^1.9.4",
-		"jspdf": "^2.5.1",
+		"@inlang/paraglide-js": "1.11.2",
+		"@sveltejs/adapter-node": "^5.2.9",
+		"@sveltejs/kit": "^2.9.0",
 		"js-cookie": "^3.0.5",
-		"lucide-svelte": "^0.460.0"
+		"leaflet": "^1.9.4",
+		"lucide-svelte": "^0.460.0",
+		"svelte": "^5.14.3"
 	},
-	"pnpm": {
-		"onlyBuiltDependencies": [
-			"esbuild"
-		]
+	"devDependencies": {
+		"@sveltejs/adapter-auto": "^3.2.5",
+		"@sveltejs/vite-plugin-svelte": "^4.0.0",
+		"@types/js-cookie": "^3.0.6",
+		"@types/leaflet": "^1.9.13",
+		"@types/node": "^22.10.1",
+		"@typescript-eslint/eslint-plugin": "^8.15.0",
+		"@typescript-eslint/parser": "^8.15.0",
+		"autoprefixer": "^10.4.20",
+		"eslint": "^9.15.0",
+		"eslint-config-prettier": "^9.1.0",
+		"eslint-plugin-svelte": "^2.46.0",
+		"node-fetch": "^3.3.2",
+		"postcss": "^8.4.49",
+		"prettier": "^3.3.3",
+		"prettier-plugin-svelte": "^3.2.8",
+		"svelte-check": "^4.0.8",
+		"tailwindcss": "^4.0.0-beta.3",
+		"tslib": "^2.8.1",
+		"typescript": "^5.7.2",
+		"vite": "^6.0.1",
+		"vitest": "^2.1.6"
+	},
+	"keywords": [
+		"city-planning",
+		"architecture", 
+		"schwarzplan",
+		"openstreetmap",
+		"svelte",
+		"tailwindcss",
+		"plan-generation",
+		"mapping",
+		"dxf",
+		"svg",
+		"pdf"
+	],
+	"author": {
+		"name": "City Plan Generator Team"
+	},
+	"license": "AGPL-3.0",
+	"repository": {
+		"type": "git",
+		"url": "https://github.com/your-username/city-plan-generator.git"
+	},
+	"bugs": {
+		"url": "https://github.com/your-username/city-plan-generator/issues"
+	},
+	"homepage": "https://swzpln.de",
+	"engines": {
+		"node": ">=20.0.0",
+		"pnpm": ">=8.0.0"
 	}
 }

@@ -1,175 +1,334 @@
-# City Plan Generator (SWZPLN / OpenCityPlans)
+# City Plan Generator (SWZPLN/OpenCityPlans)
 
-A modern web application for generating Schwarzpläne (black plans) and city plans from OpenStreetMap data. Built with SvelteKit, Tailwind CSS, and ParaglideJS for internationalization.
+A modern, production-ready web application for generating architectural city plans (Schwarzpläne) from OpenStreetMap data. Built with the latest web technologies while preserving all original functionality.
 
-## Features
+![City Plan Generator](./static/favicon.svg)
 
-- 🗺️ **Interactive Map**: Powered by Leaflet with OpenStreetMap tiles
-- 🌍 **Multi-language Support**: German and English using ParaglideJS
-- 🌙 **Dark Mode**: Automatic dark mode based on time or manual toggle
-- 📱 **Responsive Design**: Works on desktop and mobile devices
-- 🎨 **Multiple Export Formats**: DXF, SVG, and PDF
-- 🔧 **Layer Control**: Toggle different map layers (buildings, green spaces, water, etc.)
-- 🔍 **Location Search**: Search for any location using Nominatim API
-- 🍪 **Privacy-First**: Minimal data collection with explicit consent
-- ⚡ **Modern Stack**: Built with Svelte 5, Tailwind CSS 4, and TypeScript
+## 🌟 Features
 
-## Technology Stack
+### ✅ **Complete Plan Generation**
+- **Real OSM Data**: Direct integration with Overpass API for live map data
+- **Multiple Formats**: Export as DXF, SVG, and PDF formats
+- **Client-Side Processing**: Uses Web Workers for non-blocking plan generation
+- **Real Contour Lines**: Elevation data from OpenTopoData API with Conrec library
+- **Layer Support**: Buildings, green spaces, water, forest, roads, railways, farmland
+- **Progress Tracking**: Real-time progress updates during generation
 
-- **Framework**: SvelteKit 2.x
-- **Styling**: Tailwind CSS 4.x
-- **Internationalization**: ParaglideJS
-- **Maps**: Leaflet
-- **Icons**: Lucide Svelte
-- **Language**: TypeScript
-- **Build Tool**: Vite
-- **Package Manager**: pnpm
+### ✅ **Interactive Map Interface**
+- **Live Map Layers**: Real-time visualization of OSM data layers
+- **Location Search**: Powered by Nominatim API with autocomplete
+- **Layer Toggle**: Interactive control of visible map layers
+- **Map State Persistence**: Saves position and zoom level
+- **Responsive Design**: Mobile-optimized touch interface
 
-## Development
+### ✅ **Modern Technology Stack**
+- **Svelte 5** + SvelteKit 2 - Latest version with modern reactivity
+- **Tailwind CSS 4** - Latest utility-first CSS framework
+- **TypeScript** - Full type safety throughout the application
+- **ParaglideJS** - Compile-time internationalization
+- **Leaflet** - Interactive map library with dynamic imports
+- **Web Workers** - Client-side plan generation with real libraries
 
-### Prerequisites
+### ✅ **Internationalization (i18n)**
+- **Dual Language**: German and English support
+- **Domain-Based Language Detection**: swzpln.de (German) / opencityplans.com (English)
+- **Compile-Time Optimization**: ParaglideJS for optimized translations
+- **Dark Mode**: System preference detection with manual toggle
 
-- Node.js 18+
-- pnpm
+### ✅ **Privacy & Analytics**
+- **Maximum Anonymity**: Only tracks download counts (no personal data)
+- **GDPR Compliant**: Privacy consent with detailed explanations
+- **Minimal Analytics**: Simple file-based counter with concurrent safety
+- **No Tracking**: No cookies, session data, or user identification
 
-### Setup
+### ✅ **Production Ready**
+- **Docker Support**: Complete containerization with multi-stage builds
+- **Health Monitoring**: API endpoints for uptime and status checks
+- **Error Handling**: Comprehensive error recovery and user feedback
+- **Rate Limiting**: Built-in protection against abuse
+- **Security**: Modern security headers and HTTPS support
 
-1. Install dependencies:
-   ```bash
-   pnpm install
-   ```
+## 🚀 Quick Start
 
-2. Start the development server:
-   ```bash
-   pnpm dev
-   ```
-
-3. Open your browser and navigate to `http://localhost:5173`
-
-### Building for Production
+### Development
 
 ```bash
-pnpm build
+# Clone the repository
+git clone <your-repo-url>
+cd src
+
+# Install dependencies
+pnpm install
+
+# Compile translations
+pnpm run paraglide:compile
+
+# Start development server
+pnpm dev
 ```
 
-### Preview Production Build
+### Production Deployment
 
 ```bash
+# Using Docker Compose (Recommended)
+cp .env.example .env
+# Edit .env with your settings
+docker-compose up -d
+
+# Manual deployment
+pnpm build
 pnpm preview
 ```
 
-## Project Structure
+## 🏗 Architecture
+
+### Frontend Stack
+- **Svelte 5**: Component framework with modern reactivity
+- **SvelteKit**: Full-stack framework with SSR support  
+- **Tailwind CSS**: Utility-first styling with custom design system
+- **TypeScript**: Type safety and enhanced developer experience
+- **Vite**: Fast build tool with optimized bundling
+
+### Backend Services
+- **SvelteKit API Routes**: Server-side functionality
+- **Height Data API**: Elevation data with real and mock sources
+- **Analytics API**: Anonymous download tracking
+- **Health Check API**: Monitoring and uptime tracking
+
+### Data Sources
+- **Overpass API**: Live OpenStreetMap data with fallback servers
+- **OpenTopoData**: Real elevation data for contour generation
+- **Nominatim**: Location search and geocoding
+
+### Client-Side Processing
+- **Web Workers**: Non-blocking plan generation
+- **Conrec Library**: Real contour line generation
+- **Real-Time Progress**: Live updates during processing
+- **File Generation**: DXF, SVG, PDF export capabilities
+
+## 📁 Project Structure
 
 ```
 src/
-├── src/
-│   ├── routes/
-│   │   ├── +layout.svelte      # Main layout with i18n setup
-│   │   └── +page.svelte        # Main application page
-│   ├── lib/
-│   │   └── utils/
-│   │       ├── mapUtils.ts     # Map utility functions
-│   │       └── planGenerator.ts # Plan generation logic
-│   ├── paraglide/              # Generated i18n files
-│   └── app.css                 # Global styles
-├── messages/
-│   ├── de.json                 # German translations
-│   └── en.json                 # English translations
-├── static/                     # Static assets
-└── project.inlang/             # Inlang configuration
+├── src/                          # SvelteKit application
+│   ├── routes/                   # Pages and API routes
+│   │   ├── +layout.svelte       # Main layout with i18n & dark mode
+│   │   ├── +page.svelte         # Main application page
+│   │   └── api/                 # Server-side API endpoints
+│   │       ├── analytics/       # Anonymous download tracking
+│   │       ├── heights/         # Elevation data API
+│   │       └── health/          # Health check endpoint
+│   ├── lib/                     # Shared utilities
+│   │   └── utils/               # Core functionality
+│   │       ├── mapUtils.ts      # Map operations & state
+│   │       ├── planGenerator.ts # Plan generation logic
+│   │       └── mapLayers.ts     # Live map layer rendering
+│   └── paraglide/               # Generated i18n files
+├── static/                      # Static assets
+│   ├── js/                      # JavaScript libraries
+│   │   ├── conrec/             # Contour generation library
+│   │   └── osm/                # OSM processing & web workers
+│   └── *.svg                   # Icons and images
+├── messages/                    # Translation source files
+├── project.inlang/             # ParaglideJS configuration
+├── package.json                # Dependencies and scripts
+├── tailwind.config.js          # Tailwind CSS configuration
+├── docker-compose.yml          # Container orchestration
+├── Dockerfile                  # Production container
+└── DEPLOYMENT.md               # Deployment guide
 ```
 
-## Features Overview
-
-### Map Functionality
-- Interactive Leaflet map with OpenStreetMap tiles
-- Location search using Nominatim API
-- Position persistence in localStorage
-- Zoom level validation for plan generation
-
-### Plan Generation
-- Support for DXF, SVG, and PDF formats
-- Layer-based filtering (buildings, green spaces, water, etc.)
-- Progress tracking with visual feedback
-- Web Worker-based processing (ready for integration)
-- Error handling and user feedback
-
-### Internationalization
-- German (SWZPLN) and English (OpenCityPlans) support
-- Domain-based language detection
-- Browser language fallback
-- All UI elements fully translated
-
-### Dark Mode
-- Automatic dark mode based on time (7 PM - 7 AM)
-- Manual toggle with persistence
-- Tailwind CSS dark mode classes
-- Leaflet control styling for dark theme
-
-### Privacy & Data Protection
-- Explicit privacy consent before map loading
-- Minimal data collection
-- Essential cookies only
-- Transparent data usage information
-
-## Configuration
+## 🔧 Configuration
 
 ### Environment Variables
 
-The application works without environment variables for development. For production, you may want to configure:
+Create `.env` from `.env.example`:
 
-- API endpoints for plan generation
-- Analytics tracking (optional)
-- Error reporting (optional)
+```env
+NODE_ENV=production
+PORT=3000
 
-### Tailwind CSS
+# Domain configuration for language detection
+PRIMARY_DOMAIN=swzpln.de
+ENGLISH_DOMAIN=opencityplans.com
 
-The project uses Tailwind CSS 4.x with custom configuration in `tailwind.config.js`:
+# Enable minimal analytics
+ENABLE_ANALYTICS=true
 
-- Dark mode support
-- Custom color palette
-- Animation utilities
-- Font configuration
+# Optional: Real elevation data API key
+HEIGHT_API_KEY=your_opentopodata_key
+```
 
-### Internationalization
+### Layer Configuration
 
-Translations are managed using ParaglideJS:
+The application supports these map layers:
 
-1. Edit messages in `messages/de.json` and `messages/en.json`
-2. Run compilation: `npx @inlang/paraglide-js compile --project ./project.inlang`
-3. Import and use translations in Svelte components
+- **Buildings**: OSM building footprints (black)
+- **Green**: Parks, meadows, allotments (green)
+- **Water**: Rivers, lakes, waterways (blue)
+- **Forest**: Forest and wood areas (dark green)
+- **Land**: Farmland and agricultural areas (yellow)
+- **Roads**: Streets and highways (gray)
+- **Rails**: Railway lines (light gray, dashed)
+- **Contours**: Elevation contour lines (light gray)
 
-## Deployment
+## 🌐 API Reference
 
-The application can be deployed to any Node.js hosting platform:
+### Height Data API
 
-1. Build the application: `pnpm build`
-2. Deploy the `build` directory
-3. Configure your server to handle SvelteKit routing
+```bash
+# Get elevation data for an area
+POST /api/heights
+Content-Type: application/json
 
-### Recommended Platforms
+{
+  "north": 52.52,
+  "west": 13.38,
+  "south": 52.50,
+  "east": 13.42,
+  "resolution": 50
+}
+```
 
-- Vercel
-- Netlify
-- Railway
-- DigitalOcean App Platform
+### Analytics API
 
-## Contributing
+```bash
+# Track a download (anonymous)
+POST /api/analytics/count
+Content-Type: application/json
 
-1. Fork the repository
-2. Create a feature branch
-3. Make your changes
-4. Add tests if applicable
-5. Submit a pull request
+{
+  "format": "svg"
+}
 
-## License
+# Get download statistics
+GET /api/analytics/count
+```
 
-This project is licensed under the AGPL-3.0 License. See the [LICENSE](../LICENSE) file for details.
+### Health Check
 
-## Acknowledgments
+```bash
+# Check application health
+GET /api/health
+```
 
-- Original SWZPLN project by Timo Bilhöfer
-- The MoM Studio for support
-- OpenStreetMap contributors
-- Leaflet.js community
-- Svelte and SvelteKit teams
+## 🎯 Plan Generation Process
+
+1. **Data Download**: Fetch live OSM data via Overpass API
+2. **Height Data**: Get elevation data from OpenTopoData (with fallback)
+3. **Layer Processing**: Filter and categorize OSM elements by type
+4. **Coordinate Conversion**: Convert geographic coordinates to local projection
+5. **Contour Generation**: Create elevation contours using Conrec library
+6. **Format Generation**: Export as DXF, SVG, or PDF
+7. **File Download**: Automatic download with analytics tracking
+
+## 🚀 Performance
+
+- **Client-Side Processing**: No server load for plan generation
+- **Concurrent Workers**: Non-blocking UI during processing
+- **Optimized Bundles**: Tree-shaking and code splitting
+- **Lazy Loading**: Dynamic imports for large libraries
+- **Caching**: Map state and layer data persistence
+- **Compression**: Gzip and Brotli support
+
+## 🔒 Security & Privacy
+
+### Privacy Features
+- **No Personal Data**: Zero collection of user information
+- **No Cookies**: Session-less operation
+- **Anonymous Analytics**: Only download counts tracked
+- **GDPR Compliant**: Explicit consent with detailed privacy policy
+- **Local Storage Only**: Map preferences stored locally
+
+### Security Measures
+- **Content Security Policy**: XSS protection
+- **HTTPS Only**: Secure transport layer
+- **Rate Limiting**: API abuse prevention
+- **Input Validation**: Sanitized user inputs
+- **Error Handling**: No information leakage
+
+## 📊 Monitoring
+
+### Health Checks
+```bash
+# Application status
+curl https://your-domain.com/api/health
+
+# Download statistics
+curl https://your-domain.com/api/analytics/count
+```
+
+### Logging
+- **Structured Logs**: JSON format for easy parsing
+- **Error Tracking**: Comprehensive error capture
+- **Performance Metrics**: Response times and success rates
+- **Analytics**: Anonymous usage statistics
+
+## 🛠 Development
+
+### Scripts
+
+```bash
+pnpm dev              # Development server
+pnpm build            # Production build
+pnpm preview          # Preview production build
+pnpm check            # Type checking
+pnpm lint             # ESLint
+pnpm format           # Prettier formatting
+pnpm test             # Run tests
+```
+
+### Contributing
+
+1. **Code Quality**: TypeScript, ESLint, Prettier
+2. **Testing**: Unit tests with Vitest
+3. **Documentation**: Comprehensive comments and README
+4. **Accessibility**: ARIA labels and keyboard navigation
+5. **Performance**: Bundle analysis and optimization
+
+## 🌍 Deployment
+
+### Production Platforms
+
+- **Docker**: Complete containerization with docker-compose
+- **Vercel**: Automatic deployments from Git
+- **Railway**: Simple container deployment
+- **DigitalOcean**: App Platform or Droplet deployment
+- **AWS**: ECS, Elastic Beanstalk, or EC2
+
+See [DEPLOYMENT.md](./DEPLOYMENT.md) for detailed deployment instructions.
+
+### Scaling
+
+- **Horizontal**: Multiple instances behind load balancer
+- **Caching**: Redis for API responses and sessions
+- **CDN**: Static asset distribution
+- **Database**: PostgreSQL for persistent analytics
+
+## 📈 Analytics & Usage
+
+The application implements **privacy-first analytics**:
+
+- ✅ **Download counts only** - No user tracking
+- ✅ **Anonymous data** - No IP addresses or user agents
+- ✅ **Minimal storage** - Simple file-based counter
+- ✅ **GDPR compliant** - No personal data collection
+- ✅ **Concurrent safe** - File locking for simultaneous users
+
+## 🤝 Credits
+
+- **Original SWZPLN**: Foundation and concept
+- **OpenStreetMap**: Map data and community
+- **Svelte Team**: Modern reactive framework
+- **Tailwind CSS**: Utility-first styling
+- **Leaflet**: Interactive mapping
+- **Conrec**: Contour generation library
+- **OpenTopoData**: Elevation data service
+
+## 📄 License
+
+[License information from original project]
+
+---
+
+**Built with ❤️ using modern web technologies while preserving the original vision of accessible, privacy-respecting city plan generation.**

@@ -1,103 +1,144 @@
 import { json } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
+import { readFile, writeFile, mkdir } from 'fs/promises';
+import { existsSync } from 'fs';
+import path from 'path';
 
-// Simple in-memory counter (in production, you'd use a database)
-let planCount = 0;
+// Simple file-based counter for maximum anonymity and simplicity
+const COUNTER_FILE = path.join(process.cwd(), 'data', 'counter.json');
+const LOCK_FILE = path.join(process.cwd(), 'data', 'counter.lock');
 
-// You could also store additional analytics like:
-// - Timestamp
-// - Format used (DXF/SVG/PDF)
-// - Location data (city/country)
-// - User agent
-// - Session ID
-
-interface AnalyticsData {
-    count: number;
-    timestamp: string;
-    userAgent?: string;
-    format?: string;
-    location?: string;
+interface CounterData {
+    total: number;
+    lastUpdated: string;
 }
 
-export const POST: RequestHandler = async ({ request, getClientAddress }) => {
+// Ensure data directory exists
+async function ensureDataDir() {
+    const dataDir = path.dirname(COUNTER_FILE);
+    if (!existsSync(dataDir)) {
+        await mkdir(dataDir, { recursive: true });
+    }
+}
+
+// Simple file-based locking for concurrent access
+async function withLock<T>(operation: () => Promise<T>): Promise<T> {
+    const maxAttempts = 50;
+    const lockDelay = 20; // ms
+    
+    for (let attempt = 0; attempt < maxAttempts; attempt++) {
+        try {
+            // Try to create lock file (atomic operation)
+            await writeFile(LOCK_FILE, process.pid.toString(), { flag: 'wx' });
+            
+            try {
+                // Perform the operation
+                return await operation();
+            } finally {
+                // Always release the lock
+                try {
+                    await import('fs/promises').then(fs => fs.unlink(LOCK_FILE));
+                } catch {
+                    // Ignore errors when releasing lock
+                }
+            }
+        } catch (error: any) {
+            if (error.code === 'EEXIST') {
+                // Lock file exists, wait and retry
+                await new Promise(resolve => setTimeout(resolve, lockDelay));
+                continue;
+            }
+            throw error;
+        }
+    }
+    
+    throw new Error('Could not acquire lock after maximum attempts');
+}
+
+async function readCounter(): Promise<CounterData> {
     try {
-        // Increment counter
-        planCount++;
+        const data = await readFile(COUNTER_FILE, 'utf-8');
+        return JSON.parse(data);
+    } catch {
+        // File doesn't exist or is invalid, return default
+        return {
+            total: 0,
+            lastUpdated: new Date().toISOString()
+        };
+    }
+}
+
+async function writeCounter(data: CounterData): Promise<void> {
+    await writeFile(COUNTER_FILE, JSON.stringify(data, null, 2), 'utf-8');
+}
+
+export const POST: RequestHandler = async ({ request }) => {
+    try {
+        await ensureDataDir();
         
-        // Get additional data from request
-        const userAgent = request.headers.get('user-agent');
-        const timestamp = new Date().toISOString();
-        const clientIP = getClientAddress();
-        
-        // Parse request body if present
-        let requestData: any = {};
+        // Parse request body to get format info (optional)
+        let format: string | undefined;
         try {
             const contentType = request.headers.get('content-type');
             if (contentType?.includes('application/json')) {
-                requestData = await request.json();
+                const body = await request.json();
+                format = body.format; // dxf, svg, pdf
             }
         } catch {
-            // Ignore JSON parsing errors
+            // Ignore JSON parsing errors - we don't require format info
         }
         
-        // Create analytics record
-        const analyticsData: AnalyticsData = {
-            count: planCount,
-            timestamp,
-            userAgent: userAgent || undefined,
-            format: requestData.format || undefined,
-            location: requestData.location || undefined
-        };
-        
-        // Log analytics (in production, save to database)
-        console.log('Plan Generated:', {
-            count: planCount,
-            timestamp,
-            userAgent,
-            clientIP,
-            format: requestData.format,
-            location: requestData.location
+        // Increment counter with file locking for concurrent safety
+        const result = await withLock(async () => {
+            const counter = await readCounter();
+            
+            const newCounter: CounterData = {
+                total: counter.total + 1,
+                lastUpdated: new Date().toISOString()
+            };
+            
+            await writeCounter(newCounter);
+            return newCounter;
         });
         
-        // In a real implementation, you would:
-        // 1. Save to database (PostgreSQL, MongoDB, etc.)
-        // 2. Send to analytics service (Google Analytics, Mixpanel, etc.)
-        // 3. Update real-time dashboard
-        // 4. Send notifications for milestones
-        
-        /*
-        Example database save:
-        await db.analytics.create({
-            data: {
-                type: 'plan_generated',
-                timestamp: new Date(),
-                userAgent,
-                clientIP,
-                metadata: requestData
-            }
-        });
-        */
+        // Log minimal information (no personal data)
+        console.log(`Plan generated: #${result.total}${format ? ` (${format})` : ''} at ${result.lastUpdated}`);
         
         return json({
             success: true,
-            data: analyticsData
+            count: result.total,
+            timestamp: result.lastUpdated
         });
         
     } catch (error) {
         console.error('Analytics error:', error);
         
-        // Don't fail the request if analytics fails
+        // Never fail the request due to analytics issues
         return json({
             success: false,
-            error: 'Analytics tracking failed'
-        }, { status: 500 });
+            error: 'Analytics temporarily unavailable'
+        }, { status: 200 }); // Return 200 to not break the download flow
     }
 };
 
 export const GET: RequestHandler = async () => {
-    // Return current statistics
-    return json({
-        totalPlans: planCount,
-        timestamp: new Date().toISOString()
-    });
+    try {
+        await ensureDataDir();
+        
+        const counter = await readCounter();
+        
+        return json({
+            total: counter.total,
+            lastUpdated: counter.lastUpdated
+        });
+        
+    } catch (error) {
+        console.error('Analytics read error:', error);
+        
+        return json({
+            total: 0,
+            lastUpdated: new Date().toISOString(),
+            error: 'Could not read analytics data'
+        });
+    }
 };

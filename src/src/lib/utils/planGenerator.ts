@@ -202,6 +202,7 @@ export class PlanGenerator {
     private onProgress: ProgressCallback | null = null;
     private onComplete: ((blob: Blob, filename: string) => void) | null = null;
     private onError: ((error: string) => void) | null = null;
+    private currentFormat: string = '';
 
     constructor() {
         // Initialize the web worker for plan generation
@@ -296,6 +297,7 @@ export class PlanGenerator {
         this.onProgress = onProgress || null;
         this.onComplete = onComplete || null;
         this.onError = onError || null;
+        this.currentFormat = format;
 
         const bounds = map.getBounds();
         const zoom = map.getZoom();
@@ -428,12 +430,18 @@ export function downloadFile(blob: Blob, filename: string): void {
 }
 
 /**
- * Count up usage statistics (if analytics is enabled)
+ * Count up usage statistics - only tracks download clicks for anonymity
  */
-export function countUp(): void {
-    // Send analytics request
-    fetch('/api/analytics/count', { method: 'POST' }).catch(() => {
-        // Ignore analytics errors
-        console.log('Plan generated');
+export function countUp(format?: string): void {
+    // Send minimal analytics - only the format, no personal data
+    fetch('/api/analytics/count', { 
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ format })
+    }).catch(() => {
+        // Analytics should never break the user experience
+        console.log(`Plan generated${format ? ` (${format})` : ''}`);
     });
 }

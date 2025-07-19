@@ -242,7 +242,8 @@
 			(blob: Blob, filename: string) => {
 				showProgressDialog = false;
 				downloadFile(blob, filename);
-				countUp();
+				// Track download with format for minimal analytics
+				countUp(format);
 			},
 			(error: string) => {
 				showProgressDialog = false;
