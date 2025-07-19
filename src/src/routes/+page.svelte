@@ -18,6 +18,7 @@
 	} from 'lucide-svelte';
 	import { saveMapPosition, loadMapPosition, searchLocation, isZoomSufficient } from '../lib/utils/mapUtils';
 	import { PlanGenerator, downloadFile, countUp, type LayerSettings } from '../lib/utils/planGenerator';
+	import { MapLayersManager } from '../lib/utils/mapLayers';
 
 	// Props from layout
 	let { darkMode, currentLang, toggleDarkMode, switchLanguage }: {
@@ -37,6 +38,7 @@
 	let searchResults: any[] = [];
 	let showSearchResults = false;
 	let planGenerator: PlanGenerator | null = null;
+	let mapLayersManager: MapLayersManager | null = null;
 
 	// Layer states
 	let layers: LayerSettings = {
@@ -93,6 +95,11 @@
 		if (planGenerator) {
 			planGenerator.destroy();
 		}
+		
+		// Clean up map layers manager
+		if (mapLayersManager) {
+			mapLayersManager.destroy();
+		}
 	});
 
 	async function initMap() {
@@ -113,6 +120,12 @@
 			attribution: '© <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
 		}).addTo(map);
 
+		// Initialize map layers manager
+		mapLayersManager = new MapLayersManager(map);
+		
+		// Apply initial layer settings
+		await mapLayersManager.updateLayers(layers);
+
 		// Load last position if available
 		const lastPos = loadMapPosition();
 		if (lastPos) {
@@ -123,6 +136,11 @@
 		// Save position on move
 		map.on('moveend', () => {
 			saveMapPosition(map);
+		});
+
+		// Update zoom level info for download buttons
+		map.on('zoomend', () => {
+			// Could add zoom level indicator here
 		});
 
 		// Perform search if we have a search value
@@ -189,10 +207,13 @@
 		}
 	}
 
-	function updateLayers() {
+	async function updateLayers() {
 		localStorage.setItem('layers', JSON.stringify(layers));
-		// Here you would update the map layers based on the layer state
-		// This would require implementing the actual layer functionality
+		
+		// Update map layers if manager is available
+		if (mapLayersManager) {
+			await mapLayersManager.updateLayers(layers);
+		}
 	}
 
 	async function generatePlan(format: 'dxf' | 'svg' | 'pdf') {
@@ -339,6 +360,12 @@
 								<span class="text-sm">{@html m[key]()}</span>
 							</label>
 						{/each}
+					</div>
+					
+					<div class="mt-4 p-3 bg-gray-50 dark:bg-gray-700 rounded-lg">
+						<p class="text-xs text-gray-600 dark:text-gray-400">
+							💡 Zoom in to level 13+ to see layer data on the map
+						</p>
 					</div>
 				</div>
 			</div>
@@ -552,5 +579,17 @@
 {/if}
 
 <style>
-	/* Add any additional component-specific styles here */
+	:global(.osm-popup) {
+		font-size: 12px;
+		line-height: 1.4;
+	}
+	
+	:global(.osm-popup strong) {
+		color: #333;
+		text-transform: capitalize;
+	}
+	
+	:global(.dark .osm-popup strong) {
+		color: #fff;
+	}
 </style>

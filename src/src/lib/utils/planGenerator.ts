@@ -16,6 +16,184 @@ export interface ProgressCallback {
     (text: string, percent: number): void;
 }
 
+// OSM data download functionality
+async function downloadOSMData(bounds: [number, number, number, number], layers: LayerSettings, progressCallback: ProgressCallback): Promise<any> {
+    const enabledLayers = Object.entries(layers)
+        .filter(([key, enabled]) => enabled)
+        .map(([key]) => {
+            // Map our layer names to OSM layer names
+            switch (key) {
+                case 'buildings': return 'building';
+                case 'green': return 'green';
+                case 'water': return 'water';
+                case 'forest': return 'forest';
+                case 'land': return 'farmland';
+                case 'roads': return 'highway';
+                case 'rails': return 'railway';
+                case 'contours': return 'contours';
+                default: return key;
+            }
+        });
+
+    // Construct Overpass API query
+    const bbox = [bounds[2], bounds[1], bounds[0], bounds[3]].toString();
+    let query = `[out:json][bbox:${bbox}];(`;
+    
+    enabledLayers.forEach((layer) => {
+        switch (layer) {
+            case "building":
+                query += 'nwr["building"];';
+                break;
+            case "green":
+                query += 'nwr["leisure"="park"];';
+                query += 'nwr["landuse"="allotments"];';
+                query += 'nwr["landuse"="meadow"];';
+                query += 'nwr["landuse"="orchard"];';
+                query += 'nwr["landuse"="vineyard"];';
+                query += 'nwr["landuse"="cemetery"];';
+                query += 'nwr["landuse"="grass"];';
+                query += 'nwr["landuse"="plant_nursery"];';
+                query += 'nwr["landuse"="recreation_ground"];';
+                query += 'nwr["landuse"="village_green"];';
+                break;
+            case "water":
+                query += 'nwr["natural"="water"];';
+                query += 'nwr["waterway"];';
+                break;
+            case "forest":
+                query += 'nwr["landuse"="forest"];';
+                query += 'nwr["natural"="wood"];';
+                break;
+            case "farmland":
+                query += 'nwr["landuse"="farmland"];';
+                break;
+            case "highway":
+                query += 'nwr["highway"];';
+                break;
+            case "railway":
+                query += 'nwr["railway"];';
+                break;
+        }
+    });
+    
+    query += ');out geom;';
+    
+    const overpassUrl = 'https://overpass.private.coffee/api/interpreter';
+    const fallbackUrl = 'https://overpass-api.de/api/interpreter';
+    
+    progressCallback('Downloading map data...', 20);
+    
+    try {
+        // Try primary API first
+        const response = await fetch(overpassUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/x-www-form-urlencoded',
+            },
+            body: `data=${encodeURIComponent(query)}`
+        });
+        
+        if (!response.ok) {
+            throw new Error(`HTTP ${response.status}`);
+        }
+        
+        const reader = response.body!.getReader();
+        const contentLength = response.headers.get('Content-Length');
+        let receivedLength = 0;
+        const chunks: Uint8Array[] = [];
+        
+        while (true) {
+            const { done, value } = await reader.read();
+            if (done) break;
+            
+            chunks.push(value);
+            receivedLength += value.length;
+            
+            if (contentLength) {
+                const progress = Math.round((receivedLength / parseInt(contentLength)) * 30) + 20;
+                progressCallback('Downloading map data...', progress);
+            }
+        }
+        
+        // Combine chunks
+        const allChunks = new Uint8Array(receivedLength);
+        let position = 0;
+        for (const chunk of chunks) {
+            allChunks.set(chunk, position);
+            position += chunk.length;
+        }
+        
+        const result = new TextDecoder('utf-8').decode(allChunks);
+        progressCallback('Map data downloaded', 50);
+        
+        return JSON.parse(result);
+        
+    } catch (error) {
+        console.warn('Primary Overpass API failed, trying fallback...', error);
+        
+        // Try fallback API
+        try {
+            const response = await fetch(fallbackUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                },
+                body: `data=${encodeURIComponent(query)}`
+            });
+            
+            if (!response.ok) {
+                throw new Error(`HTTP ${response.status}`);
+            }
+            
+            const data = await response.json();
+            progressCallback('Map data downloaded', 50);
+            return data;
+            
+        } catch (fallbackError) {
+            throw new Error(`Failed to download OSM data: ${fallbackError.message}`);
+        }
+    }
+}
+
+// Height data download using local API
+async function downloadHeightData(bounds: [number, number, number, number], progressCallback: ProgressCallback): Promise<any> {
+    progressCallback('Downloading height data...', 55);
+    
+    try {
+        const response = await fetch('/api/heights', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
+                north: bounds[0],
+                west: bounds[1],
+                south: bounds[2],
+                east: bounds[3],
+                resolution: 50
+            })
+        });
+        
+        if (!response.ok) {
+            throw new Error(`Height API error: ${response.status}`);
+        }
+        
+        const result = await response.json();
+        
+        if (!result.success) {
+            throw new Error(result.error || 'Failed to fetch height data');
+        }
+        
+        progressCallback('Height data downloaded', 58);
+        return result.data.heightMatrix;
+        
+    } catch (error) {
+        console.warn('Failed to download height data:', error);
+        // Return null to indicate no height data available
+        return null;
+    }
+}
+
 /**
  * Generate a city plan in the specified format
  */
@@ -35,23 +213,26 @@ export class PlanGenerator {
             this.worker = new Worker('/js/osm/gen_swzpln_worker.js');
             
             this.worker.onmessage = (event) => {
-                const { type, data } = event.data;
+                const { type, task, status, data, format, result, filename, message } = event.data;
                 
                 switch (type) {
                     case 'progress':
                         if (this.onProgress) {
-                            this.onProgress(data.text, data.percent);
+                            const progressText = this.getProgressText(task, status);
+                            const progressPercent = this.getProgressPercent(task, data);
+                            this.onProgress(progressText, progressPercent);
                         }
                         break;
                     case 'complete':
                         if (this.onComplete) {
-                            const blob = new Blob([data.content], { type: data.mimeType });
-                            this.onComplete(blob, data.filename);
+                            const mimeType = this.getMimeType(format);
+                            const blob = new Blob([result], { type: mimeType });
+                            this.onComplete(blob, filename);
                         }
                         break;
                     case 'error':
                         if (this.onError) {
-                            this.onError(data.message);
+                            this.onError(message);
                         }
                         break;
                 }
@@ -64,6 +245,40 @@ export class PlanGenerator {
             };
         } catch (error) {
             console.error('Failed to initialize worker:', error);
+        }
+    }
+
+    private getProgressText(task: string, status: string): string {
+        switch (task) {
+            case 'init':
+                return 'Initializing...';
+            case 'processing':
+                return 'Processing map data...';
+            case 'contours':
+                return 'Generating contour lines...';
+            case 'converting':
+                return status;
+            case 'complete':
+                return 'Download starting...';
+            default:
+                return status || 'Processing...';
+        }
+    }
+
+    private getProgressPercent(task: string, data?: any): number {
+        switch (task) {
+            case 'init':
+                return 60;
+            case 'processing':
+                return data ? 60 + Math.round((data.current / data.total) * 20) : 70;
+            case 'contours':
+                return 80;
+            case 'converting':
+                return data ? 80 + Math.round((data.current / data.total) * 15) : 90;
+            case 'complete':
+                return 100;
+            default:
+                return 70;
         }
     }
 
@@ -111,99 +326,49 @@ export class PlanGenerator {
                 this.onProgress('Initializing...', 0);
             }
 
-            // For now, we'll use the existing generation logic
-            // In a real implementation, you would send data to the worker
-            await this.simulateGeneration(format, boundsArray, layers);
+            // Download OSM data
+            const osmData = await downloadOSMData(boundsArray, layers, this.onProgress || (() => {}));
+            
+            // Download height data if contours are enabled
+            let heightData = null;
+            if (layers.contours) {
+                heightData = await downloadHeightData(boundsArray, this.onProgress || (() => {}));
+            }
+
+            // Convert layer settings to array format for worker
+            const enabledLayers = Object.entries(layers)
+                .filter(([key, enabled]) => enabled)
+                .map(([key]) => {
+                    switch (key) {
+                        case 'buildings': return 'building';
+                        case 'green': return 'green';
+                        case 'water': return 'water';
+                        case 'forest': return 'forest';
+                        case 'land': return 'farmland';
+                        case 'roads': return 'highway';
+                        case 'rails': return 'railway';
+                        case 'contours': return 'contours';
+                        default: return key;
+                    }
+                });
+
+            // Send data to worker for processing
+            if (this.worker) {
+                this.worker.postMessage({
+                    format,
+                    osm_json: osmData,
+                    hm_matrix: heightData,
+                    bounds: boundsArray,
+                    layers: enabledLayers,
+                    zoom,
+                    scale: 1 // Default scale, could be configurable
+                });
+            }
 
         } catch (error) {
             if (this.onError) {
                 this.onError(`Generation failed: ${error.message}`);
             }
-        }
-    }
-
-    /**
-     * Simulate plan generation for demo purposes
-     * In a real implementation, this would interface with the actual OSM data processing
-     */
-    private async simulateGeneration(
-        format: string,
-        bounds: [number, number, number, number],
-        layers: LayerSettings
-    ): Promise<void> {
-        const steps = [
-            { text: '1 / 4 - Initializing...', percent: 10 },
-            { text: '2 / 4 - Downloading map data...', percent: 40 },
-            { text: '3 / 4 - Processing map data...', percent: 70 },
-            { text: `4 / 4 - Converting to ${format.toUpperCase()}...`, percent: 90 },
-            { text: 'Download starting...', percent: 100 }
-        ];
-
-        for (let i = 0; i < steps.length; i++) {
-            await new Promise(resolve => setTimeout(resolve, 1500));
-            if (this.onProgress) {
-                this.onProgress(steps[i].text, steps[i].percent);
-            }
-        }
-
-        // Simulate file generation
-        const mockContent = this.generateMockFile(format);
-        const mimeType = this.getMimeType(format);
-        const filename = `schwarzplan_${Date.now()}.${format}`;
-
-        if (this.onComplete) {
-            const blob = new Blob([mockContent], { type: mimeType });
-            this.onComplete(blob, filename);
-        }
-    }
-
-    /**
-     * Generate mock file content for demonstration
-     */
-    private generateMockFile(format: string): string {
-        switch (format) {
-            case 'svg':
-                return `<?xml version="1.0" encoding="UTF-8"?>
-<svg xmlns="http://www.w3.org/2000/svg" width="1000" height="1000" viewBox="0 0 1000 1000">
-    <rect width="1000" height="1000" fill="white"/>
-    <rect x="100" y="100" width="200" height="150" fill="black"/>
-    <rect x="400" y="200" width="300" height="200" fill="black"/>
-    <rect x="150" y="500" width="250" height="180" fill="black"/>
-    <text x="500" y="50" text-anchor="middle" font-family="Arial" font-size="24">Schwarzplan Demo</text>
-</svg>`;
-            case 'dxf':
-                return `0
-SECTION
-2
-HEADER
-9
-$ACADVER
-1
-AC1009
-0
-ENDSEC
-0
-SECTION
-2
-ENTITIES
-0
-LINE
-8
-0
-10
-100.0
-20
-100.0
-11
-300.0
-21
-100.0
-0
-ENDSEC
-0
-EOF`;
-            default:
-                return 'Mock plan data';
         }
     }
 
@@ -266,10 +431,9 @@ export function downloadFile(blob: Blob, filename: string): void {
  * Count up usage statistics (if analytics is enabled)
  */
 export function countUp(): void {
-    // In the original implementation, this would send a request to track usage
-    // For now, we'll just log it
-    console.log('Plan generated');
-    
-    // You could implement analytics here, e.g.:
-    // fetch('/api/count', { method: 'POST' });
+    // Send analytics request
+    fetch('/api/analytics/count', { method: 'POST' }).catch(() => {
+        // Ignore analytics errors
+        console.log('Plan generated');
+    });
 }
