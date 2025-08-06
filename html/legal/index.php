@@ -1,8 +1,7 @@
 <?php
-$isAjax = isset($_SERVER['HTTP_X_REQUESTED_WITH']) and
-    strtolower($_SERVER['HTTP_X_REQUESTED_WITH']) === 'xmlhttprequest';
-if (!$isAjax) {
-?>
+($isAjax = isset($_SERVER["HTTP_X_REQUESTED_WITH"])) and
+    strtolower($_SERVER["HTTP_X_REQUESTED_WITH"]) === "xmlhttprequest";
+if (!$isAjax) { ?>
 
     <head>
         <meta charset="UTF-8">
@@ -14,15 +13,16 @@ if (!$isAjax) {
         <meta name="title" content="swzpln.de | Impressum" />
         <meta name="author" content="Timo Bilhöfer" />
         <meta name="publisher" content="Timo Bilhöfer" />
-        <meta name="copyright" content="Timo Bilhöfer <?php echo date("Y"); ?>" />
+        <meta name="copyright" content="Timo Bilhöfer <?php echo date(
+            "Y",
+        ); ?>" />
         <meta name="robots" content="NOINDEX" />
         <meta name="language" http-equiv="content-language" content="de" />
     </head>
 
     <body id="legal">
-    <?php
-}
-    ?>
+    <?php }
+?>
     <h2 id="imprint">Impressum</h2>
     <p>Angaben gemäß § 5 TMG</p>
     <p>Timo Bilhöfer <br>
@@ -55,7 +55,9 @@ if (!$isAjax) {
     Website Impressum teilweise von <a href="https://www.impressum-generator.de">impressum-generator.de</a>
 
     <p>Kartendaten: &copy;
-        <?php echo date("Y"); ?> <a target="_blank" href="https://osm.org/copyright">OpenStreetMap</a> contributors
+        <?php echo date(
+            "Y",
+        ); ?> <a target="_blank" href="https://osm.org/copyright">OpenStreetMap</a> contributors
     </p>
     <p>Overpass-API bereitgestellt von <a target="_blank" href="https://overpass.kumi.systems/">kumi.systems</a></p>
 
@@ -79,7 +81,7 @@ if (!$isAjax) {
 <p>Wühlischstr. 20</p>
 <p>10245 Berlin</p>
 <p>Deutschland</p>
-<p>E-Mail: swzpln@themom.studio</p>
+<p>E-Mail: swzpln@holderbilhoefer.com</p>
 <p>Website: swzpln.de, opencityplans.com</p>
 
 <h4>3. Cookies</h4>
@@ -133,4 +135,5 @@ if (!$isAjax) {
     }
 
     die();
-    ?>
+
+?>
