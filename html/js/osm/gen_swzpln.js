@@ -37,7 +37,7 @@ function bounds2array(bounds) {
 
 // trigger the counter
 function countUp(){
-    $.ajax({url: "/c/?count=1"});
+    $.get("/c/?count=1");
 }
 
 export function cancelGen() {
