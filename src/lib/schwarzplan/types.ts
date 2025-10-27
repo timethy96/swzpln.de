@@ -92,6 +92,8 @@ export interface GeometryObject {
 	type: Layer;
 	path: Coordinate[];
 	role?: string;
+	// For highways: the specific highway type (motorway, primary, etc.)
+	highwayType?: string;
 }
 
 // ============================================================================
@@ -166,6 +168,7 @@ export interface WorkerRequest {
 	layers: Layer[];
 	zoom: number;
 	scale?: number;
+	contourInterval?: number;
 }
 
 export interface WorkerProgressMessage {

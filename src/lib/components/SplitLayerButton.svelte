@@ -11,7 +11,9 @@
         children, 
         initialSelected = false, 
         onToggle = undefined,
-        dropdownItems = [] // Array of {icon, label, id, color?} objects
+        dropdownItems = [], // Array of {icon, label, id, color?, value?, onSelect?} objects
+        onDropdownItemClick = undefined, // Optional callback for when dropdown item is clicked
+        selectedValue = undefined // Value to highlight in dropdown
     } = $props();
 
     let selected = $state(initialSelected);
@@ -28,8 +30,14 @@
     // Dropdown item click handler
     function handleDropdownItemClick(item: any) {
         open = false;
-        // You can extend this to handle item-specific logic
-        console.log('Dropdown item clicked:', item);
+        // Call the callback if provided
+        if (onDropdownItemClick) {
+            onDropdownItemClick(item);
+        }
+        // Also call item's own onSelect if it has one
+        if (item.onSelect) {
+            item.onSelect(item);
+        }
     }
 </script>
 
@@ -63,15 +71,21 @@
         <Popover.Content class="w-56 p-2" align="start">
             <div class="space-y-1">
                 {#each dropdownItems as item}
+                    {@const isSelected = item.value !== undefined && item.value === selectedValue}
                     <button
-                        class="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg hover:bg-gray-100 transition-colors duration-200"
+                        class="flex items-center gap-2 w-full px-3 py-2 text-sm rounded-lg hover:bg-gray-100 dark:hover:bg-gray-800 transition-colors duration-200 {isSelected ? 'bg-gray-100 dark:bg-gray-800 font-semibold' : ''}"
                         onclick={() => handleDropdownItemClick(item)}
                     >
                         {#if item.icon}
                             {@const ItemIcon = item.icon}
                             <ItemIcon class="h-4 w-4" style={item.color ? `color: ${item.color}` : ''} />
                         {/if}
-                        <span>{item.label}</span>
+                        <span class="flex-1 text-left">{item.label}</span>
+                        {#if isSelected}
+                            <svg class="h-4 w-4 text-gray-600 dark:text-gray-300" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+                            </svg>
+                        {/if}
                     </button>
                 {/each}
             </div>

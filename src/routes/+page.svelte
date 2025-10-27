@@ -3,6 +3,7 @@
 	import Layers from '$lib/components/Layers.svelte';
 	import MapArea from '$lib/components/MapArea.svelte';
 	import NavRail from '$lib/components/NavRail.svelte';
+	import PrivacyConsent from '$lib/components/PrivacyConsent.svelte';
 	import { Globe, Map, Moon, Heart, CodeXml, FileText, CircleQuestionMark, ShoppingCart } from 'lucide-svelte';
 
 	let isOpen = $state(false);
@@ -15,7 +16,7 @@
 		{ icon: Moon, label: 'Dark Mode', onClick: () => {
 			document.documentElement.classList.toggle('dark');
 		} },
-		{ icon: ShoppingCart, label: 'Fanshop', href: 'https://shop.swzpln.de' },
+		//{ icon: ShoppingCart, label: 'Fanshop', href: 'https://shop.swzpln.de' },
 		{ icon: CodeXml, label: 'Quellcode (github.com)', href: 'https://github.com/timethy96/swzpln.de' },
 		{ icon: FileText, label: 'Impressum & Datenschutz', href: '/impressum' },
 
@@ -30,6 +31,9 @@
 		<MapArea />
 	</div>
 </div>
+
+<!-- Privacy consent dialog -->
+<PrivacyConsent />
 
 <style>
 	:global(body) {

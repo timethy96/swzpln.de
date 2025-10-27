@@ -1,38 +1,62 @@
-# sv
+[![ko-fi](https://ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/S6S3EEUDS)
 
-Everything you need to build a Svelte project, powered by [`sv`](https://github.com/sveltejs/cli).
+# swzpln | opencityplans | plan - generator
 
-## Creating a project
+## Abstract
 
-If you're seeing this, you've probably already done this step. Congrats!
+The webapp swzpln.de / opencityplans.com provides uncomplicated and permanently free access to plan material for everyone. In addition to ground figure plans, thematic layers, such as forests or water bodies, can also be added to the plan. The map data is created instantly and can be downloaded in SVG, PDF and DXF formats.
 
-```sh
-# create a new project in the current directory
-npx sv create
+The extensive database of openstreetmaps.org is used as the basis for the map material. This way, ground figure plans of places that are not in the general interest of the world can also be created. In this way, global justice in the archiving and documentation of city maps is also aimed for. The plans are created locally directly on the computer via TypeScript Web Workers, so no data is sent to swzpln.de / opencityplans.com. swzpln.de / opencityplans.com respects the privacy of the users and does not collect any personal data.
 
-# create a new project in my-app
-npx sv create my-app
-```
+## Quick Start
 
-## Developing
+1. Copy `.env.example` to `.env` and add your Open Topo Data API key
+2. Install dependencies: `pnpm install`
+3. Run dev server: `pnpm dev`
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## Tech Stack
 
-```sh
-npm run dev
+### Frontend
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
+Built with **SvelteKit**, **TypeScript**, and **Tailwind CSS**. Uses shadcn-svelte for UI components.
 
-## Building
+### Map Generation
 
-To create a production version of your app:
+All schwarzplan generation happens **client-side** using TypeScript Web Workers. Core modules are in `src/lib/schwarzplan/`:
+- OSM data fetching and parsing
+- Elevation data and contour generation
+- Export to DXF, SVG, PDF formats
 
-```sh
-npm run build
-```
+## Credits
 
-You can preview the production build with `npm run preview`.
+(c) Timo Bilhöfer aka timethy96
 
-> To deploy your app, you may need to install an [adapter](https://svelte.dev/docs/kit/adapters) for your target environment.
+Published under GNU AFFERO GENERAL PUBLIC LICENSE v3
+
+Thanks to Nicholas Coulange aka Vestibule for contributing the search functions as well as the positions saving functions.
+
+**Libraries:**
+
+[SvelteKit](https://kit.svelte.dev/) - MIT License
+
+[shadcn-svelte](https://www.shadcn-svelte.com/) - MIT License
+
+[MapLibre GL](https://maplibre.org/) - BSD-3-Clause License
+
+[@tarikjabiri/dxf](https://github.com/tarikjabiri/dxf) - MIT License
+
+[jsPDF](https://github.com/parallax/jsPDF) - MIT License
+
+[ml-conrec](https://github.com/mljs/conrec/) - MIT License
+
+
+
+**Map Data:**
+
+Map Tiles: [CARTO](https://carto.com/) - Basemaps
+
+Overpass API: [overpass.private.coffee](https://overpass.private.coffee/) - Operated by Private.coffee
+
+Map Data: [(c) OpenStreetMap contributors](https://www.openstreetmap.org/copyright)
+
+Elevation Data: [Open Topo Data API](https://www.opentopodata.org/) with Mapzen dataset

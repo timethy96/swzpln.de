@@ -19,6 +19,15 @@ export const mapLocation = writable<MapLocation>(initialLocation);
 export const mapExtent = writable<MapExtent | null>(null);
 export const is3DMode = writable<boolean>(false);
 
+// Current visible map bounds (updated when map moves)
+export interface CurrentBounds {
+    north: number;
+    south: number;
+    east: number;
+    west: number;
+}
+export const currentMapBounds = writable<CurrentBounds | null>(null);
+
 // Helper function to update map location
 export function setMapLocation(coordinates: [number, number], zoom: number = 14) {
     mapLocation.set({

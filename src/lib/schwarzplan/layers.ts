@@ -13,7 +13,7 @@ export const LAYER_CONFIG: Record<Layer, LayerConfig> = {
 	},
 	highway: {
 		color: '#828282',
-		fillable: false,
+		fillable: true, // Render as filled polygons with width
 		overpassQuery: 'nwr["highway"];',
 		lineType: 'CONTINUOUS',
 		dxfColor: 253
