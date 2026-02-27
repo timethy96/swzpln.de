@@ -3,6 +3,8 @@
 	import { Badge } from '$lib/components/ui/badge';
 	import { Menu, X } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
+	import { onMount } from 'svelte';
+	import * as m from '$lib/paraglide/messages';
 
 	// Props for controlling the drawer
 	let { 
@@ -18,6 +20,27 @@
 			active?: boolean;
 		}>;
 	} = $props();
+
+	// Download counter
+	let downloadCount = $state(0);
+	
+	// Fetch download count
+	async function fetchDownloadCount() {
+		try {
+			const response = await fetch('/api/counter/total');
+			const data = await response.json();
+			downloadCount = data.total;
+		} catch (error) {
+			console.warn('Failed to fetch download count:', error);
+		}
+	}
+	
+	// Fetch on mount and poll every 5 seconds
+	onMount(() => {
+		fetchDownloadCount();
+		const interval = setInterval(fetchDownloadCount, 5000);
+		return () => clearInterval(interval);
+	});
 
 	// Close drawer when clicking backdrop
 	function closeDrawer() {
@@ -53,7 +76,7 @@
 
 <!-- Navigation Rail -->
 <nav 
-	class="left-0 top-0 h-full z-50 rounded-r-3xl bg-[var(--background)] transition-all duration-300 ease-in-out w-[64px] relative shrink-0"
+	class="left-0 top-0 h-screen z-50 rounded-r-3xl bg-[var(--background)] transition-all duration-300 ease-in-out w-[64px] relative shrink-0"
 	class:w-[320px]={isOpen}
 	class:absolute={isOpen}
 	class:md:relative={isOpen}
@@ -84,11 +107,11 @@
 	<div class="absolute bottom-4 left-0 right-0 h-40 flex flex-col items-center justify-end overflow-hidden">
 		{#if isOpen}
 			<div class="px-3 py-5 w-[312px] text-sm text-muted-foreground leading-tight select-none">
-				<span>© {new Date().getFullYear()} SWZPLN<br>
-				erstellt von <a href="https://timo.bilhoefer.de" target="_blank" class="text-primary">Timo Bilhöfer</a><br>
-				unterstützt durch <a href="https://holderbilhoefer.com" target="_blank" class="text-primary">Holder Bilhöfer Architekten</a>.<br><br>
-				Diese Webseite ist Quelloffen<br>
-				und unter der <a href="https://github.com/timethy96/swzpln.de/blob/main/LICENSE" target="_blank" class="text-primary">AGPL-3</a> Lizenz veröffentlicht.</span>
+				<span>{m.nav_footer_copyright({year: new Date().getFullYear().toString()})}<br>
+				{m.nav_footer_created_by()} <a href="https://timo.bilhoefer.de" target="_blank" class="text-primary">Timo Bilhöfer</a><br>
+				{m.nav_footer_supported_by()} <a href="https://holderbilhoefer.com" target="_blank" class="text-primary">Holder Bilhöfer Architekten</a>.<br><br>
+				{m.nav_footer_open_source()}<br>
+				{m.nav_footer_license()}</span>
 			</div>
 		{/if}
 		<Badge 
@@ -96,7 +119,7 @@
 			class="font-mono tabular-nums cursor-pointer {isOpen ? 'text-sm px-3 py-1' : 'text-[10px] px-2 py-1 min-w-12'}"
 			onclick={() => isOpen = !isOpen}
 		>
-			164573+{isOpen ? ' Pläne erstellt' : ''}
+			{downloadCount.toLocaleString('de-DE')}+{isOpen ? ' ' + m.nav_footer_plans_created() : ''}
 		</Badge> 
 	</div>
 </nav>

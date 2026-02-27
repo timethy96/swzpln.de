@@ -1,148 +1,348 @@
-// Convert OSM JSON data to geometry objects
-
 import type {
 	Bounds,
 	Coordinate,
 	GeometryObject,
 	OSMData,
-	OSMElement,
-	ProgressCallback
+	ProgressCallback,
+	BuildingMetadata,
+	OSMRelation
 } from '../types';
 import { classifyTags } from '../layers';
 import { latLngToXY } from '../geometry/coordinates';
+import * as m from '$lib/paraglide/messages';
+import type { Layer } from '$lib/schwarzplan/types';
+import { convertAndMergeRoads } from '../roads';
 
-/**
- * Convert OSM JSON data to an array of geometry objects
- */
+type ParsedWay = {
+	layer: Layer | null;
+	nodes: number[];
+	tags?: Record<string, string>;
+	relationId?: number;
+};
+
+// --- Main Export ---
+
 export function osmDataToGeometry(
 	osmData: OSMData,
 	bounds: Bounds,
 	onProgress?: ProgressCallback
 ): GeometryObject[] {
-	const elements = osmData.elements;
-	const totalElements = elements.length;
+	notify(onProgress, 0, m.progress_osm_parse());
 
-	onProgress?.({
-		step: 'osm-parse',
-		percent: 0,
-		message: 'OSM-Daten werden analysiert...'
-	});
+	// 1. Index Elements
+	const { nodes, ways, relations } = indexElements(osmData, bounds);
 
-	// Index nodes by ID for quick lookup
-	const nodes = new Map<number, Coordinate>();
-	const ways = new Map<number, { layer: string | null; nodes: number[]; tags?: Record<string, string> }>();
-	const relations: Array<{ layer: string | null; members: Array<{ ref: number; role: string }> }> =
-		[];
-
-	let processedCount = 0;
-
-	// First pass: process all elements
-	for (const element of elements) {
-		switch (element.type) {
-			case 'node':
-				// Convert node coordinates to XY
-				const coord = latLngToXY(bounds, element.lat, element.lon);
-				nodes.set(element.id, coord);
-				break;
-
-			case 'way':
-				// Store way with its nodes and tags
-				const wayLayer = classifyTags(element.tags);
-				ways.set(element.id, {
-					layer: wayLayer,
-					nodes: element.nodes,
-					tags: element.tags
-				});
-				break;
-
-			case 'relation':
-				// Store relation with its members
-				const relLayer = classifyTags(element.tags);
-				relations.push({
-					layer: relLayer,
-					members: element.members
-						.filter((m) => m.type === 'way')
-						.map((m) => ({ ref: m.ref, role: m.role }))
-				});
-				break;
-		}
-
-		// Update progress every 100 elements
-		processedCount++;
-		if (processedCount % 100 === 0 && onProgress) {
-			const percent = Math.round((processedCount / totalElements) * 50); // First 50%
-			onProgress({
-				step: 'osm-parse',
-				percent,
-				message: `Elemente werden verarbeitet: ${processedCount}/${totalElements}`
-			});
-		}
-	}
-
-	// Second pass: apply relation tags to ways
-	for (const relation of relations) {
-		if (!relation.layer) continue;
-
-		for (const member of relation.members) {
-			const way = ways.get(member.ref);
-			if (way) {
-				// Override way layer with relation layer
-				ways.set(member.ref, {
-					...way,
-					layer: relation.layer
-				});
-			}
-		}
-	}
-
-	// Third pass: convert ways to geometry objects
 	const geometryObjects: GeometryObject[] = [];
-	let wayCount = 0;
-	const totalWays = ways.size;
 
-	for (const [wayId, way] of ways) {
-		if (!way.layer) continue;
+	// 2. Process Relations (Building parts grouping & Multipolygon stitching)
+	for (const rel of relations) {
+		const result = processRelation(rel, ways, nodes);
+		if (result) geometryObjects.push(...result);
+	}
 
-		// Build path from node coordinates
-		const path: Coordinate[] = [];
-		for (const nodeId of way.nodes) {
-			const coord = nodes.get(nodeId);
-			if (coord) {
-				// Copy coordinate to avoid mutations
-				path.push({ x: coord.x, y: coord.y });
+	// 3. Process Ways (Standard geometry)
+	const linearLayers = ['highway', 'railway', 'waterway'];
+	const linearSegments: Map<string, Coordinate[][]> = new Map();
+
+	const wayObjects = Array.from(ways.values())
+		.filter(w => w.layer !== null) // Skip suppressed ways
+		.map(w => {
+			// If it's a linear layer, we buffer it for stitching
+			if (linearLayers.includes(w.layer!) && !w.tags?.area) {
+				// If special highway type (e.g. roundabout), maybe keep separate?
+				// But for standard plan viewing, stitching is better.
+				// We group by "layer" + "highwayType" (if available) to not stitch unrelated things?
+				// Actually, just layer might be enough, but usually we want to stitch segments of same type.
+				// For simplicity, let's stitch per layer.
+				// Or maybe per layer+type? e.g. primary road with primary road.
+				const key = w.layer + (w.tags?.highway ? `:${w.tags.highway}` : '');
+
+				const coords = getWayCoords(w, nodes);
+				if (coords.length > 1) {
+					if (!linearSegments.has(key)) linearSegments.set(key, []);
+					linearSegments.get(key)!.push(coords);
+				}
+				return null; // Deferred
 			}
-		}
 
-		// Only add if we have a valid path
-		if (path.length > 0) {
+			return createWayObject(w, nodes);
+		})
+		.filter((o): o is GeometryObject => o !== null);
+
+	geometryObjects.push(...wayObjects);
+
+	// 4. Process Stitched Linear Segments
+	for (const [key, segments] of linearSegments) {
+		const [layer, type] = key.split(':');
+		// Highways are not "closedOnly", so we pass false
+		const stitched = stitchWays(segments, false);
+
+		for (const path of stitched) {
 			geometryObjects.push({
-				type: way.layer as any,
+				type: layer as any,
 				path,
-				role: undefined,
-				// Capture highway type for width calculation
-				highwayType: way.tags?.highway
-			});
-		}
-
-		// Update progress every 100 ways
-		wayCount++;
-		if (wayCount % 100 === 0 && onProgress) {
-			const percent = 50 + Math.round((wayCount / totalWays) * 50); // Second 50%
-			onProgress({
-				step: 'osm-parse',
-				percent,
-				message: `Geometrien werden aufgebaut: ${wayCount}/${totalWays}`
+				highwayType: type
 			});
 		}
 	}
 
-	onProgress?.({
-		step: 'osm-parse',
-		percent: 100,
-		message: `Abgeschlossen: ${geometryObjects.length} Objekte`
-	});
+	notify(onProgress, 95, `Merging roads...`);
 
-	return geometryObjects;
+	// 5. Buffer and Union Roads
+	// This converts linear highways into buffered polygons and merges adjacent ones
+	const mergedObjects = convertAndMergeRoads(geometryObjects);
+
+	notify(onProgress, 100, `Done: ${mergedObjects.length} objects`);
+	return mergedObjects;
 }
 
+// --- Indexing ---
 
+function indexElements(osmData: OSMData, bounds: Bounds) {
+	const nodes = new Map<number, Coordinate>();
+	const ways = new Map<number, ParsedWay>();
+	const relations: OSMRelation[] = [];
+
+	for (const el of osmData.elements) {
+		if (el.type === 'node') {
+			nodes.set(el.id, latLngToXY(bounds, el.lat, el.lon));
+		} else if (el.type === 'way') {
+			ways.set(el.id, {
+				layer: resolveLayer(classifyTags(el.tags)),
+				nodes: el.nodes,
+				tags: el.tags
+			});
+		} else if (el.type === 'relation') {
+			relations.push(el);
+		}
+	}
+	return { nodes, ways, relations };
+}
+
+// --- Relation Processing ---
+
+function processRelation(
+	rel: OSMRelation,
+	ways: Map<number, ParsedWay>,
+	nodes: Map<number, Coordinate>
+): GeometryObject[] | null {
+	const layer = classifyTags(rel.tags);
+
+	// A. Building Relations (Group parts)
+	if (layer === 'building' || rel.tags?.building) {
+		linkBuildingParts(rel, ways);
+		// Fall through: A building relation might also define geometry (e.g. outline/multipolygon)
+	}
+
+	// B. Multipolygon Geometry (Stitching)
+	if (layer && rel.tags?.type === 'multipolygon') {
+		return createMultipolygonObjects(rel, layer, ways, nodes);
+	}
+
+	return null;
+}
+
+function linkBuildingParts(rel: OSMRelation, ways: Map<number, ParsedWay>) {
+	for (const member of rel.members) {
+		if (member.type !== 'way') continue;
+		const way = ways.get(member.ref);
+		if (way?.tags?.['building:part'] === 'yes') {
+			way.relationId = rel.id;
+			way.layer = 'building';
+		}
+	}
+}
+
+function createMultipolygonObjects(
+	rel: OSMRelation,
+	layer: Layer,
+	ways: Map<number, ParsedWay>,
+	nodes: Map<number, Coordinate>
+): GeometryObject[] {
+	const outerWays: Coordinate[][] = [];
+	const innerWays: Coordinate[][] = [];
+
+	for (const member of rel.members) {
+		if (member.type !== 'way') continue;
+		const way = ways.get(member.ref);
+		if (!way) continue;
+
+		const coords = getWayCoords(way, nodes);
+		if (coords.length < 2) continue;
+
+		if (member.role === 'outer') outerWays.push(coords);
+		else if (member.role === 'inner') innerWays.push(coords);
+
+		// Suppress member drawing if it matches parent layer to avoid dupes
+		if (way.layer === layer) way.layer = null;
+	}
+
+	if (outerWays.length === 0) return [];
+
+	const stitchedOuter = stitchWays(outerWays);
+	const stitchedInner = stitchWays(innerWays);
+	const buildingMeta = layer === 'building' ? extractBuildingMetadata(rel.tags) : undefined;
+
+	// Assign holes to containing outer rings
+	return stitchedOuter.map(poly => {
+		const holes = stitchedInner.filter(hole => isPointInPolygon(hole[0], poly));
+
+		const obj: GeometryObject = {
+			type: layer,
+			path: poly,
+			relationId: rel.id,
+			holes
+		};
+		if (buildingMeta) obj.buildingMetadata = buildingMeta;
+		return obj;
+	});
+}
+
+// --- Way Processing ---
+
+function createWayObject(way: ParsedWay, nodes: Map<number, Coordinate>): GeometryObject | null {
+	const path = getWayCoords(way, nodes);
+	if (path.length === 0) return null;
+
+	const obj: GeometryObject = {
+		type: way.layer!, // Checked before calling
+		path,
+		highwayType: way.tags?.highway,
+		relationId: way.relationId
+	};
+
+	if (way.layer === 'building') {
+		obj.buildingMetadata = extractBuildingMetadata(way.tags);
+	}
+
+	return obj;
+}
+
+function getWayCoords(way: ParsedWay, nodes: Map<number, Coordinate>): Coordinate[] {
+	return way.nodes
+		.map(id => nodes.get(id))
+		.filter((c): c is Coordinate => c !== undefined);
+}
+
+// --- Geometry Helpers ---
+
+/** 
+ * Stitches segments into closed polygons. 
+ * Greedy endpoint matching. 
+ */
+/** 
+ * Stitches segments into combined paths.
+ * Supports both closed rings and open linear chains.
+ */
+function stitchWays(segments: Coordinate[][], closedOnly: boolean = false): Coordinate[][] {
+	const policies: Coordinate[][] = [];
+	const pool = [...segments];
+
+	while (pool.length > 0) {
+		const ring = [...pool.shift()!];
+		let changed = true;
+
+		// Grow path until closed or no matches found
+		while (changed) {
+			changed = false;
+			const start = ring[0];
+			const end = ring[ring.length - 1];
+
+			if (pointsEqual(start, end)) break; // Closed
+
+			for (let i = 0; i < pool.length; i++) {
+				const seg = pool[i];
+				const sStart = seg[0];
+				const sEnd = seg[seg.length - 1];
+
+				if (pointsEqual(end, sStart)) {
+					ring.push(...seg.slice(1));
+				} else if (pointsEqual(end, sEnd)) {
+					ring.push(...seg.slice(0, -1).reverse());
+				} else if (pointsEqual(start, sEnd)) {
+					ring.unshift(...seg.slice(0, -1));
+				} else if (pointsEqual(start, sStart)) {
+					ring.unshift(...seg.slice(1).reverse());
+				} else {
+					continue;
+				}
+
+				pool.splice(i, 1);
+				changed = true;
+				break;
+			}
+		}
+
+		if (!closedOnly || pointsEqual(ring[0], ring[ring.length - 1])) {
+			if (ring.length > 1) policies.push(ring);
+		}
+	}
+	return policies;
+}
+
+function pointsEqual(a: Coordinate, b: Coordinate): boolean {
+	return Math.abs(a.x - b.x) < 1e-6 && Math.abs(a.y - b.y) < 1e-6;
+}
+
+function isPointInPolygon(p: Coordinate, polygon: Coordinate[]): boolean {
+	let inside = false;
+	for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
+		const xi = polygon[i].x, yi = polygon[i].y;
+		const xj = polygon[j].x, yj = polygon[j].y;
+
+		const intersect = ((yi > p.y) !== (yj > p.y)) &&
+			(p.x < (xj - xi) * (p.y - yi) / (yj - yi) + xi);
+		if (intersect) inside = !inside;
+	}
+	return inside;
+}
+
+// --- Utils ---
+
+function resolveLayer(layer: Layer | null): Layer | null {
+	return layer === 'building_parts' ? 'building' : layer;
+}
+
+function notify(cb: ProgressCallback | undefined, percent: number, message: string) {
+	cb?.({ step: 'osm-parse', percent, message });
+}
+
+function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadata | undefined {
+	if (!tags) return undefined;
+	if (!tags.building && tags['building:part'] !== 'yes') return undefined;
+
+	const getVal = (k: string) => parseFloat(tags[k]);
+
+	const meta: BuildingMetadata = {
+		height: getVal('height') || undefined,
+		levels: getVal('building:levels') || undefined,
+		minHeight: getVal('min_height') || undefined,
+		minLevel: getVal('building:min_level') || undefined,
+		roofHeight: getVal('roof:height') || undefined,
+		roofLevels: getVal('roof:levels') || undefined,
+		roofShape: tags['roof:shape'],
+		shape: ['sphere', 'cone', 'pyramid', 'cylinder'].includes(tags['building:shape'] || '')
+			? tags['building:shape']
+			: undefined
+	};
+
+	if (!meta.roofShape && !meta.shape && tags['building:shape']) {
+		meta.roofShape = tags['building:shape'];
+	}
+
+	// Clean undefined keys
+	Object.keys(meta).forEach(key => (meta as any)[key] === undefined && delete (meta as any)[key]);
+
+	// Defaults if missing
+	if (!meta.height && !meta.levels && tags['building:part'] !== 'yes') {
+		meta.height = 10;
+		meta.levels = 3;
+	} else if (meta.levels && !meta.height) {
+		meta.height = meta.levels * 3;
+	}
+	if (meta.minLevel && !meta.minHeight) {
+		meta.minHeight = meta.minLevel * 3;
+	}
+
+	return Object.keys(meta).length > 0 ? meta : undefined;
+}

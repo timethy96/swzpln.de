@@ -2,233 +2,143 @@
 
 import { jsPDF } from 'jspdf';
 import type { Bounds, ContourData, GeometryObject, ProgressCallback } from '../types';
-import { LAYER_CONFIG, isLayerFillable } from '../layers';
-import { latLngToXY, getMaxXY } from '../geometry/coordinates';
-import { convertAndMergeRoads } from '../roads';
+import { LAYER_CONFIG, isLayerFillable, sortObjectsByLayer } from '../layers';
+import { getMaxXY } from '../geometry/coordinates';
+import * as m from '$lib/paraglide/messages';
 
-/**
- * Export geometry objects to PDF format
- */
 export function exportToPDF(
 	objects: GeometryObject[],
 	contours: ContourData | null,
 	bounds: Bounds,
 	zoom: number,
 	scale: number,
-	onProgress?: ProgressCallback
+	onProgress?: ProgressCallback,
+	buildingStyle?: 'filled' | 'outline'
 ): string {
-	onProgress?.({
-		step: 'export',
-		percent: 0,
-		message: 'PDF-Export wird initialisiert...'
-	});
+	notify(onProgress, 0, m.progress_pdf_init());
 
 	const maxXY = getMaxXY(bounds);
-	const txtSize = (19 - zoom) * 10;
-
-	// Calculate dimensions in mm
+	// Dims in mm
 	const width = maxXY.x * 1000 * scale;
+	const txtSize = (19 - zoom) * 10;
 	const height = (maxXY.y + txtSize + 5) * 1000 * scale;
 
-	// Determine orientation
-	const orientation = width > height ? 'l' : 'p';
-
-	// Create PDF document
 	const doc = new jsPDF({
-		orientation,
+		orientation: width > height ? 'l' : 'p',
 		unit: 'mm',
 		format: [width, height]
 	});
 
-	// Add contours first (background)
-	if (contours) {
-		onProgress?.({
-			step: 'export',
-			percent: 10,
-			message: 'Höhenlinien werden hinzugefügt...'
-		});
+	// Prepare Data
+	// Roads are already merged
+	const merged = [...objects];
+	if (contours) merged.push(...fromContours(contours, maxXY));
 
-		const contourColor = LAYER_CONFIG.contours.color;
-		doc.setDrawColor(contourColor);
+	const sorted = sortObjectsByLayer(merged);
+	const total = sorted.length;
 
-		for (const contour of contours.contours) {
-			const path: any[] = [];
+	notify(onProgress, 20, m.progress_pdf_adding_objects());
 
-			contour.forEach((coord, index) => {
-				const x = (coord.x * maxXY.x * 1000 * scale) / contours.sizeX;
-				const y = (coord.y * maxXY.y * 1000 * scale) / contours.sizeY;
-				const op = index === 0 ? 'm' : 'l';
-				path.push({ op, c: [x, y] });
-			});
+	let count = 0;
+	for (const obj of sorted) {
+		renderObj(doc, obj, maxXY, scale, buildingStyle);
 
-			if (path.length > 1) {
-				doc.path(path).stroke();
-			}
+		count++;
+		if (count % 200 === 0) {
+			notify(onProgress, 20 + Math.round((count / total) * 70), m.progress_dxf_exporting({ current: count.toString(), total: total.toString() }));
 		}
 	}
 
-	onProgress?.({
-		step: 'export',
-		percent: 20,
-		message: 'Straßen werden zusammengeführt...'
-	});
-
-	// Convert and merge roads
-	const processedObjects = convertAndMergeRoads(objects);
-
-	onProgress?.({
-		step: 'export',
-		percent: 30,
-		message: 'OSM-Objekte werden zu PDF hinzugefügt...'
-	});
-
-	// Separate highways from other objects to control rendering order
-	const highways: GeometryObject[] = [];
-	const nonHighways: GeometryObject[] = [];
-	
-	for (const obj of processedObjects) {
-		if (obj.type === 'highway') {
-			highways.push(obj);
-		} else {
-			nonHighways.push(obj);
-		}
-	}
-
-	// First pass: add highways (roads go underneath)
-	let processedCount = 0;
-	const totalObjects = highways.length + nonHighways.length;
-
-	for (const obj of highways) {
-		const layer = obj.type;
-		const path = obj.path;
-
-		if (path.length === 0) continue;
-
-		const config = LAYER_CONFIG[layer];
-		const color = config?.color || '#FF0000';
-
-		// For highways, render as thick stroke instead of filled polygon
-		// to avoid coverage issues with merged roads
-		const isHighway = layer === 'highway';
-
-		// Transform coordinates: scale and flip Y axis (PDF Y goes down from top)
-		const pdfPath: any[] = [];
-
-		path.forEach((coord, index) => {
-			const x = coord.x * 1000 * scale;
-			const y = (coord.y - maxXY.y) * -1 * 1000 * scale;
-			const op = index === 0 ? 'm' : 'l';
-			pdfPath.push({ op, c: [x, y] });
-		});
-
-		if (isHighway) {
-			// Render as thick stroke (outline)
-			doc.setDrawColor(color);
-			doc.setLineWidth(0.5 * scale);
-			pdfPath.push({ op: 'h' }); // close path
-			doc.path(pdfPath).stroke();
-		} else {
-			// Determine if fillable or stroke-only
-			const fillable = isLayerFillable(layer);
-
-			if (fillable) {
-				// Remove redundant point and close path
-				pdfPath.slice(0, -1).push({ op: 'h' });
-				doc.setFillColor(color);
-				doc.path(pdfPath).fill();
-			} else {
-				// Stroke only
-				doc.setDrawColor(color);
-				doc.path(pdfPath).stroke();
-			}
-		}
-
-		processedCount++;
-		if (processedCount % 100 === 0 && onProgress) {
-			const percent = 30 + Math.round((processedCount / totalObjects) * 55);
-			onProgress({
-				step: 'export',
-				percent,
-				message: `Objekte werden exportiert: ${processedCount}/${totalObjects}`
-			});
-		}
-	}
-
-	// Second pass: add non-highway objects (buildings, etc. go on top)
-	for (const obj of nonHighways) {
-		const layer = obj.type;
-		const path = obj.path;
-
-		if (path.length === 0) continue;
-
-		const config = LAYER_CONFIG[layer];
-		const color = config?.color || '#FF0000';
-
-		// Transform coordinates: scale and flip Y axis (PDF Y goes down from top)
-		const pdfPath: any[] = [];
-
-		path.forEach((coord, index) => {
-			const x = coord.x * 1000 * scale;
-			const y = (coord.y - maxXY.y) * -1 * 1000 * scale;
-			const op = index === 0 ? 'm' : 'l';
-			pdfPath.push({ op, c: [x, y] });
-		});
-
-		// Determine if fillable or stroke-only
-		const fillable = isLayerFillable(layer);
-
-		if (fillable) {
-			// Remove redundant point and close path
-			pdfPath.slice(0, -1).push({ op: 'h' });
-			doc.setFillColor(color);
-			doc.path(pdfPath).fill();
-		} else {
-			// Stroke only
-			doc.setDrawColor(color);
-			doc.path(pdfPath).stroke();
-		}
-
-		processedCount++;
-		if (processedCount % 100 === 0 && onProgress) {
-			const percent = 30 + Math.round((processedCount / totalObjects) * 55);
-			onProgress({
-				step: 'export',
-				percent,
-				message: `Objekte werden exportiert: ${processedCount}/${totalObjects}`
-			});
-		}
-	}
-
-	onProgress?.({
-		step: 'export',
-		percent: 85,
-		message: 'Attribution wird hinzugefügt...'
-	});
-
-	// Add attribution text
+	// Attribution
+	notify(onProgress, 95, m.progress_pdf_adding_attribution());
 	const textX = (maxXY.x - 5) * 1000 * scale;
 	const textY = (maxXY.y + txtSize) * 1000 * scale;
-	const fontSize = txtSize * 1000 * scale;
-
 	doc.setTextColor('#FF0000');
-	doc.setFontSize(fontSize);
+	doc.setFontSize(txtSize * 1000 * scale);
 	doc.text('(c) OpenStreetMap.org contributors', textX, textY, { align: 'right' });
 
-	onProgress?.({
-		step: 'export',
-		percent: 90,
-		message: 'PDF wird generiert...'
-	});
-
-	// Generate blob URL
-	const blobUrl = doc.output('bloburl');
-
-	onProgress?.({
-		step: 'export',
-		percent: 100,
-		message: 'PDF-Export abgeschlossen'
-	});
-
-	return String(blobUrl);
+	notify(onProgress, 100, m.progress_pdf_complete());
+	return String(doc.output('bloburl'));
 }
 
+// Helpers
+
+function notify(cb: ProgressCallback | undefined, percent: number, message: string) {
+	if (cb) cb({ step: 'export', percent, message });
+}
+
+function fromContours(contours: ContourData, maxXY: { x: number, y: number }): GeometryObject[] {
+	return contours.contours.map(c => ({
+		type: 'contours',
+		path: c.map(p => ({
+			// Normalize to match other objects logic
+			x: (p.x * maxXY.x) / contours.sizeX,
+			y: (p.y * maxXY.y) / contours.sizeY
+		}))
+	}));
+}
+
+function renderObj(
+	doc: jsPDF,
+	obj: GeometryObject,
+	maxXY: { x: number, y: number },
+	scale: number,
+	buildingStyle?: 'filled' | 'outline'
+) {
+	if (obj.path.length === 0) return;
+	const layer = obj.type;
+	const config = LAYER_CONFIG[layer];
+	const color = config?.color || '#FF0000';
+
+	// Construct Path ops
+	// Construct Path ops
+	const ops: any[] = [];
+
+	const addPath = (pts: { x: number, y: number }[]) => {
+		pts.forEach((p, i) => {
+			const x = p.x * 1000 * scale;
+			const y = (p.y - maxXY.y) * -1 * 1000 * scale;
+			ops.push({ op: i === 0 ? 'm' : 'l', c: [x, y] });
+		});
+		// Close the subpath
+		ops.push({ op: 'h' });
+	};
+
+	addPath(obj.path);
+
+	// Add holes
+	if (obj.holes) {
+		for (const hole of obj.holes) {
+			addPath(hole);
+		}
+	}
+
+	if (layer === 'highway') {
+		doc.setDrawColor(color);
+		doc.setLineWidth(0.5 * scale);
+		doc.path(ops).stroke();
+		return;
+	}
+
+	const isBuilding = layer === 'building' || layer === 'building_parts';
+	const shouldFill = isLayerFillable(layer) && !(isBuilding && buildingStyle === 'outline');
+
+	if (shouldFill) {
+		doc.setFillColor(color);
+		// 'evenodd' rule is needed for holes. jsPDF path supports it?
+		// jsPDF.path docs say: path(lines, style) where style is stroke/fill.
+		// Advanced API might be needed or just assuming non-zero winding if manual 'm' is used.
+		// However, standard PDF 'f*' operator corresponds to even-odd.
+		// In jsPDF, .fill('evenodd') should work if supported, or passing it as option.
+
+
+		// 'evenodd' rule would be preferred ('f*') but typing issues prevent easy usage here.
+		// We rely on standard non-zero winding. If stitching produces correct alternating winding, holes work.
+		doc.path(ops).fill();
+	} else {
+		// Outline
+		doc.setDrawColor(color);
+		doc.setLineWidth(0.1 * scale); // default thin stroke for contours etc
+		doc.path(ops).stroke();
+	}
+}

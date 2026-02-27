@@ -45,7 +45,7 @@
     <!-- Main button -->
     <Button 
         variant="outline" 
-        class="h-10 px-3 gap-2 border-gray-300 font-medium transition-all duration-300 ease-out transform rounded-l-3xl rounded-r-none border-r-0 active:scale-95 {selected ? 'text-white shadow-lg' : 'text-[var(--foreground)] hover:bg-[var(--background)]/80'}"
+        class="h-10 px-3 gap-2 border-gray-300 font-medium transition-all duration-300 ease-out transform {selected ? 'rounded-l-md rounded-r-none border-r-0' : 'rounded-l-3xl rounded-r-none border-r-0'} active:scale-95 {selected ? 'text-white shadow-lg' : 'text-[var(--foreground)] hover:bg-[var(--background)]/80'}"
         style={selected ? `background-color: ${color}; border-color: ${color}; box-shadow: 0 4px 12px ${color}40;` : 'background-color: var(--background);'}
         onclick={handleMainClick} 
         {id}
@@ -62,7 +62,7 @@
     <!-- Dropdown trigger -->
     <Popover.Root bind:open>
         <Popover.Trigger 
-            class="h-10 px-2 border rounded-r-3xl rounded-l-none transition-all duration-300 ease-out transform active:scale-95 {selected ? 'text-white shadow-lg' : 'text-[var(--foreground)] hover:bg-[var(--background)]/80'} inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
+            class="h-10 px-2 border transition-all duration-300 ease-out transform active:scale-95 {selected ? 'rounded-r-md rounded-l-none' : 'rounded-r-3xl rounded-l-none'} {selected ? 'text-white shadow-lg' : 'text-[var(--foreground)] hover:bg-[var(--background)]/80'} inline-flex items-center justify-center whitespace-nowrap font-medium ring-offset-background focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-50"
             style={selected ? `background-color: ${color}; border-color: ${color}; border-left-color: #AAA; box-shadow: 0 4px 12px ${color}40;` : 'background-color: var(--background);'}
         >
             <ChevronDown class="h-3 w-3 transition-colors duration-300 {selected ? 'text-white' : ''}" />

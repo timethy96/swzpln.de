@@ -10,58 +10,86 @@ import type {
 import { exportToDXF } from './dxf';
 import { exportToSVG } from './svg';
 import { exportToPDF } from './pdf';
+import { exportToDXF3D } from './dxf3d';
+import { exportToIFC } from './ifc';
+import { exportTo3DM } from './rhino3dm';
+import * as m from '$lib/paraglide/messages';
 
 /**
  * Export geometry objects to the specified format
+ * Returns string for text-based formats, Uint8Array for binary formats
  */
-export function exportGeometry(
+export async function exportGeometry(
 	format: ExportFormat,
 	objects: GeometryObject[],
 	contours: ContourData | null,
+	elevationMatrix: number[][] | null,
 	bounds: Bounds,
 	zoom: number,
 	scale: number | undefined,
-	onProgress?: ProgressCallback
-): string {
+	onProgress?: ProgressCallback,
+	buildingStyle?: 'filled' | 'outline'
+): Promise<string | Uint8Array> {
 	switch (format) {
 		case 'dxf':
-			return exportToDXF(objects, contours, bounds, zoom, onProgress);
+			return exportToDXF(objects, contours, bounds, zoom, onProgress, buildingStyle);
 
 		case 'svg':
 			if (!scale) {
-				throw new Error('Scale is required for SVG export');
+				throw new Error(m.error_scale_required_svg());
 			}
-			return exportToSVG(objects, contours, bounds, zoom, scale, onProgress);
+			return exportToSVG(objects, contours, bounds, zoom, scale, onProgress, buildingStyle);
 
 		case 'pdf':
 			if (!scale) {
-				throw new Error('Scale is required for PDF export');
+				throw new Error(m.error_scale_required_pdf());
 			}
-			return exportToPDF(objects, contours, bounds, zoom, scale, onProgress);
+			return exportToPDF(objects, contours, bounds, zoom, scale, onProgress, buildingStyle);
+
+		case 'dxf3d':
+			return exportToDXF3D(objects, elevationMatrix, bounds, zoom, onProgress, contours);
+
+		case 'ifc':
+			return await exportToIFC(objects, elevationMatrix, bounds, onProgress);
+
+		case '3dm':
+			return await exportTo3DM(objects, elevationMatrix, bounds, onProgress);
 
 		default:
-			throw new Error(`Unsupported export format: ${format}`);
+			throw new Error(m.error_unsupported_format({ format }));
 	}
 }
 
 /**
  * Trigger download of exported file
  */
-export function downloadFile(filename: string, content: string | Blob, mimeType: string): void {
-	const blob = typeof content === 'string' ? new Blob([content], { type: mimeType }) : content;
+export function downloadFile(
+	filename: string,
+	content: string | Uint8Array | Blob,
+	mimeType: string
+): void {
+	let blob: Blob;
 
-	// For PDF blob URLs, we can use them directly
-	if (typeof content === 'string' && content.startsWith('blob:')) {
-		const a = document.createElement('a');
-		a.href = content;
-		a.download = filename;
-		document.body.appendChild(a);
-		a.click();
-		document.body.removeChild(a);
-		return;
+	// Convert content to Blob
+	if (typeof content === 'string') {
+		// Check if it's a blob URL
+		if (content.startsWith('blob:')) {
+			const a = document.createElement('a');
+			a.href = content;
+			a.download = filename;
+			document.body.appendChild(a);
+			a.click();
+			document.body.removeChild(a);
+			return;
+		}
+		blob = new Blob([content], { type: mimeType });
+	} else if (content instanceof Uint8Array) {
+		blob = new Blob([content as any], { type: mimeType });
+	} else {
+		blob = content;
 	}
 
-	// For other formats, create object URL
+	// Create object URL and trigger download
 	const url = URL.createObjectURL(blob);
 	const a = document.createElement('a');
 	a.href = url;
@@ -80,11 +108,16 @@ export function downloadFile(filename: string, content: string | Blob, mimeType:
 export function getMimeType(format: ExportFormat): string {
 	switch (format) {
 		case 'dxf':
+		case 'dxf3d':
 			return 'application/dxf';
 		case 'svg':
 			return 'image/svg+xml';
 		case 'pdf':
 			return 'application/pdf';
+		case 'ifc':
+			return 'application/x-step'; // IFC uses STEP format
+		case '3dm':
+			return 'model/obj'; // OBJ format (more compatible than 3DM)
 		default:
 			return 'application/octet-stream';
 	}
@@ -94,7 +127,18 @@ export function getMimeType(format: ExportFormat): string {
  * Get filename for export format
  */
 export function getFilename(format: ExportFormat): string {
-	return `swzpln.${format}`;
+	// Map format to file extension
+	const extensionMap: Record<ExportFormat, string> = {
+		dxf: 'dxf',
+		svg: 'svg',
+		pdf: 'pdf',
+		dxf3d: 'dxf',
+		ifc: 'ifc',
+		'3dm': 'obj' // Export as OBJ format for universal compatibility
+	};
+
+	const extension = extensionMap[format] || format;
+	return `swzpln.${extension}`;
 }
 
 

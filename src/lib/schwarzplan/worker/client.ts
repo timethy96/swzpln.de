@@ -9,6 +9,7 @@ import type {
 	WorkerMessage,
 	WorkerRequest
 } from '../types';
+import * as m from '$lib/paraglide/messages';
 
 export class SchwarzplanWorker {
 	private worker: Worker | null = null;
@@ -32,7 +33,7 @@ export class SchwarzplanWorker {
 				console.error('Worker error:', error);
 				this.currentProgress?.({
 					step: 'error',
-					message: 'Worker error occurred'
+					message: m.error_worker()
 				});
 			};
 		}
@@ -53,7 +54,7 @@ export class SchwarzplanWorker {
 				this.currentProgress?.({
 					step: 'complete',
 					percent: 100,
-					message: 'Generation complete'
+					message: m.error_generation_complete()
 				});
 				break;
 
@@ -78,7 +79,8 @@ export class SchwarzplanWorker {
 		zoom: number,
 		scale: number | undefined,
 		onProgress?: ProgressCallback,
-		contourInterval?: number
+		contourInterval?: number,
+		buildingStyle?: 'filled' | 'outline'
 	): Promise<string> {
 		return new Promise((resolve, reject) => {
 			this.currentProgress = onProgress;
@@ -112,7 +114,8 @@ export class SchwarzplanWorker {
 				layers,
 				zoom,
 				scale,
-				contourInterval
+				contourInterval,
+				buildingStyle
 			};
 
 			worker.postMessage(request);
@@ -128,7 +131,7 @@ export class SchwarzplanWorker {
 			this.worker = null;
 			this.currentProgress?.({
 				step: 'error',
-				message: 'Generation cancelled'
+				message: m.error_generation_cancelled()
 			});
 			this.currentProgress = undefined;
 		}

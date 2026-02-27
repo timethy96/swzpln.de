@@ -2,169 +2,219 @@
 	import LayerButton from './LayerButton.svelte';
 	import SplitLayerButton from './SplitLayerButton.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton';
-	import { Building, Sprout, TreePine, Waves, Wheat, Car, TramFront, Mountain, Box, TrendingUp, Activity, ChartColumn, Minus, Plus } from 'lucide-svelte';
-	import { is3DMode } from '$lib/stores/mapStore';
-	import { selectedLayers, toggleLayer, setContourInterval, contourInterval } from '$lib/stores/schwarzplanStore';
+	import {
+		Building,
+		Sprout,
+		TreePine,
+		Waves,
+		Wheat,
+		Car,
+		TramFront,
+		Mountain,
+		Box,
+		TrendingUp,
+		Activity,
+		ChartColumn,
+		Minus,
+		Plus,
+		Square,
+		SquareDashed
+	} from 'lucide-svelte';
+	import { appState } from '$lib/state.svelte';
 	import type { Layer } from '$lib/schwarzplan/types';
 	import { onMount } from 'svelte';
-	
+	import * as m from '$lib/paraglide/messages';
+
 	let isLoading = $state(true);
 
 	onMount(() => {
 		isLoading = false;
 	});
 
-	function toggle3D(selected: boolean) {
-		is3DMode.set(selected);
-	}
+	// Helpers wrapping appState actions (or use directly in markup)
 
-	// Check if a schwarzplan layer is selected
-	function isLayerSelected(layer: Layer): boolean {
-		return $selectedLayers.includes(layer);
-	}
-
-	// Handle layer toggle for schwarzplan layers
-	function handleLayerToggle(layer: Layer) {
-		return (selected: boolean) => {
-			toggleLayer(layer);
-		};
-	}
-	
 	// Elevation lines dropdown options with callbacks
 	const elevationOptions = [
-		{ 
-			icon: Minus, 
-			label: '1m Intervall', 
-			id: 'elevation-1m', 
+		{
+			icon: Minus,
+			label: m.layer_elevation_interval_1m(),
+			id: 'elevation-1m',
 			color: '#1F2A4A',
 			value: 1,
-			onSelect: () => setContourInterval(1)
+			onSelect: () => (appState.contourInterval = 1)
 		},
-		{ 
-			icon: Activity, 
-			label: '5m Intervall', 
-			id: 'elevation-5m', 
+		{
+			icon: Activity,
+			label: m.layer_elevation_interval_5m(),
+			id: 'elevation-5m',
 			color: '#2A3A5A',
 			value: 5,
-			onSelect: () => setContourInterval(5)
+			onSelect: () => (appState.contourInterval = 5)
 		},
-		{ 
-			icon: TrendingUp, 
-			label: '10m Intervall', 
-			id: 'elevation-10m', 
+		{
+			icon: TrendingUp,
+			label: m.layer_elevation_interval_10m(),
+			id: 'elevation-10m',
 			color: '#2F3A5A',
 			value: 10,
-			onSelect: () => setContourInterval(10)
+			onSelect: () => (appState.contourInterval = 10)
 		},
-		{ 
-			icon: ChartColumn, 
-			label: '20m Intervall', 
-			id: 'elevation-20m', 
+		{
+			icon: ChartColumn,
+			label: m.layer_elevation_interval_20m(),
+			id: 'elevation-20m',
 			color: '#3F4A6A',
 			value: 20,
-			onSelect: () => setContourInterval(20)
+			onSelect: () => (appState.contourInterval = 20)
 		},
-		{ 
-			icon: Plus, 
-			label: '50m Intervall', 
-			id: 'elevation-50m', 
+		{
+			icon: Plus,
+			label: m.layer_elevation_interval_50m(),
+			id: 'elevation-50m',
 			color: '#4F5A7A',
 			value: 50,
-			onSelect: () => setContourInterval(50)
+			onSelect: () => (appState.contourInterval = 50)
+		}
+	];
+	// Building style dropdown options
+	const buildingOptions = [
+		{
+			icon: Square,
+			label: m.layer_building_filled(),
+			id: 'building-filled',
+			color: '#222222',
+			value: 'filled',
+			onSelect: () => (appState.buildingStyle = 'filled')
+		},
+		{
+			icon: SquareDashed,
+			label: m.layer_building_outline(),
+			id: 'building-outline',
+			color: '#222222',
+			value: 'outline',
+			onSelect: () => (appState.buildingStyle = 'outline')
 		}
 	];
 </script>
 
-<div class="flex flex-row gap-2 flex-wrap m-4 absolute top-18 z-10 max-w-[calc(90%-96px)]">
+<div class="absolute top-18 z-10 m-4 flex max-w-[calc(90%-96px)] flex-row flex-wrap gap-2">
 	{#if isLoading}
 		<!-- Skeleton loading state -->
 		{#each Array(9) as _, i}
 			<Skeleton class="h-10 w-32 rounded-3xl" />
 		{/each}
-	{:else if !$is3DMode}
-		<LayerButton 
-			icon={Building} 
-			id="building" 
-			color="#000000" 
-			initialSelected={isLayerSelected('building')}
-			onToggle={handleLayerToggle('building')}
+	{:else if !appState.is3DMode}
+		<SplitLayerButton
+			icon={Building}
+			id="building"
+			color="#222222"
+			initialSelected={appState.layers.includes('building')}
+			onToggle={() => appState.toggleLayer('building')}
+			dropdownItems={buildingOptions}
+			selectedValue={appState.buildingStyle}
 		>
-			Gebäude
-		</LayerButton>
-		<LayerButton 
-			icon={Sprout} 
-			id="green" 
-			color="#4A5A3A" 
-			initialSelected={isLayerSelected('green')}
-			onToggle={handleLayerToggle('green')}
-		>
-			Grünflächen
-		</LayerButton>
-		<LayerButton 
-			icon={TreePine} 
-			id="forest" 
-			color="#2F4A2F" 
-			initialSelected={isLayerSelected('forest')}
-			onToggle={handleLayerToggle('forest')}
-		>
-			Waldflächen
-		</LayerButton>
-		<LayerButton 
-			icon={Waves} 
-			id="water" 
-			color="#2F4A5A" 
-			initialSelected={isLayerSelected('water')}
-			onToggle={handleLayerToggle('water')}
-		>
-			Gewässer
-		</LayerButton>
-		<LayerButton 
-			icon={Wheat} 
-			id="farmland" 
-			color="#5A5A2F" 
-			initialSelected={isLayerSelected('farmland')}
-			onToggle={handleLayerToggle('farmland')}
-		>
-			Landwirtschaft
-		</LayerButton>
-		<LayerButton 
-			icon={Car} 
-			id="highway" 
-			color="#5A2F2F" 
-			initialSelected={isLayerSelected('highway')}
-			onToggle={handleLayerToggle('highway')}
-		>
-			Straßen
-		</LayerButton>
-		<LayerButton 
-			icon={TramFront} 
-			id="railway" 
-			color="#4A2F5A" 
-			initialSelected={isLayerSelected('railway')}
-			onToggle={handleLayerToggle('railway')}
-		>
-			Schienen
-		</LayerButton>
-		<SplitLayerButton 
-			icon={Mountain} 
-			id="contours" 
-			color="#2F3A5A" 
-			initialSelected={isLayerSelected('contours')}
-			onToggle={handleLayerToggle('contours')}
-			dropdownItems={elevationOptions}
-			selectedValue={$contourInterval}
-		>
-			Höhenlinien
+			{m.layer_building()}
 		</SplitLayerButton>
-		<div class="border-l border-gray-500 h-8 mx-2 self-center"></div>
-		<LayerButton icon={Box} id="3d" color="#5A2F4A" onToggle={toggle3D}>3D</LayerButton>
+		<LayerButton
+			icon={Sprout}
+			id="green"
+			color="#4A5A3A"
+			initialSelected={appState.layers.includes('green')}
+			onToggle={() => appState.toggleLayer('green')}
+		>
+			{m.layer_green()}
+		</LayerButton>
+		<LayerButton
+			icon={TreePine}
+			id="forest"
+			color="#2F4A2F"
+			initialSelected={appState.layers.includes('forest')}
+			onToggle={() => appState.toggleLayer('forest')}
+		>
+			{m.layer_forest()}
+		</LayerButton>
+		<LayerButton
+			icon={Waves}
+			id="water"
+			color="#2F4A5A"
+			initialSelected={appState.layers.includes('water')}
+			onToggle={() => appState.toggleLayer('water')}
+		>
+			{m.layer_water()}
+		</LayerButton>
+		<LayerButton
+			icon={Wheat}
+			id="farmland"
+			color="#5A5A2F"
+			initialSelected={appState.layers.includes('farmland')}
+			onToggle={() => appState.toggleLayer('farmland')}
+		>
+			{m.layer_farmland()}
+		</LayerButton>
+		<LayerButton
+			icon={Car}
+			id="highway"
+			color="#5A2F2F"
+			initialSelected={appState.layers.includes('highway')}
+			onToggle={() => appState.toggleLayer('highway')}
+		>
+			{m.layer_highway()}
+		</LayerButton>
+		<LayerButton
+			icon={TramFront}
+			id="railway"
+			color="#4A2F5A"
+			initialSelected={appState.layers.includes('railway')}
+			onToggle={() => appState.toggleLayer('railway')}
+		>
+			{m.layer_railway()}
+		</LayerButton>
+		<SplitLayerButton
+			icon={Mountain}
+			id="contours"
+			color="#2F3A5A"
+			initialSelected={appState.layers.includes('contours')}
+			onToggle={() => appState.toggleLayer('contours')}
+			dropdownItems={elevationOptions}
+			selectedValue={appState.contourInterval}
+		>
+			{m.layer_contours()}
+		</SplitLayerButton>
+		<div class="mx-2 h-8 self-center border-l border-gray-500"></div>
+		<LayerButton
+			icon={Box}
+			id="3d"
+			color="#5A2F4A"
+			onToggle={(v: boolean) => (appState.is3DMode = v)}>{m.layer_3d()}</LayerButton
+		>
 	{:else}
 		<!-- 3D mode buttons -->
-		<LayerButton icon={Box} id="3d" color="#5A2F4A" onToggle={toggle3D} initialSelected={$is3DMode}>3D</LayerButton>
+		<LayerButton
+			icon={Box}
+			id="3d"
+			color="#5A2F4A"
+			onToggle={(v: boolean) => (appState.is3DMode = v)}
+			initialSelected={appState.is3DMode}>{m.layer_3d()}</LayerButton
+		>
 
-			<div class="border-l border-gray-500 h-8 mx-2 self-center"></div>
-			<LayerButton icon={Building} id="3d-building" color="#000000" initialSelected={true}>Gebäude</LayerButton>
-			<LayerButton icon={Mountain} id="3d-height" color="#2F3A5A">Gelände</LayerButton>
-
+		<div class="mx-2 h-8 self-center border-l border-gray-500"></div>
+		<LayerButton
+			icon={Building}
+			id="3d-building"
+			color="#222222"
+			initialSelected={appState.selected3DLayers.building}
+			onToggle={(v: boolean) => appState.toggle3DLayer('building', v)}
+		>
+			{m.layer_building()}
+		</LayerButton>
+		<LayerButton
+			icon={Mountain}
+			id="3d-height"
+			color="#2F3A5A"
+			initialSelected={appState.selected3DLayers.height}
+			onToggle={(v: boolean) => appState.toggle3DLayer('height', v)}
+		>
+			{m.layer_terrain()}
+		</LayerButton>
 	{/if}
 </div>

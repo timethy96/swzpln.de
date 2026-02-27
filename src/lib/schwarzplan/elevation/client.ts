@@ -1,6 +1,7 @@
 // Client-side elevation data fetcher
 
 import type { Bounds, ProgressCallback } from '../types';
+import * as m from '$lib/paraglide/messages';
 
 /**
  * Fetch elevation matrix from the API endpoint
@@ -12,7 +13,7 @@ export async function fetchElevationData(
 	onProgress?.({
 		step: 'elevation-download',
 		percent: 0,
-		message: 'Höhendaten werden angefordert...'
+		message: m.progress_elevation_requesting()
 	});
 
 	try {
@@ -26,7 +27,7 @@ export async function fetchElevationData(
 		onProgress?.({
 			step: 'elevation-download',
 			percent: 30,
-			message: 'Höhendaten werden heruntergeladen...'
+			message: m.progress_elevation_downloading()
 		});
 
 		const response = await fetch(url.toString());
@@ -41,7 +42,7 @@ export async function fetchElevationData(
 		onProgress?.({
 			step: 'elevation-download',
 			percent: 100,
-			message: 'Höhendaten empfangen'
+			message: m.progress_elevation_received()
 		});
 
 		// Validate matrix structure
@@ -54,7 +55,7 @@ export async function fetchElevationData(
 		console.error('Failed to fetch elevation data:', error);
 		onProgress?.({
 			step: 'error',
-			message: 'Höhendaten konnten nicht abgerufen werden. Höhenlinien werden deaktiviert.'
+			message: m.progress_elevation_failed()
 		});
 		return null;
 	}

@@ -2,136 +2,164 @@
 
 import type { Layer, LayerConfig } from './types';
 
-// Layer configuration with colors and Overpass queries
+// Central Configuration
+// Adds matchTags to define how OSM tags map to our layers.
+// Strings mean "must equal", Arrays mean "must be one of".
 export const LAYER_CONFIG: Record<Layer, LayerConfig> = {
 	building: {
 		color: '#000000',
 		fillable: true,
 		overpassQuery: 'nwr["building"];',
 		lineType: 'CONTINUOUS',
-		dxfColor: 0
+		dxfColor: 0,
+		matchTags: { building: [] }
+	},
+	building_parts: {
+		color: '#000000',
+		fillable: true,
+		overpassQuery: 'nwr["building:part"];',
+		lineType: 'CONTINUOUS',
+		dxfColor: 0,
+		matchTags: { 'building:part': 'yes' }
 	},
 	highway: {
 		color: '#828282',
-		fillable: true, // Render as filled polygons with width
+		fillable: true,
 		overpassQuery: 'nwr["highway"];',
 		lineType: 'CONTINUOUS',
-		dxfColor: 253
+		dxfColor: 253,
+		matchTags: { highway: [] } // Any highway tag
 	},
 	railway: {
 		color: '#BEBEBE',
 		fillable: false,
 		overpassQuery:
-			'nwr["railway"="tram"];nwr["railway"="subway"];nwr["railway"="rail"];nwr["railway"="preserved"];nwr["railway"="narrow_gauge"];nwr["railway"="monorail"];nwr["railway"="miniature"];nwr["railway"="light_rail"];nwr["railway"="funicular"];',
+			'nwr["railway"~"^(tram|subway|rail|preserved|narrow_gauge|monorail|miniature|light_rail|funicular)$"];',
 		lineType: 'DASHED',
-		dxfColor: 254
+		dxfColor: 254,
+		matchTags: {
+			railway: [
+				'tram', 'subway', 'rail', 'preserved', 'narrow_gauge',
+				'monorail', 'miniature', 'light_rail', 'funicular'
+			]
+		}
 	},
 	water: {
 		color: '#AAD4FF',
 		fillable: true,
 		overpassQuery: 'nwr["natural"="water"];nwr["waterway"];',
 		lineType: 'CONTINUOUS',
-		dxfColor: 151
+		dxfColor: 151,
+		matchTags: { natural: 'water', waterway: [] } // waterway as fallback if checking values
 	},
 	waterway: {
 		color: '#AAD4FF',
 		fillable: false,
 		overpassQuery: 'nwr["waterway"];',
 		lineType: 'CONTINUOUS',
-		dxfColor: 151
+		dxfColor: 151,
+		matchTags: { waterway: [] }
 	},
 	green: {
 		color: '#9DBD7E',
 		fillable: true,
 		overpassQuery:
-			'nwr["leisure"="park"];nwr["landuse"="allotments"];nwr["landuse"="meadow"];nwr["landuse"="orchard"];nwr["landuse"="vineyard"];nwr["landuse"="cemetery"];nwr["landuse"="grass"];nwr["landuse"="plant_nursery"];nwr["landuse"="recreation_ground"];nwr["landuse"="village_green"];',
+			'nwr["leisure"~"^(park)$"];nwr["landuse"~"^(allotments|meadow|orchard|vineyard|cemetery|grass|plant_nursery|recreation_ground|village_green)$"];',
 		lineType: 'CONTINUOUS',
-		dxfColor: 73
+		dxfColor: 73,
+		matchTags: {
+			leisure: ['park'],
+			landuse: [
+				'allotments', 'meadow', 'orchard', 'vineyard', 'cemetery',
+				'grass', 'plant_nursery', 'recreation_ground', 'village_green'
+			]
+		}
 	},
 	forest: {
 		color: '#608156',
 		fillable: true,
 		overpassQuery: 'nwr["landuse"="forest"];nwr["natural"="wood"];',
 		lineType: 'CONTINUOUS',
-		dxfColor: 85
+		dxfColor: 85,
+		matchTags: { landuse: 'forest', natural: 'wood' }
 	},
 	farmland: {
 		color: '#FFEAAA',
 		fillable: true,
 		overpassQuery: 'nwr["landuse"="farmland"];',
 		lineType: 'CONTINUOUS',
-		dxfColor: 41
+		dxfColor: 41,
+		matchTags: { landuse: 'farmland' }
 	},
 	contours: {
 		color: '#CCCCCC',
 		fillable: false,
 		overpassQuery: '',
 		lineType: 'CONTINUOUS',
-		dxfColor: 6
+		dxfColor: 6,
+		matchTags: {}
 	}
 };
 
-// Tags used for filtering
-const GREEN_TAGS = [
-	'park',
-	'grass',
-	'allotments',
-	'meadow',
-	'orchard',
-	'vineyard',
-	'cemetery',
-	'plant_nursery',
-	'recreation_ground',
-	'village_green'
-];
-
-const FOREST_TAGS = ['forest', 'wood'];
-
-const RAILWAY_TAGS = [
-	'rail',
-	'tram',
-	'subway',
-	'narrow_gauge',
-	'monorail',
-	'light_rail',
-	'funicular'
-];
-
-// Helper function to check if any values match
-function haveCommon(values: string[], tags: string[]): boolean {
-	return values.some((v) => tags.includes(v));
-}
-
-// Classify OSM tags into layer type
+// Generic Tag Classifier
+// Iterates through LAYER_CONFIG to find a match.
 export function classifyTags(tags?: Record<string, string>): Layer | null {
 	if (!tags) return null;
 
-	const keys = Object.keys(tags);
-	const values = Object.values(tags);
+	// Priority Check (Building & Highway usually override others)
+	if (matchLayer(tags, 'building')) return 'building';
+	if (matchLayer(tags, 'highway')) return 'highway';
 
-	if (keys.includes('building')) {
-		return 'building';
-	} else if (keys.includes('highway')) {
-		return 'highway';
-	} else if (haveCommon(values, GREEN_TAGS)) {
-		return 'green';
-	} else if (haveCommon(values, FOREST_TAGS)) {
-		return 'forest';
-	} else if (haveCommon(values, RAILWAY_TAGS)) {
-		return 'railway';
-	} else if (values.includes('water')) {
-		return 'water';
-	} else if (keys.includes('waterway')) {
-		return 'waterway';
-	} else if (values.includes('farmland')) {
-		return 'farmland';
+	// General Check
+	for (const key in LAYER_CONFIG) {
+		const layer = key as Layer;
+		if (layer === 'building' || layer === 'highway' || layer === 'contours') continue;
+		if (matchLayer(tags, layer)) return layer;
 	}
 
 	return null;
 }
 
-// Get layers that should be closed (filled polygons)
+// Check if tags match a specific layer configuration
+function matchLayer(tags: Record<string, string>, layer: Layer): boolean {
+	const config = LAYER_CONFIG[layer];
+	if (!config.matchTags) return false;
+
+	for (const [key, requirement] of Object.entries(config.matchTags)) {
+		if (tags[key]) {
+			// If constraint is empty array/string, any existence is a match
+			if (Array.isArray(requirement) && requirement.length === 0) return true;
+			if (typeof requirement === 'string' && requirement === '') return true;
+
+			// Check specific values
+			if (Array.isArray(requirement)) {
+				if (requirement.includes(tags[key])) return true;
+			} else {
+				if (tags[key] === requirement) return true;
+			}
+		}
+	}
+	return false;
+}
+
+// Rendering Order (Bottom to Top)
+export const LAYER_RENDER_ORDER: Layer[] = [
+	'water',
+	'waterway',
+	'green',
+	'farmland',
+	'forest',
+	'railway',
+	'highway',
+	'contours',
+	'building'
+];
+
+export function sortObjectsByLayer<T extends { type: Layer }>(objects: T[]): T[] {
+	const orderMap = new Map(LAYER_RENDER_ORDER.map((l, i) => [l, i]));
+	return [...objects].sort((a, b) => (orderMap.get(a.type) ?? 0) - (orderMap.get(b.type) ?? 0));
+}
+
 export function isLayerFillable(layer: Layer): boolean {
 	return LAYER_CONFIG[layer].fillable;
 }
-

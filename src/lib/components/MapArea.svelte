@@ -1,111 +1,127 @@
 <script lang="ts">
-    import { MapLibre } from 'svelte-maplibre';
-    import { NavigationControl } from 'svelte-maplibre';
-    import { AttributionControl } from 'svelte-maplibre';
-    import DownloadButton from './DownloadButton.svelte';
-    import { Button } from '$lib/components/ui/button';
-    import { Skeleton } from '$lib/components/ui/skeleton';
-    import { mapLocation, mapExtent, currentMapBounds } from '$lib/stores/mapStore';
-    import { privacyAccepted, acceptPrivacy } from '$lib/stores/schwarzplanStore';
-    import { onMount } from 'svelte';
-    
-    // Use derived values directly from stores
-    let center = $derived($mapLocation.center);
-    let zoom = $derived($mapLocation.zoom);
-    let mapInstance = $state<any>(null);
-    let isLoading = $state(true);
+	import { MapLibre } from 'svelte-maplibre';
+	import { NavigationControl } from 'svelte-maplibre';
+	import { AttributionControl } from 'svelte-maplibre';
+	import DownloadButton from './DownloadButton.svelte';
+	import { Skeleton } from '$lib/components/ui/skeleton';
+	import { appState } from '$lib/state.svelte';
+	import { onMount } from 'svelte';
 
-    // Mark as loaded after mount
-    onMount(() => {
-        isLoading = false;
-    });
+	let mapInstance = $state<any>(null);
+	let isLoading = $state(true);
 
-    // Handle extent changes only
-    $effect(() => {
-        if ($mapExtent && mapInstance) {
-            mapInstance.fitBounds($mapExtent.bounds, {
-                padding: 50,
-                maxZoom: 18
-            });
-            // Clear extent after applying to prevent re-triggering
-            mapExtent.set(null);
-        }
-    });
+	onMount(() => {
+		isLoading = false;
+	});
 
-    // Update bounds when map moves
-    $effect(() => {
-        if (mapInstance) {
-            const updateBounds = () => {
-                const bounds = mapInstance.getBounds();
-                currentMapBounds.set({
-                    north: bounds.getNorth(),
-                    south: bounds.getSouth(),
-                    east: bounds.getEast(),
-                    west: bounds.getWest()
-                });
-            };
+	// Handle extent changes
+	$effect(() => {
+		if (appState.requestExtent && mapInstance) {
+			mapInstance.fitBounds(appState.requestExtent, {
+				padding: 50,
+				maxZoom: 18,
+				duration: 3000,
+				essential: true
+			});
+			// Clear request (handled in store previously, now part of setLocation logic but safe here too)
+		}
+	});
 
-            mapInstance.on('moveend', updateBounds);
-            updateBounds(); // Initial bounds
+	// Handle flyTo requests
+	$effect(() => {
+		if (appState.requestFlyTo && mapInstance) {
+			mapInstance.flyTo({
+				center: appState.requestFlyTo.center,
+				zoom: appState.requestFlyTo.zoom,
+				essential: true,
+				duration: 3000
+			});
+		}
+	});
 
-            return () => {
-                mapInstance.off('moveend', updateBounds);
-            };
-        }
-    });
+	// Sync map movements to state
+	$effect(() => {
+		if (mapInstance) {
+			const updateState = () => {
+				const bounds = mapInstance.getBounds();
+				const center = mapInstance.getCenter();
+				const zoom = mapInstance.getZoom();
 
-    // Using a grayscale style similar to your previous filter
-    const style = "https://basemaps.cartocdn.com/gl/positron-gl-style/style.json";
+				// Update state without triggering loops (basic equality check logic is in state setter if needed, but direct assignment is fine)
+				appState.setBounds({
+					north: bounds.getNorth(),
+					south: bounds.getSouth(),
+					east: bounds.getEast(),
+					west: bounds.getWest()
+				});
+
+				// Update location (persisted to cookie by state effect)
+				appState.setLocation([center.lng, center.lat], zoom);
+			};
+
+			mapInstance.on('moveend', updateState);
+			updateState(); // Initial sync
+
+			// Force disable interactions that might persist or default to enabled
+			mapInstance.dragRotate.disable();
+			mapInstance.touchPitch.disable();
+			mapInstance.touchZoomRotate.disableRotation();
+
+			return () => {
+				mapInstance.off('moveend', updateState);
+			};
+		}
+	});
+
+	const style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
 </script>
 
-<div class="map-container relative m-4 ml-0 mt-0 rounded-xl h-full w-auto bg-gray-200 border border-gray-300">
-    {#if isLoading || !$privacyAccepted}
-        <!-- Skeleton while loading or privacy not accepted -->
-        <div class="flex items-center justify-center h-full w-full p-0">
-            <Skeleton class="h-full w-full rounded-xl" />
-        </div>
-    {:else}
-        <!-- Map loaded and privacy accepted -->
-        <MapLibre
-            {center}
-            {zoom}
-            {style}
-            class="map"
-            attributionControl={false}
-            bind:map={mapInstance}
-        >
-            {#snippet children({ map })}
-                <!-- Only zoom controls (NavigationControl shows zoom buttons) -->
-                <NavigationControl position="top-right" showCompass={false} />
-                
-                <!-- Attribution control positioned on the left -->
-                <AttributionControl position="bottom-left" />
-            {/snippet}
-        </MapLibre>
-        <DownloadButton />
-    {/if}
+<div
+	class="map-container relative m-4 mt-0 ml-0 h-full w-auto rounded-xl border border-gray-300 bg-gray-200"
+>
+	{#if isLoading || !appState.privacyAccepted}
+		<div class="flex h-full w-full items-center justify-center p-0">
+			<Skeleton class="h-full w-full rounded-xl" />
+		</div>
+	{:else}
+		<MapLibre
+			center={appState.location.center}
+			zoom={appState.location.zoom}
+			{style}
+			class="map"
+			attributionControl={false}
+			bind:map={mapInstance}
+			dragRotate={false}
+		>
+			{#snippet children({ map })}
+				<NavigationControl position="top-right" showCompass={false} />
+				<AttributionControl position="bottom-left" />
+			{/snippet}
+		</MapLibre>
+		<DownloadButton />
+	{/if}
 </div>
 
 <style>
-    .map-container {
-        overflow: hidden;
-    }
-    
-    :global(.map) {
-        height: 100% !important;
-        width: 100% !important;
-        border-radius: 0.75rem; /* rounded-xl equivalent */
-    }
-    
-    :global(.maplibregl-ctrl-attrib a) {
-        color: var(--foreground) !important;
-    }
+	.map-container {
+		overflow: hidden;
+	}
 
-    :global(.maplibregl-canvas) {
-        filter: grayscale(100%);
-    }
+	:global(.map) {
+		height: 100% !important;
+		width: 100% !important;
+		border-radius: 0.75rem;
+	}
 
-    :global(.dark .maplibregl-canvas) {
-        filter: grayscale(100%) invert(100%) brightness(150%);
-    }
+	:global(.maplibregl-ctrl-attrib a) {
+		color: var(--foreground) !important;
+	}
+
+	:global(.maplibregl-canvas) {
+		filter: grayscale(100%);
+	}
+
+	:global(.dark .maplibregl-canvas) {
+		filter: grayscale(100%) invert(100%) brightness(150%);
+	}
 </style>

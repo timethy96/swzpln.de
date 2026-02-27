@@ -16,22 +16,36 @@ function progressCallback(info: ProgressInfo): void {
 // Handle messages from main thread
 self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 	try {
-		const { format, osmData, elevationMatrix, bounds, layers, zoom, scale, contourInterval } = event.data;
+		const { format, osmData, elevationMatrix, bounds, layers, zoom, scale, contourInterval, buildingStyle } =
+			event.data;
 
 		// Step 1: Convert OSM data to geometry
 		const geometryObjects = osmDataToGeometry(osmData, bounds, progressCallback);
 
-		// Step 2: Generate contours if elevation data is available
+		// Step 2: Generate contours if elevation data is available (for 2D formats)
 		let contours = null;
-		
+
 		if (elevationMatrix && layers.includes('contours')) {
 			contours = generateContours(elevationMatrix, zoom, progressCallback, contourInterval);
 		}
 
 		// Step 3: Export to requested format
-		const result = exportGeometry(format, geometryObjects, contours, bounds, zoom, scale, progressCallback);
+		// Note: 3D formats use elevationMatrix directly, 2D formats use contours
+		const result = await exportGeometry(
+			format,
+			geometryObjects,
+			contours,
+			elevationMatrix,
+			bounds,
+			zoom,
+			scale,
+			progressCallback,
+			buildingStyle
+		);
 
 		// Step 4: Send result back to main thread
+		// For binary data (Uint8Array), send as is
+		// For string data, send as is
 		const message: WorkerMessage = {
 			type: 'complete',
 			data: result,

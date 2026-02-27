@@ -24,6 +24,8 @@
 		"@sveltejs/kit": "^2.22.0",
 		"@sveltejs/vite-plugin-svelte": "^6.2.0",
 		"@tailwindcss/vite": "^4.1.13",
+		"@types/earcut": "^3.0.0",
+		"@types/node": "^24.9.1",
 		"@vitest/browser": "^3.2.3",
 		"bits-ui": "^2.11.4",
 		"clsx": "^2.1.1",
@@ -52,11 +54,15 @@
 	"dependencies": {
 		"@inlang/paraglide-js": "^2.0.0",
 		"@tarikjabiri/dxf": "^2.8.9",
+		"earcut": "^3.0.2",
 		"jspdf": "^3.0.3",
 		"lucide-svelte": "^0.545.0",
 		"ml-conrec": "^5.0.3",
 		"polygon-clipping": "^0.15.7",
-		"svelte-maplibre": "^1.2.1"
+		"rhino3dm": "^8.17.0",
+		"sql.js": "^1.13.0",
+		"svelte-maplibre": "^1.2.1",
+		"web-ifc": "^0.0.72"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [

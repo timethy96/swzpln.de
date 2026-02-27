@@ -3,6 +3,7 @@
 import { Conrec } from 'ml-conrec';
 import type { ContourData, ContourLine, Coordinate, ProgressCallback } from '../types';
 import { getContourInterval } from '../geometry/coordinates';
+import * as m from '$lib/paraglide/messages';
 
 /**
  * Generate contour lines from elevation matrix
@@ -18,7 +19,7 @@ export function generateContours(
 		onProgress?.({
 			step: 'contours',
 			percent: 0,
-			message: 'Höhenlinien werden generiert...'
+			message: m.progress_contours_generating()
 		});
 
 		// Validate matrix
@@ -38,7 +39,7 @@ export function generateContours(
 		onProgress?.({
 			step: 'contours',
 			percent: 20,
-			message: 'Kontur-Intervall wird berechnet...'
+			message: m.progress_contours_calculating()
 		});
 
 		// Use custom interval if provided, otherwise use zoom-based interval
@@ -85,7 +86,7 @@ export function generateContours(
 		onProgress?.({
 			step: 'contours',
 			percent: 80,
-			message: 'Höhenlinien werden verarbeitet...'
+			message: m.progress_contours_processing()
 		});
 
 		// Convert contours to our coordinate format

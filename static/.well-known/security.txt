@@ -1,0 +1,8 @@
+Contact: contact(at)swzpln.de
+Preferred-Languages: en, de
+Canonical: https://swzpln.de/.well-known/security.txt
+Policy: https://github.com/timethy96/swzpln.de/blob/main/SECURITY.md
+
+
+
+

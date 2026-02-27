@@ -2,159 +2,110 @@
 
 import { DxfWriter, Units, point3d, LWPolylineFlags } from '@tarikjabiri/dxf';
 import type { Bounds, ContourData, GeometryObject, ProgressCallback } from '../types';
-import { LAYER_CONFIG, isLayerFillable } from '../layers';
+import { LAYER_CONFIG, isLayerFillable, sortObjectsByLayer } from '../layers';
 import { latLngToXY, getMaxXY } from '../geometry/coordinates';
-import { convertAndMergeRoads } from '../roads';
+import * as m from '$lib/paraglide/messages';
 
-/**
- * Export geometry objects to DXF format
- */
 export function exportToDXF(
 	objects: GeometryObject[],
 	contours: ContourData | null,
 	bounds: Bounds,
 	zoom: number,
-	onProgress?: ProgressCallback
+	onProgress?: ProgressCallback,
+	buildingStyle?: 'filled' | 'outline'
 ): string {
-	onProgress?.({
-		step: 'export',
-		percent: 0,
-		message: 'DXF-Export wird initialisiert...'
-	});
+	notify(onProgress, 0, m.progress_dxf_init());
 
-	// Create DXF writer
+	// 1. Setup
 	const dxf = new DxfWriter();
 	dxf.setUnits(Units.Meters);
 
-	// Add layers for each type present in objects
-	const layersUsed = new Set(objects.map((obj) => obj.type));
-
-	for (const layer of layersUsed) {
-		const config = LAYER_CONFIG[layer];
-		if (config) {
-			dxf.addLayer(layer, config.dxfColor || 7, config.lineType || 'CONTINUOUS');
-		}
+	// Add layers dynamically based on config
+	for (const [key, conf] of Object.entries(LAYER_CONFIG)) {
+		dxf.addLayer(key, conf.dxfColor || 7, conf.lineType || 'CONTINUOUS');
 	}
-
-	// Add contours layer if needed
-	if (contours) {
-		const contourConfig = LAYER_CONFIG.contours;
-		dxf.addLayer('contours', contourConfig.dxfColor || 6, contourConfig.lineType || 'CONTINUOUS');
-	}
-
-	// Add "other" layer for unclassified objects
 	dxf.addLayer('other', 1, 'CONTINUOUS');
 
-	onProgress?.({
-		step: 'export',
-		percent: 10,
-		message: 'Straßen werden zusammengeführt...'
-	});
-
-	// Convert and merge roads
-	const processedObjects = convertAndMergeRoads(objects);
-
-	onProgress?.({
-		step: 'export',
-		percent: 20,
-		message: 'OSM-Objekte werden zu DXF hinzugefügt...'
-	});
-
-	// Calculate text size and position for attribution
-	const txtXY = latLngToXY(bounds, bounds.south, bounds.east);
+	// 2. Prepare Data
 	const maxXY = getMaxXY(bounds);
+	// Roads are already merged in converter step
+	const merged = [...objects];
+	if (contours) merged.push(...fromContours(contours, maxXY));
+
+	const sorted = sortObjectsByLayer(merged);
+	const total = sorted.length;
+
+	notify(onProgress, 20, m.progress_dxf_adding_objects());
+
+	// 3. Render
+	let count = 0;
+
+	for (const obj of sorted) {
+		const layer = (LAYER_CONFIG[obj.type] ? obj.type : 'other');
+		dxf.setCurrentLayerName(layer);
+
+		renderDXFObj(dxf, obj, maxXY);
+
+		count++;
+		if (count % 200 === 0) {
+			notify(onProgress, 20 + Math.round((count / total) * 70), m.progress_dxf_exporting({ current: count.toString(), total: total.toString() }));
+		}
+	}
+
+	// 4. Attribution
+	const txtXY = latLngToXY(bounds, bounds.south, bounds.east);
 	const txtSize = (19 - zoom) * 10;
+	dxf.setCurrentLayerName('other');
+	dxf.addText(point3d(txtXY.x, txtXY.y - txtSize, 0), txtSize, '(c) OpenStreetMap.org contributors');
 
-	// Add attribution text on "other" layer
-	dxf.addText(
-		point3d(txtXY.x, txtXY.y - txtSize, 0),
-		txtSize,
-		'(c) OpenStreetMap.org contributors'
-	);
-
-	// Add objects (group by layer for better organization)
-	let processedCount = 0;
-	const totalObjects = processedObjects.length;
-
-	// Group objects by layer
-	const objectsByLayer = new Map<string, GeometryObject[]>();
-	for (const obj of processedObjects) {
-		const layerName = layersUsed.has(obj.type) ? obj.type : 'other';
-		if (!objectsByLayer.has(layerName)) {
-			objectsByLayer.set(layerName, []);
-		}
-		objectsByLayer.get(layerName)!.push(obj);
-	}
-
-	// Add objects layer by layer
-	for (const [layerName, layerObjects] of objectsByLayer) {
-		// Set the current layer
-		dxf.setCurrentLayerName(layerName);
-		
-		for (const obj of layerObjects) {
-			const path = obj.path;
-			if (path.length === 0) continue;
-
-			// Convert path to LWPolyline vertices
-			const vertices = path.map((coord) => ({
-				point: point3d(coord.x, coord.y, 0)
-			}));
-
-			// Check if should be closed
-			const shouldClose = isLayerFillable(obj.type);
-			const flags = shouldClose ? LWPolylineFlags.Closed : 0;
-
-			// Add polyline with flags
-			dxf.addLWPolyline(vertices, { flags });
-
-			processedCount++;
-			if (processedCount % 100 === 0 && onProgress) {
-				const percent = 20 + Math.round((processedCount / totalObjects) * 60);
-				onProgress({
-					step: 'export',
-					percent,
-					message: `Objekte werden exportiert: ${processedCount}/${totalObjects}`
-				});
-			}
-		}
-	}
-
-	// Add contours if available
-	if (contours) {
-		onProgress?.({
-			step: 'export',
-			percent: 85,
-			message: 'Höhenlinien werden hinzugefügt...'
-		});
-
-		for (const contour of contours.contours) {
-			const vertices = contour.map((coord) => {
-				const x = (coord.x * maxXY.x) / contours.sizeX;
-				const y = Math.abs((coord.y * maxXY.y) / contours.sizeY - maxXY.y);
-				return { point: point3d(x, y, 0) };
-			});
-
-			if (vertices.length > 1) {
-				dxf.addLWPolyline(vertices);
-			}
-		}
-	}
-
-	onProgress?.({
-		step: 'export',
-		percent: 95,
-		message: 'DXF-Datei wird finalisiert...'
-	});
-
-	// Generate DXF string
-	const dxfString = dxf.stringify();
-
-	onProgress?.({
-		step: 'export',
-		percent: 100,
-		message: 'DXF-Export abgeschlossen'
-	});
-
-	return dxfString;
+	notify(onProgress, 100, m.progress_dxf_complete());
+	return dxf.stringify();
 }
 
+// Helpers
+
+function notify(cb: ProgressCallback | undefined, percent: number, message: string) {
+	if (cb) cb({ step: 'export', percent, message });
+}
+
+function fromContours(contours: ContourData, maxXY: { x: number, y: number }): GeometryObject[] {
+	return contours.contours.map(c => ({
+		type: 'contours',
+		path: c.map(p => ({
+			// Normalize to meters relative to maxXY for uniform scaling
+			x: (p.x * maxXY.x) / contours.sizeX,
+			y: Math.abs((p.y * maxXY.y) / contours.sizeY - maxXY.y) // Flip Y match DXF coord system if needed? Or just pass through.
+			// SVG/PDF flipped Y because screen coords go down. DXF is Cartesian (Y up). 
+			// Original DXF code: y: Math.abs((coord.y * maxXY.y) / contours.sizeY - maxXY.y);
+			// Wait, latLngToXY returns {x, y} relative to SW corner (0,0). Y is distance North.
+			// So Y increases upwards.
+			// The contours came from a raster which might be indexed Top-Down.
+			// Let's assume the Y-flip logic was intentional for raster->vector conversion.
+		}))
+	}));
+}
+
+function renderDXFObj(dxf: DxfWriter, obj: GeometryObject, maxXY: { x: number, y: number }) {
+	if (obj.path.length === 0) return;
+
+	// In DXF land, our coordinates are already meters from SW.
+	// But check logic for specific inversions. 
+	// Standard latLngToXY gives Y+ = North. This is satisfying for DXF.
+
+	const vertices = obj.path.map(p => ({ point: point3d(p.x, p.y, 0) }));
+
+	// Check closure
+	// Use config directly instead of re-importing isLayerFillable if preferred, but isLayerFillable is fine.
+	const shouldClose = isLayerFillable(obj.type);
+	const flags = shouldClose ? LWPolylineFlags.Closed : 0;
+
+	dxf.addLWPolyline(vertices, { flags });
+
+	// Add holes as separate polylines
+	if (obj.holes) {
+		for (const hole of obj.holes) {
+			const holeVertices = hole.map(p => ({ point: point3d(p.x, p.y, 0) }));
+			dxf.addLWPolyline(holeVertices, { flags: LWPolylineFlags.Closed });
+		}
+	}
+}

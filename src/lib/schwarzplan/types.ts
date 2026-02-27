@@ -6,6 +6,7 @@
 
 export type Layer =
 	| 'building'
+	| 'building_parts'
 	| 'highway'
 	| 'railway'
 	| 'water'
@@ -21,6 +22,7 @@ export interface LayerConfig {
 	overpassQuery: string;
 	lineType?: 'CONTINUOUS' | 'DASHED';
 	dxfColor?: number;
+	matchTags?: Record<string, string | string[]>;
 }
 
 // ============================================================================
@@ -94,13 +96,31 @@ export interface GeometryObject {
 	role?: string;
 	// For highways: the specific highway type (motorway, primary, etc.)
 	highwayType?: string;
+	// For buildings: 3D metadata
+	buildingMetadata?: BuildingMetadata;
+	// For multi-part buildings: the relation ID to group them
+	relationId?: number;
+	// For multipolygons: inner rings (holes)
+	holes?: Coordinate[][];
+}
+
+// Building 3D metadata from OSM tags
+export interface BuildingMetadata {
+	shape?: string; // Building shape (from building:shape)
+	height?: number; // Height in meters (from height tag or calculated from levels)
+	minHeight?: number; // Minimum height in meters (from min_height)
+	levels?: number; // Number of floors (from building:levels)
+	minLevel?: number; // Starting floor level (from building:min_level)
+	roofShape?: string; // Roof shape (from roof:shape)
+	roofHeight?: number; // Additional roof height (from roof:height)
+	roofLevels?: number; // Roof levels (from roof:levels)
 }
 
 // ============================================================================
 // Export Types
 // ============================================================================
 
-export type ExportFormat = 'dxf' | 'svg' | 'pdf';
+export type ExportFormat = 'dxf' | 'svg' | 'pdf' | 'ifc' | '3dm' | 'dxf3d';
 
 export interface ExportOptions {
 	format: ExportFormat;
@@ -169,6 +189,7 @@ export interface WorkerRequest {
 	zoom: number;
 	scale?: number;
 	contourInterval?: number;
+	buildingStyle?: 'filled' | 'outline';
 }
 
 export interface WorkerProgressMessage {
@@ -178,7 +199,7 @@ export interface WorkerProgressMessage {
 
 export interface WorkerCompleteMessage {
 	type: 'complete';
-	data: string | Blob;
+	data: string | Uint8Array | Blob;
 	filename: string;
 }
 
@@ -188,4 +209,28 @@ export interface WorkerErrorMessage {
 }
 
 export type WorkerMessage = WorkerProgressMessage | WorkerCompleteMessage | WorkerErrorMessage;
+
+// ============================================================================
+// 3D Geometry Types
+// ============================================================================
+
+// 3D coordinate with elevation
+export interface Coordinate3D {
+	x: number;
+	y: number;
+	z: number;
+}
+
+// Terrain mesh data structure (Triangulated Irregular Network)
+export interface TerrainMesh {
+	vertices: Coordinate3D[]; // All vertices with x,y,z coordinates
+	triangles: number[]; // Triangle indices (groups of 3, referencing vertices array)
+}
+
+// Extruded building 3D mesh
+export interface BuildingMesh {
+	vertices: Coordinate3D[]; // All vertices including base and top
+	faces: number[][]; // Face indices (each face is an array of vertex indices)
+	buildingId?: number; // OSM way/relation ID
+}
 

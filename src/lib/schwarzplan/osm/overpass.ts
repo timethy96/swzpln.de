@@ -2,6 +2,7 @@
 
 import type { Bounds, Layer, OSMData, ProgressCallback } from '../types';
 import { LAYER_CONFIG } from '../layers';
+import * as m from '$lib/paraglide/messages';
 
 // Primary and fallback Overpass API endpoints
 const PRIMARY_API = 'https://overpass.private.coffee/api/';
@@ -11,54 +12,10 @@ const FALLBACK_API = 'https://overpass-api.de/api/';
 // A free and unlimited Overpass instance operated by Private.coffee
 // https://overpass.private.coffee/
 
-let activeAPI = PRIMARY_API;
-
-/**
- * Check if an Overpass API endpoint is available
- */
-async function checkAPIAvailability(apiUrl: string): Promise<boolean> {
-	try {
-		const response = await fetch(`${apiUrl}status`, {
-			method: 'GET',
-			signal: AbortSignal.timeout(5000)
-		});
-		return response.ok;
-	} catch {
-		return false;
-	}
-}
-
-/**
- * Ensure we have an available API endpoint
- */
-async function ensureAPIAvailable(): Promise<string> {
-	// Check if primary API is available
-	const primaryAvailable = await checkAPIAvailability(PRIMARY_API);
-	if (primaryAvailable) {
-		activeAPI = PRIMARY_API;
-		return PRIMARY_API;
-	}
-
-	// Fallback to secondary API
-	console.warn('Primary Overpass API not available, using fallback');
-	activeAPI = FALLBACK_API;
-
-	// Show alert to user about fallback
-	if (typeof window !== 'undefined') {
-		alert(
-			'The primary Overpass API is not available. Switching to a fallback API (overpass-api.de). ' +
-				'Please note that you might experience slower downloads and may be subject to additional usage restrictions. ' +
-				'More information on overpass-api.de'
-		);
-	}
-
-	return FALLBACK_API;
-}
-
 /**
  * Construct Overpass API query URL for given bounds and layers
  */
-function constructOverpassQuery(bounds: Bounds, layers: Layer[]): string {
+function constructOverpassQuery(apiBase: string, bounds: Bounds, layers: Layer[]): string {
 	const bbox = [bounds.south, bounds.west, bounds.north, bounds.east].join(',');
 
 	// Build query parts for each layer
@@ -66,15 +23,17 @@ function constructOverpassQuery(bounds: Bounds, layers: Layer[]): string {
 	for (const layer of layers) {
 		if (layer === 'contours') continue; // Skip contours, handled separately
 		const config = LAYER_CONFIG[layer];
-		if (config.overpassQuery) {
+		if (config && config.overpassQuery) {
 			queryParts.push(config.overpassQuery);
+		} else if (!config) {
+			console.warn(`Layer config missing for: ${layer}`);
 		}
 	}
 
 	// Construct full query
 	const query = `[out:json][bbox:${bbox}];(${queryParts.join('')});out body;>;out skel qt;`;
 
-	return `${activeAPI}interpreter?data=${encodeURIComponent(query)}`;
+	return `${apiBase}interpreter?data=${encodeURIComponent(query)}`;
 }
 
 /**
@@ -85,19 +44,38 @@ export async function downloadOSMData(
 	layers: Layer[],
 	onProgress?: ProgressCallback
 ): Promise<OSMData> {
-	// Ensure API is available
-	await ensureAPIAvailable();
+	onProgress?.({ step: 'osm-download', percent: 0, message: m.progress_osm_download() });
 
-	// Construct query URL
-	const url = constructOverpassQuery(bounds, layers);
+	let response: Response;
+	const timeout = 120000; // 120 seconds timeout for primary
 
-	onProgress?.({ step: 'osm-download', percent: 0, message: 'OSM-Daten werden heruntergeladen...' });
+	try {
+		// Try Primary API
+		const controller = new AbortController();
+		const id = setTimeout(() => controller.abort(), timeout);
 
-	// Fetch with streaming
-	const response = await fetch(url);
+		const url = constructOverpassQuery(PRIMARY_API, bounds, layers);
+		response = await fetch(url, { signal: controller.signal });
+		clearTimeout(id);
 
-	if (!response.ok) {
-		throw new Error(`Overpass API error: ${response.status} ${response.statusText}`);
+		if (!response.ok) {
+			throw new Error(`Primary API error: ${response.status}`);
+		}
+	} catch (primaryError) {
+		console.warn('Primary Overpass API failed, switching to fallback:', primaryError);
+
+		if (typeof window !== 'undefined') {
+			// Optional: Notify user about fallback if desired, though user asked to just switch
+			// alert(m.error_overpass_fallback()); 
+		}
+
+		// Try Fallback API
+		const url = constructOverpassQuery(FALLBACK_API, bounds, layers);
+		response = await fetch(url);
+
+		if (!response.ok) {
+			throw new Error(`Overpass API error (fallback): ${response.status} ${response.statusText}`);
+		}
 	}
 
 	const reader = response.body?.getReader();
@@ -124,7 +102,7 @@ export async function downloadOSMData(
 			onProgress({
 				step: 'osm-download',
 				percent,
-				message: `OSM-Daten werden heruntergeladen: ${(receivedLength / 1024).toFixed(0)}KB`
+				message: m.progress_osm_download_progress({ size: (receivedLength / 1024).toFixed(0) })
 			});
 		}
 	}
@@ -137,9 +115,10 @@ export async function downloadOSMData(
 		position += chunk.length;
 	}
 
-	// Decode and parse JSON
+	// Decode JSON
 	const text = new TextDecoder('utf-8').decode(chunksAll);
-	onProgress?.({ step: 'osm-download', percent: 100, message: 'OSM-Daten heruntergeladen' });
+
+	onProgress?.({ step: 'osm-download', percent: 100, message: m.progress_osm_downloaded() });
 
 	try {
 		const data = JSON.parse(text) as OSMData;
