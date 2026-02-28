@@ -98,18 +98,15 @@
 		if (!bounds) return;
 
 		const zoom = appState.location.zoom;
-		let layers = [...appState.layers];
+		let layers: Layer[];
 
 		if (appState.is3DMode) {
-			if (appState.selected3DLayers.building && !layers.includes('building')) {
-				layers.push('building');
+			layers = [];
+			if (appState.selected3DLayers.building) {
+				layers.push('building', 'building_parts');
 			}
-			// Explicitly fetch building parts for 3D generation if building layer is active
-			if (appState.selected3DLayers.building || layers.includes('building')) {
-				if (!layers.includes('building_parts')) {
-					layers.push('building_parts');
-				}
-			}
+		} else {
+			layers = [...appState.layers];
 		}
 
 		try {

@@ -48,7 +48,9 @@ export function exportToDXF3D(
 			footprint: b.path,
 			metadata: b.buildingMetadata!,
 			id: undefined, // Building IDs not strictly needed for DXF export visual
-			relationId: b.relationId
+			relationId: b.relationId,
+			isOutline: b.isOutline,
+			holes: b.holes
 		}));
 
 	// Batch process buildings (handles grouping & terrain offset internally)

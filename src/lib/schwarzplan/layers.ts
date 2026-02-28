@@ -20,7 +20,7 @@ export const LAYER_CONFIG: Record<Layer, LayerConfig> = {
 		overpassQuery: 'nwr["building:part"];',
 		lineType: 'CONTINUOUS',
 		dxfColor: 0,
-		matchTags: { 'building:part': 'yes' }
+		matchTags: { 'building:part': [] } // Any value matches (tower, column, roof, yes, ...)
 	},
 	highway: {
 		color: '#828282',

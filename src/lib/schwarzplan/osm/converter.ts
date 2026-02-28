@@ -18,6 +18,7 @@ type ParsedWay = {
 	nodes: number[];
 	tags?: Record<string, string>;
 	relationId?: number;
+	isOutline?: boolean;
 };
 
 // --- Main Export ---
@@ -92,6 +93,51 @@ export function osmDataToGeometry(
 	// This converts linear highways into buffered polygons and merges adjacent ones
 	const mergedObjects = convertAndMergeRoads(geometryObjects);
 
+	notify(onProgress, 98, 'Resolving 3D building parts...');
+
+	// 6. Resolve Building Outlines vs Parts via Spatial Containment
+	const buildings = mergedObjects.filter(o => o.type === 'building' && o.buildingMetadata);
+	const parts = buildings.filter(b => b.buildingMetadata!.isPart);
+	const potentialOutlines = buildings.filter(b => !b.buildingMetadata!.isPart && !b.isOutline);
+
+	for (const outline of potentialOutlines) {
+		const outlineBBox = getBBox(outline.path);
+
+		for (const part of parts) {
+			const partBBox = getBBox(part.path);
+			if (bboxIntersect(outlineBBox, partBBox)) {
+				const centroid = calculateCentroid(part.path);
+				if (isPointInPolygon(centroid, outline.path)) {
+					// Don't let parts from other building relations suppress this outline
+					if (part.relationId && outline.relationId && part.relationId !== outline.relationId) continue;
+
+					// Only suppress outline if the part has a meaningful 3D body.
+					// Dome-only parts (height == roofHeight, no levels) are roof decorations,
+					// not full building replacements — they shouldn't suppress the outline.
+					const partMeta = part.buildingMetadata;
+					if (!partMeta) continue;
+					const hasBody = (partMeta.height && partMeta.height > (partMeta.roofHeight || 0)) || !!partMeta.levels;
+					if (!hasBody) continue;
+
+					outline.isOutline = true;
+
+					// Group them so they share base elevation
+					if (!part.relationId) {
+						// Create a pseudo relation ID
+						const pseudoId = outline.relationId || Math.floor(Math.random() * -1000000);
+						outline.relationId = pseudoId;
+						part.relationId = pseudoId;
+					} else if (!outline.relationId) {
+						outline.relationId = part.relationId;
+					}
+
+
+					// Continue checking other parts in this outline
+				}
+			}
+		}
+	}
+
 	notify(onProgress, 100, `Done: ${mergedObjects.length} objects`);
 	return mergedObjects;
 }
@@ -143,12 +189,26 @@ function processRelation(
 }
 
 function linkBuildingParts(rel: OSMRelation, ways: Map<number, ParsedWay>) {
+	let hasParts = false;
 	for (const member of rel.members) {
 		if (member.type !== 'way') continue;
 		const way = ways.get(member.ref);
-		if (way?.tags?.['building:part'] === 'yes') {
+		if (way?.tags?.['building:part'] && way.tags['building:part'] !== 'no') {
+			hasParts = true;
 			way.relationId = rel.id;
 			way.layer = 'building';
+		}
+	}
+
+	if (hasParts) {
+		for (const member of rel.members) {
+			if (member.type !== 'way') continue;
+			const way = ways.get(member.ref);
+			if (way && (member.role === 'outline' || !way.tags?.['building:part'] || way.tags['building:part'] === 'no')) {
+				way.isOutline = true;
+				// Also group the outline with the relation so it belongs to the same building
+				way.relationId = rel.id;
+			}
 		}
 	}
 }
@@ -208,7 +268,8 @@ function createWayObject(way: ParsedWay, nodes: Map<number, Coordinate>): Geomet
 		type: way.layer!, // Checked before calling
 		path,
 		highwayType: way.tags?.highway,
-		relationId: way.relationId
+		relationId: way.relationId,
+		isOutline: way.isOutline
 	};
 
 	if (way.layer === 'building') {
@@ -309,7 +370,7 @@ function notify(cb: ProgressCallback | undefined, percent: number, message: stri
 
 function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadata | undefined {
 	if (!tags) return undefined;
-	if (!tags.building && tags['building:part'] !== 'yes') return undefined;
+	if (!tags.building && (!tags['building:part'] || tags['building:part'] === 'no')) return undefined;
 
 	const getVal = (k: string) => parseFloat(tags[k]);
 
@@ -323,18 +384,15 @@ function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadat
 		roofShape: tags['roof:shape'],
 		shape: ['sphere', 'cone', 'pyramid', 'cylinder'].includes(tags['building:shape'] || '')
 			? tags['building:shape']
-			: undefined
+			: undefined,
+		isPart: (tags['building:part'] && tags['building:part'] !== 'no' && !tags.building) ? true : undefined
 	};
-
-	if (!meta.roofShape && !meta.shape && tags['building:shape']) {
-		meta.roofShape = tags['building:shape'];
-	}
 
 	// Clean undefined keys
 	Object.keys(meta).forEach(key => (meta as any)[key] === undefined && delete (meta as any)[key]);
 
 	// Defaults if missing
-	if (!meta.height && !meta.levels && tags['building:part'] !== 'yes') {
+	if (!meta.height && !meta.levels && (!tags['building:part'] || tags['building:part'] === 'no')) {
 		meta.height = 10;
 		meta.levels = 3;
 	} else if (meta.levels && !meta.height) {
@@ -344,5 +402,44 @@ function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadat
 		meta.minHeight = meta.minLevel * 3;
 	}
 
+	// Infer height from roof:height for parts that only specify a roof (e.g. dome with roof:height=42)
+	if (!meta.height && !meta.levels && meta.roofHeight) {
+		meta.height = (meta.minHeight || 0) + meta.roofHeight;
+	}
+
 	return Object.keys(meta).length > 0 ? meta : undefined;
+}
+
+interface BBox {
+	minX: number;
+	minY: number;
+	maxX: number;
+	maxY: number;
+}
+
+function getBBox(polygon: Coordinate[]): BBox {
+	let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+	for (const p of polygon) {
+		if (p.x < minX) minX = p.x;
+		if (p.x > maxX) maxX = p.x;
+		if (p.y < minY) minY = p.y;
+		if (p.y > maxY) maxY = p.y;
+	}
+	return { minX, minY, maxX, maxY };
+}
+
+function bboxIntersect(a: BBox, b: BBox): boolean {
+	return a.minX <= b.maxX && a.maxX >= b.minX && a.minY <= b.maxY && a.maxY >= b.minY;
+}
+
+function calculateCentroid(polygon: Coordinate[]): Coordinate {
+	let sx = 0, sy = 0;
+	if (polygon.length === 0) return { x: 0, y: 0 };
+	const len = pointsEqual(polygon[0], polygon[polygon.length - 1]) ? polygon.length - 1 : polygon.length;
+	const count = len > 0 ? len : polygon.length;
+	for (let i = 0; i < count; i++) {
+		sx += polygon[i].x;
+		sy += polygon[i].y;
+	}
+	return { x: sx / count, y: sy / count };
 }

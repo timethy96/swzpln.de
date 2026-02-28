@@ -67,8 +67,12 @@ export function interpolateTerrainElevation(
 	const gx = (point.x / maxXY.x) * (gridSize.cols - 1);
 	const gy = (point.y / maxXY.y) * (gridSize.rows - 1);
 
-	const x0 = Math.floor(gx);
-	const y0 = Math.floor(gy);
+	// Clamp to grid boundaries
+	const clampedGx = Math.max(0, Math.min(gx, gridSize.cols - 1));
+	const clampedGy = Math.max(0, Math.min(gy, gridSize.rows - 1));
+
+	const x0 = Math.floor(clampedGx);
+	const y0 = Math.floor(clampedGy);
 	const x1 = Math.min(x0 + 1, gridSize.cols - 1);
 	const y1 = Math.min(y0 + 1, gridSize.rows - 1);
 

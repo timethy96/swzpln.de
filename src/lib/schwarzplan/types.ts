@@ -100,6 +100,8 @@ export interface GeometryObject {
 	buildingMetadata?: BuildingMetadata;
 	// For multi-part buildings: the relation ID to group them
 	relationId?: number;
+	// For multi-part buildings: true if this is just the 2D outline covering the whole building
+	isOutline?: boolean;
 	// For multipolygons: inner rings (holes)
 	holes?: Coordinate[][];
 }
@@ -114,6 +116,7 @@ export interface BuildingMetadata {
 	roofShape?: string; // Roof shape (from roof:shape)
 	roofHeight?: number; // Additional roof height (from roof:height)
 	roofLevels?: number; // Roof levels (from roof:levels)
+	isPart?: boolean; // True if it comes from building:part
 }
 
 // ============================================================================
