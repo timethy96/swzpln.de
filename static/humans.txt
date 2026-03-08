@@ -3,8 +3,8 @@ Creator: Timo Bilhöfer
 Site: https://timo.bilhoefer.de
 Location: Berlin, Germany
 
-Supporter: Holder Bilhöfer Architekten
-Site: https://holderbilhoefer.com
+Supporter: TAB Studio UG (haftungsbeschränkt)
+Site: https://tabstudio.de
 
 /* THANKS */
 OpenStreetMap Contributors

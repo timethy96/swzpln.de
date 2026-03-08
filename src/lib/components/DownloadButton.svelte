@@ -3,7 +3,7 @@
 	import { Progress } from '$lib/components/ui/progress';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { Dialog, DialogContent, DialogHeader, DialogTitle } from '$lib/components/ui/dialog';
-	import { Download } from 'lucide-svelte';
+	import { Download, Loader2 } from 'lucide-svelte';
 	import { appState } from '$lib/state.svelte';
 	import { downloadOSMData } from '$lib/schwarzplan/osm/overpass';
 	import { fetchElevationData } from '$lib/schwarzplan/elevation/client';
@@ -280,13 +280,18 @@
 >
 	<DialogContent class="max-w-md" showCloseButton={false}>
 		<DialogHeader>
-			<DialogTitle>
-				{#if appState.progress?.step === 'error'}
-					{m.export_error_title()}
-				{:else}
-					{m.export_progress_title()}
+			<div class="flex items-center justify-between">
+				<DialogTitle>
+					{#if appState.progress?.step === 'error'}
+						{m.export_error_title()}
+					{:else}
+						{m.export_progress_title()}
+					{/if}
+				</DialogTitle>
+				{#if appState.progress?.step === 'osm-download' || appState.progress?.step === 'elevation-download'}
+					<Loader2 class="size-5 animate-spin text-muted-foreground" />
 				{/if}
-			</DialogTitle>
+			</div>
 		</DialogHeader>
 
 		{#if appState.progress}

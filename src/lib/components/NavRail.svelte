@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
+	import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '$lib/components/ui/tooltip';
 	import { Menu, X } from 'lucide-svelte';
 	import { goto } from '$app/navigation';
 	import { onMount } from 'svelte';
@@ -91,17 +92,40 @@
 				<Menu class="h-6 w-6" />
 			{/if}
 		</Button>
-		{#each navigationItems as item}
-			<Button 
-				variant="ghost" 
-				class={isOpen ? 'h-12 w-[calc(100%-8px)] justify-start overflow-hidden m-0' : 'h-12 w-12 px-0 justify-start overflow-hidden m-0'}
-				onclick={() => handleItemClick(item)}
-			>
-				{@const IconComponent = item.icon}
-				<IconComponent class="h-6 w-6 mx-1" />
-				{#if isOpen}<span class="text-base">{item.label}</span>{/if}
-			</Button>
-		{/each}
+		<TooltipProvider delayDuration={300}>
+			{#each navigationItems as item}
+				{#if isOpen}
+					<Button
+						variant="ghost"
+						class="h-12 w-[calc(100%-8px)] justify-start overflow-hidden m-0"
+						onclick={() => handleItemClick(item)}
+					>
+						{@const IconComponent = item.icon}
+						<IconComponent class="h-6 w-6 mx-1" />
+						<span class="text-base">{item.label}</span>
+					</Button>
+				{:else}
+					<Tooltip>
+						<TooltipTrigger>
+							{#snippet child({ props })}
+								<Button
+									{...props}
+									variant="ghost"
+									class="h-12 w-12 px-0 justify-start overflow-hidden m-0"
+									onclick={() => handleItemClick(item)}
+								>
+									{@const IconComponent = item.icon}
+									<IconComponent class="h-6 w-6 mx-1" />
+								</Button>
+							{/snippet}
+						</TooltipTrigger>
+						<TooltipContent side="right">
+							{item.label}
+						</TooltipContent>
+					</Tooltip>
+				{/if}
+			{/each}
+		</TooltipProvider>
 	</div>
 
 	<div class="absolute bottom-4 left-0 right-0 h-40 flex flex-col items-center justify-end overflow-hidden">
@@ -109,7 +133,7 @@
 			<div class="px-3 py-5 w-[312px] text-sm text-muted-foreground leading-tight select-none">
 				<span>{m.nav_footer_copyright({year: new Date().getFullYear().toString()})}<br>
 				{m.nav_footer_created_by()} <a href="https://timo.bilhoefer.de" target="_blank" class="text-primary">Timo Bilhöfer</a><br>
-				{m.nav_footer_supported_by()} <a href="https://holderbilhoefer.com" target="_blank" class="text-primary">Holder Bilhöfer Architekten</a>.<br><br>
+				{m.nav_footer_supported_by()} <a href="https://tabstudio.de" target="_blank" class="text-primary">TAB Studio UG (haftungsbeschränkt)</a>.<br><br>
 				{m.nav_footer_open_source()}<br>
 				{m.nav_footer_license()}</span>
 			</div>

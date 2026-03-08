@@ -104,6 +104,8 @@ export interface GeometryObject {
 	isOutline?: boolean;
 	// For multipolygons: inner rings (holes)
 	holes?: Coordinate[][];
+	// Raw OSM tags (for IFC export)
+	tags?: Record<string, string>;
 }
 
 // Building 3D metadata from OSM tags

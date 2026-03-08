@@ -2,8 +2,8 @@
   "schema_version": "v1",
   "name_for_model": "swzpln",
   "name_for_human": "SWZPLN Site Plan Generator",
-  "description_for_model": "Generate site plans (schwarzplan) for any location. Exports to DXF, SVG, and PDF formats. Includes building footprints, roads, green spaces, water bodies, and elevation contours from OpenStreetMap data. Ideal for architects, urban planners, and designers.",
-  "description_for_human": "Generate free site plans for any city.",
+  "description_for_model": "Generate site plans (schwarzplan) and 3D city models for any location. 2D exports to DXF, SVG, and PDF. 3D exports to IFC (BIM) and 3D DXF with extruded buildings, terrain elevation, and roof shapes. Includes building footprints, roads, green spaces, water bodies, and elevation contours from OpenStreetMap data. Ideal for architects, urban planners, BIM coordinators, and designers.",
+  "description_for_human": "Generate free site plans and 3D city models for any city.",
   "auth": {
     "type": "none"
   },

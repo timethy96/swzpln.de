@@ -1,0 +1,37 @@
+# SWZPLN / OpenCityPlans
+
+> Free site plan (Schwarzplan) and 3D city model generator for architects, urban planners, and designers.
+
+SWZPLN generates professional site plans and 3D city models from OpenStreetMap data for any location worldwide.
+
+## 2D Exports
+- DXF (for AutoCAD and CAD software)
+- SVG (vector graphics)
+- PDF (print-ready documents)
+
+## 3D Exports
+- IFC (BIM format, compatible with Revit, ArchiCAD, and other BIM software)
+- 3D DXF (3D geometry for CAD software)
+
+## Features
+- Building footprints with height and level data
+- 3D extruded buildings with roof shapes
+- Terrain elevation and contour lines
+- Road networks, green spaces, water bodies
+- Layered output (buildings, roads, water, green, forest, farmland, railways, contours)
+- Multiple scales for architectural drawings
+
+## Data Sources
+- OpenStreetMap for building and geographic data
+- Open Topo Data with Mapzen for elevation data
+- CARTO for preview map tiles
+
+## Links
+- German site: https://swzpln.de
+- English site: https://opencityplans.com
+- Source code: https://github.com/timethy96/swzpln.de
+- Legal: https://swzpln.de/impressum
+
+## License
+- Website: AGPL-3
+- Generated plans: CC0 (public domain)

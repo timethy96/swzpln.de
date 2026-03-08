@@ -15,9 +15,9 @@
 		"name": appTitle,
 		"alternateName": locale === 'en' ? 'OpenCityPlans' : 'SWZPLN',
 		"url": origin,
-		"description": locale === 'en' 
-			? "Free professional site plan generator for architects and designers. Export as DXF, SVG, or PDF."
-			: "Kostenloser professioneller Schwarzplan Generator für Architekten und Designer. Export als DXF, SVG oder PDF.",
+		"description": locale === 'en'
+			? "Free professional site plan and 3D city model generator for architects and designers. Export as DXF, SVG, PDF, IFC (BIM), or 3D DXF."
+			: "Kostenloser professioneller Schwarzplan und 3D-Stadtmodell Generator für Architekten und Designer. Export als DXF, SVG, PDF, IFC (BIM) oder 3D-DXF.",
 		"inLanguage": locale === 'en' ? 'en-US' : 'de-DE',
 		"potentialAction": {
 			"@type": "SearchAction",
@@ -70,9 +70,12 @@
 		"featureList": [
 			"Generate site plans from OpenStreetMap data",
 			"Export to DXF, SVG, and PDF formats",
-			"3D terrain visualization",
+			"3D city models with extruded buildings",
+			"IFC (BIM) export for architecture workflows",
+			"3D DXF export for CAD software",
+			"3D terrain visualization with elevation data",
 			"Contour line generation",
-			"Building footprints",
+			"Building footprints with height data",
 			"Road networks",
 			"Green spaces and water bodies"
 		],
@@ -103,7 +106,15 @@
 				"name": "What file formats can I export?",
 				"acceptedAnswer": {
 					"@type": "Answer",
-					"text": "You can export your site plans in DXF (for CAD software like AutoCAD), SVG (vector graphics), and PDF formats. All exports include layers for buildings, roads, green spaces, water bodies, and contour lines."
+					"text": "You can export 2D site plans in DXF, SVG, and PDF formats. For 3D models, SWZPLN supports IFC (BIM format for Revit, ArchiCAD, etc.) and 3D DXF (for AutoCAD and other CAD software). All exports include layers for buildings, roads, green spaces, water bodies, and contour lines."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Can I create 3D city models and BIM data?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Yes, SWZPLN can generate 3D city models with extruded buildings based on OpenStreetMap height data. You can export these as IFC files for BIM workflows (compatible with Revit, ArchiCAD, and other BIM software) or as 3D DXF files for CAD applications. The models include building heights, terrain elevation, and roof shapes."
 				}
 			},
 			{
@@ -136,7 +147,15 @@
 				"name": "In welche Dateiformate kann ich exportieren?",
 				"acceptedAnswer": {
 					"@type": "Answer",
-					"text": "Sie können Ihre Schwarzpläne in DXF (für CAD-Software wie AutoCAD), SVG (Vektorgrafik) und PDF-Formaten exportieren. Alle Exporte enthalten Ebenen für Gebäude, Straßen, Grünflächen, Gewässer und Höhenlinien."
+					"text": "2D-Schwarzpläne können als DXF, SVG und PDF exportiert werden. Für 3D-Modelle unterstützt SWZPLN IFC (BIM-Format für Revit, ArchiCAD etc.) und 3D-DXF (für AutoCAD und andere CAD-Software). Alle Exporte enthalten Ebenen für Gebäude, Straßen, Grünflächen, Gewässer und Höhenlinien."
+				}
+			},
+			{
+				"@type": "Question",
+				"name": "Kann ich 3D-Stadtmodelle und BIM-Daten erstellen?",
+				"acceptedAnswer": {
+					"@type": "Answer",
+					"text": "Ja, SWZPLN kann 3D-Stadtmodelle mit extrudierten Gebäuden basierend auf OpenStreetMap-Höhendaten generieren. Diese lassen sich als IFC-Dateien für BIM-Workflows (kompatibel mit Revit, ArchiCAD und anderer BIM-Software) oder als 3D-DXF-Dateien für CAD-Anwendungen exportieren. Die Modelle enthalten Gebäudehöhen, Geländeerhebungen und Dachformen."
 				}
 			},
 			{

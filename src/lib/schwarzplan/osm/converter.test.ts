@@ -145,37 +145,132 @@ describe('OSM converter', () => {
 			expect(result[1].type).toBe('highway');
 		});
 
-		it('should apply relation tags to ways', () => {
+		it('should apply relation tags to ways via multipolygon', () => {
 			const osmData: OSMData = {
 				version: 0.6,
 				generator: 'test',
 				elements: [
-					{
-						type: 'node',
-						id: 1,
-						lat: 48.75,
-						lon: 9.15
-					},
+					{ type: 'node', id: 1, lat: 48.75, lon: 9.15 },
+					{ type: 'node', id: 2, lat: 48.76, lon: 9.16 },
+					{ type: 'node', id: 3, lat: 48.75, lon: 9.17 },
 					{
 						type: 'way',
 						id: 100,
-						nodes: [1],
+						nodes: [1, 2, 3, 1],
 						tags: { highway: 'residential' }
 					},
 					{
 						type: 'relation',
 						id: 200,
 						members: [{ type: 'way', ref: 100, role: 'outer' }],
-						tags: { building: 'yes' }
+						tags: { building: 'yes', type: 'multipolygon' }
 					}
 				]
 			};
 
 			const result = osmDataToGeometry(osmData, testBounds);
 
-			expect(result).toHaveLength(1);
-			// Relation tags should override way tags
-			expect(result[0].type).toBe('building');
+			// The multipolygon relation creates a building from the way,
+			// suppressing its original highway classification
+			const buildings = result.filter(r => r.type === 'building');
+			expect(buildings).toHaveLength(1);
+		});
+
+		it('should filter underground buildings', () => {
+			const osmData: OSMData = {
+				version: 0.6,
+				generator: 'test',
+				elements: [
+					{ type: 'node', id: 1, lat: 48.75, lon: 9.15 },
+					{ type: 'node', id: 2, lat: 48.76, lon: 9.16 },
+					{
+						type: 'way',
+						id: 100,
+						nodes: [1, 2],
+						tags: { building: 'yes', location: 'underground' }
+					}
+				]
+			};
+
+			const result = osmDataToGeometry(osmData, testBounds);
+			const buildings = result.filter(r => r.type === 'building');
+			expect(buildings).toHaveLength(0);
+		});
+
+		it('should filter buildings with negative layer', () => {
+			const osmData: OSMData = {
+				version: 0.6,
+				generator: 'test',
+				elements: [
+					{ type: 'node', id: 1, lat: 48.75, lon: 9.15 },
+					{ type: 'node', id: 2, lat: 48.76, lon: 9.16 },
+					{
+						type: 'way',
+						id: 100,
+						nodes: [1, 2],
+						tags: { building: 'yes', layer: '-1' }
+					}
+				]
+			};
+
+			const result = osmDataToGeometry(osmData, testBounds);
+			const buildings = result.filter(r => r.type === 'building');
+			expect(buildings).toHaveLength(0);
+		});
+
+		it('should keep above-ground buildings', () => {
+			const osmData: OSMData = {
+				version: 0.6,
+				generator: 'test',
+				elements: [
+					{ type: 'node', id: 1, lat: 48.75, lon: 9.15 },
+					{ type: 'node', id: 2, lat: 48.76, lon: 9.16 },
+					{
+						type: 'way',
+						id: 100,
+						nodes: [1, 2],
+						tags: { building: 'yes' }
+					},
+					{
+						type: 'way',
+						id: 101,
+						nodes: [1, 2],
+						tags: { building: 'yes', layer: '1' }
+					}
+				]
+			};
+
+			const result = osmDataToGeometry(osmData, testBounds);
+			const buildings = result.filter(r => r.type === 'building');
+			expect(buildings).toHaveLength(2);
+		});
+
+		it('should filter underground building relations', () => {
+			const osmData: OSMData = {
+				version: 0.6,
+				generator: 'test',
+				elements: [
+					{ type: 'node', id: 1, lat: 48.75, lon: 9.15 },
+					{ type: 'node', id: 2, lat: 48.76, lon: 9.16 },
+					{ type: 'node', id: 3, lat: 48.75, lon: 9.17 },
+					{
+						type: 'way',
+						id: 100,
+						nodes: [1, 2, 3, 1],
+						tags: {}
+					},
+					{
+						type: 'relation',
+						id: 200,
+						members: [{ type: 'way', ref: 100, role: 'outer' }],
+						tags: { building: 'yes', type: 'multipolygon', location: 'underground' }
+					}
+				]
+			};
+
+			const result = osmDataToGeometry(osmData, testBounds);
+			const buildings = result.filter(r => r.type === 'building');
+			expect(buildings).toHaveLength(0);
 		});
 
 		it('should skip ways with missing nodes', () => {

@@ -66,6 +66,9 @@ Allow: /
 User-agent: YandexBot
 Allow: /
 
+# LLM context (https://llmstxt.org)
+LLMs-txt: https://swzpln.de/llms.txt
+
 # Sitemaps (German site is primary)
 Sitemap: https://swzpln.de/sitemap.xml
 Sitemap: https://opencityplans.com/sitemap.xml

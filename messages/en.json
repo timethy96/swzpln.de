@@ -130,8 +130,8 @@
 	"common_error": "Error",
 	"osm_attribution": "(c) OpenStreetMap.org contributors",
 	"seo_default_title": "OPENCITYPLANS - Free Site Plan Generator for Architects & Designers",
-	"seo_default_description": "Generate professional site plans (schwarzplan) for free. Export as DXF, SVG, or PDF. Perfect for architects, urban planners, and designers. Based on OpenStreetMap data with 3D terrain support.",
-	"seo_keywords": "site plan, schwarzplan, architecture, urban planning, DXF export, CAD, OpenStreetMap, free tools, architects, city planning, 3D terrain, contour lines, building footprints",
+	"seo_default_description": "Generate professional site plans (schwarzplan) and 3D city models for free. Export as DXF, SVG, PDF, IFC (BIM), or 3D DXF. Perfect for architects, urban planners, and designers. Based on OpenStreetMap data with 3D buildings and terrain.",
+	"seo_keywords": "site plan, schwarzplan, architecture, urban planning, DXF export, CAD, OpenStreetMap, free tools, architects, city planning, 3D terrain, contour lines, building footprints, IFC, BIM, 3D city model, 3D building model, IFC export, BIM model, open BIM, 3D DXF",
 	"seo_author": "Timo Bilhöfer",
 	"seo_creator": "SWZPLN",
 	"seo_ai_declaration": "This website uses AI for optimization but all core content is human-created"

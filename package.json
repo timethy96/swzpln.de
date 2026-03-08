@@ -61,8 +61,7 @@
 		"polygon-clipping": "^0.15.7",
 		"rhino3dm": "^8.17.0",
 		"sql.js": "^1.13.0",
-		"svelte-maplibre": "^1.2.1",
-		"web-ifc": "^0.0.72"
+		"svelte-maplibre": "^1.2.1"
 	},
 	"pnpm": {
 		"onlyBuiltDependencies": [

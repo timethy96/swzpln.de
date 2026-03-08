@@ -131,8 +131,8 @@
 	"common_error": "Fehler",
 	"osm_attribution": "(c) OpenStreetMap.org contributors",
 	"seo_default_title": "SWZPLN - Kostenloser Schwarzplan Generator für Architekten & Designer",
-	"seo_default_description": "Erstelle kostenlos professionelle Schwarzpläne. Export als DXF, SVG oder PDF. Perfekt für Architekten, Stadtplaner und Designer. Basierend auf OpenStreetMap-Daten mit 3D-Geländeunterstützung.",
-	"seo_keywords": "schwarzplan, lageplan, architektur, stadtplanung, DXF export, CAD, OpenStreetMap, kostenlose tools, architekten, stadtplanung, 3D gelände, höhenlinien, gebäudegrundrisse",
+	"seo_default_description": "Erstelle kostenlos professionelle Schwarzpläne und 3D-Stadtmodelle. Export als DXF, SVG, PDF, IFC (BIM) oder 3D-DXF. Perfekt für Architekten, Stadtplaner und Designer. Basierend auf OpenStreetMap-Daten mit 3D-Gebäuden und Gelände.",
+	"seo_keywords": "schwarzplan, lageplan, architektur, stadtplanung, DXF export, CAD, OpenStreetMap, kostenlose tools, architekten, stadtplanung, 3D gelände, höhenlinien, gebäudegrundrisse, IFC, BIM, 3D stadtmodell, 3D gebäudemodell, IFC export, BIM modell, open BIM, 3D DXF",
 	"seo_author": "Timo Bilhöfer",
 	"seo_creator": "SWZPLN",
 	"seo_ai_declaration": "Diese Webseite nutzt KI zur Optimierung, aber alle Kerninhalte sind menschengemacht"

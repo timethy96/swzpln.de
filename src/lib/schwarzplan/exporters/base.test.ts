@@ -16,6 +16,18 @@ describe('base exporter', () => {
 		it('should return correct mime type for pdf', () => {
 			expect(getMimeType('pdf')).toBe('application/pdf');
 		});
+
+		it('should return correct mime type for ifc', () => {
+			expect(getMimeType('ifc')).toBe('application/x-step');
+		});
+
+		it('should return correct mime type for dxf3d', () => {
+			expect(getMimeType('dxf3d')).toBe('application/dxf');
+		});
+
+		it('should return correct mime type for 3dm', () => {
+			expect(getMimeType('3dm')).toBe('model/obj');
+		});
 	});
 
 	describe('getFilename', () => {
@@ -29,6 +41,18 @@ describe('base exporter', () => {
 
 		it('should return correct filename for pdf', () => {
 			expect(getFilename('pdf')).toBe('swzpln.pdf');
+		});
+
+		it('should return correct filename for ifc', () => {
+			expect(getFilename('ifc')).toBe('swzpln.ifc');
+		});
+
+		it('should return correct filename for dxf3d', () => {
+			expect(getFilename('dxf3d')).toBe('swzpln.dxf');
+		});
+
+		it('should return correct filename for 3dm', () => {
+			expect(getFilename('3dm')).toBe('swzpln.obj');
 		});
 	});
 

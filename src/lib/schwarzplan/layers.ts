@@ -47,10 +47,10 @@ export const LAYER_CONFIG: Record<Layer, LayerConfig> = {
 	water: {
 		color: '#AAD4FF',
 		fillable: true,
-		overpassQuery: 'nwr["natural"="water"];nwr["waterway"];',
+		overpassQuery: 'nwr["natural"="water"];',
 		lineType: 'CONTINUOUS',
 		dxfColor: 151,
-		matchTags: { natural: 'water', waterway: [] } // waterway as fallback if checking values
+		matchTags: { natural: 'water' }
 	},
 	waterway: {
 		color: '#AAD4FF',
@@ -106,6 +106,9 @@ export const LAYER_CONFIG: Record<Layer, LayerConfig> = {
 export function classifyTags(tags?: Record<string, string>): Layer | null {
 	if (!tags) return null;
 
+	// Skip underground structures (subway stations, passages, tunnels, etc.)
+	if (isUnderground(tags)) return null;
+
 	// Priority Check (Building & Highway usually override others)
 	if (matchLayer(tags, 'building')) return 'building';
 	if (matchLayer(tags, 'highway')) return 'highway';
@@ -118,6 +121,16 @@ export function classifyTags(tags?: Record<string, string>): Layer | null {
 	}
 
 	return null;
+}
+
+// Check if an element is underground based on OSM tags
+export function isUnderground(tags: Record<string, string>): boolean {
+	if (tags.location === 'underground') return true;
+	if (tags.tunnel === 'yes' || tags.tunnel === 'building_passage') return true;
+	if (tags.parking === 'underground') return true;
+	const layer = parseFloat(tags.layer);
+	if (!isNaN(layer) && layer < 0) return true;
+	return false;
 }
 
 // Check if tags match a specific layer configuration

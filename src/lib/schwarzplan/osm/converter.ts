@@ -7,7 +7,7 @@ import type {
 	BuildingMetadata,
 	OSMRelation
 } from '../types';
-import { classifyTags } from '../layers';
+import { classifyTags, isUnderground } from '../layers';
 import { latLngToXY } from '../geometry/coordinates';
 import * as m from '$lib/paraglide/messages';
 import type { Layer } from '$lib/schwarzplan/types';
@@ -174,8 +174,8 @@ function processRelation(
 ): GeometryObject[] | null {
 	const layer = classifyTags(rel.tags);
 
-	// A. Building Relations (Group parts)
-	if (layer === 'building' || rel.tags?.building) {
+	// A. Building Relations (Group parts) — skip if underground
+	if ((layer === 'building' || rel.tags?.building) && !isUnderground(rel.tags || {})) {
 		linkBuildingParts(rel, ways);
 		// Fall through: A building relation might also define geometry (e.g. outline/multipolygon)
 	}
@@ -193,7 +193,7 @@ function linkBuildingParts(rel: OSMRelation, ways: Map<number, ParsedWay>) {
 	for (const member of rel.members) {
 		if (member.type !== 'way') continue;
 		const way = ways.get(member.ref);
-		if (way?.tags?.['building:part'] && way.tags['building:part'] !== 'no') {
+		if (way?.tags?.['building:part'] && way.tags['building:part'] !== 'no' && !isUnderground(way.tags)) {
 			hasParts = true;
 			way.relationId = rel.id;
 			way.layer = 'building';
@@ -253,7 +253,10 @@ function createMultipolygonObjects(
 			relationId: rel.id,
 			holes
 		};
-		if (buildingMeta) obj.buildingMetadata = buildingMeta;
+		if (buildingMeta) {
+			obj.buildingMetadata = buildingMeta;
+			if (rel.tags) obj.tags = rel.tags;
+		}
 		return obj;
 	});
 }
@@ -274,6 +277,7 @@ function createWayObject(way: ParsedWay, nodes: Map<number, Coordinate>): Geomet
 
 	if (way.layer === 'building') {
 		obj.buildingMetadata = extractBuildingMetadata(way.tags);
+		if (way.tags) obj.tags = way.tags;
 	}
 
 	return obj;
