@@ -108,6 +108,11 @@
 			}
 		} else {
 			layers = [...appState.layers];
+			// Always fetch building:part data when buildings are enabled
+			// (complex buildings like churches consist of building:part elements)
+			if (layers.includes('building') && !layers.includes('building_parts')) {
+				layers.push('building_parts');
+			}
 		}
 
 		try {

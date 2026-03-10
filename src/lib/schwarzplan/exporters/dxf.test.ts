@@ -110,6 +110,12 @@ describe('DXF exporter', () => {
 		expect(result).not.toContain('HATCH');
 	});
 
+	it('should not add hatches for highways', () => {
+		const result = exportToDXF([makeHighway()], null, testBounds, 14);
+		expect(result).toContain('LWPOLYLINE');
+		expect(result).not.toContain('HATCH');
+	});
+
 	it('should handle multiple object types', () => {
 		const result = exportToDXF([makeBuilding(), makeHighway()], null, testBounds, 14);
 		expect(result).toContain('LWPOLYLINE');
@@ -136,6 +142,38 @@ describe('DXF exporter', () => {
 		// Building + hole = at least 2 LWPOLYLINE entities
 		const polylineCount = (result.match(/LWPOLYLINE/g) || []).length;
 		expect(polylineCount).toBeGreaterThanOrEqual(2);
+	});
+
+	it('should render buildings after other layers (on top)', () => {
+		const objects: GeometryObject[] = [
+			makeBuilding(),
+			{
+				type: 'green',
+				path: [
+					{ x: 50, y: 50 },
+					{ x: 60, y: 50 },
+					{ x: 60, y: 60 },
+					{ x: 50, y: 60 }
+				]
+			},
+			{
+				type: 'water',
+				path: [
+					{ x: 30, y: 30 },
+					{ x: 40, y: 30 },
+					{ x: 40, y: 40 },
+					{ x: 30, y: 40 }
+				]
+			}
+		];
+		const result = exportToDXF(objects, null, testBounds, 14);
+		// Find layer assignments in ENTITIES section
+		// Buildings should appear after green/water in the DXF output
+		const waterIdx = result.indexOf('\nwater\n');
+		const greenIdx = result.indexOf('\ngreen\n');
+		const buildingIdx = result.lastIndexOf('\nbuilding\n');
+		expect(buildingIdx).toBeGreaterThan(waterIdx);
+		expect(buildingIdx).toBeGreaterThan(greenIdx);
 	});
 
 	it('should call progress callback', () => {

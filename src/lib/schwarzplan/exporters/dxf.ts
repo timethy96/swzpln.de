@@ -105,8 +105,11 @@ function fromContours(contours: ContourData, maxXY: { x: number; y: number }): G
 function renderDXFObj(dxf: DxfWriter, obj: GeometryObject, _maxXY: { x: number; y: number }) {
 	if (obj.path.length === 0) return;
 
-	const shouldClose = isLayerFillable(obj.type);
-	const flags = shouldClose ? LWPolylineFlags.Closed : 0;
+	const isFillable = isLayerFillable(obj.type);
+	// Highways are polygons but should not get SOLID hatches in DXF
+	// (they would obscure buildings and other layers underneath)
+	const shouldHatch = isFillable && obj.type !== 'highway';
+	const flags = isFillable ? LWPolylineFlags.Closed : 0;
 
 	// Outline polyline
 	const vertices = obj.path.map((p) => ({ point: point3d(p.x, p.y, 0) }));
@@ -120,8 +123,8 @@ function renderDXFObj(dxf: DxfWriter, obj: GeometryObject, _maxXY: { x: number; 
 		}
 	}
 
-	// SOLID hatch for fillable areas
-	if (shouldClose) {
+	// SOLID hatch for fillable areas (except highways)
+	if (shouldHatch) {
 		const boundaryPaths = new HatchBoundaryPaths();
 
 		// Outer boundary
