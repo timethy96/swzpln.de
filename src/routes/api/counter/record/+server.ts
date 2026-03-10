@@ -14,7 +14,15 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	// Origin check: only accept from same origin
 	const origin = request.headers.get('origin');
 	const host = request.headers.get('host');
-	if (origin && !origin.includes(host || '')) {
+	if (!origin || !host) {
+		throw error(403, 'Forbidden');
+	}
+	try {
+		const originHost = new URL(origin).host;
+		if (originHost !== host) {
+			throw error(403, 'Forbidden');
+		}
+	} catch {
 		throw error(403, 'Forbidden');
 	}
 

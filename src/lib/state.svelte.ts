@@ -137,7 +137,7 @@ class AppState {
 		const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'));
 		if (match) {
 			try {
-				return JSON.parse(match[2]);
+				return JSON.parse(decodeURIComponent(match[2]));
 			} catch {
 				return fallback;
 			}
@@ -151,7 +151,7 @@ class AppState {
 		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const expires = new Date();
 		expires.setTime(expires.getTime() + 30 * 24 * 60 * 60 * 1000); // 30 days
-		document.cookie = `${name}=${str};expires=${expires.toUTCString()};path=/`;
+		document.cookie = `${name}=${encodeURIComponent(str)};expires=${expires.toUTCString()};path=/;SameSite=Lax;Secure`;
 	}
 }
 

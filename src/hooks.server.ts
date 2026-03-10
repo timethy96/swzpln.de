@@ -42,7 +42,9 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 			// Base URI: self
 			"base-uri 'self'",
 			// Form action: self
-			"form-action 'self'"
+			"form-action 'self'",
+			// Upgrade HTTP to HTTPS
+			'upgrade-insecure-requests'
 		].join('; ')
 	);
 

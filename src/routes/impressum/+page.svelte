@@ -224,8 +224,8 @@
 			Folgende Cookies werden gesetzt:<br />
 			• darkmode: true oder false: Speichert die Einstellung, ob die dunkle Version der Webseite aktiviert
 			wurde<br />
-			• lastCenter: [latitude, longitude, zoom]: Speichert den letzten gesetzten Standort der Karte,
-			um diesen bei neuem Laden wieder anzeigen zu können.<br />
+			• lastCenter: [latitude, longitude, zoom]: Speichert den letzten gesetzten Standort der Karte, um
+			diesen bei neuem Laden wieder anzeigen zu können.<br />
 			• layers: [Liste mit true oder false Werten]: Speichert die zuletzt ausgewählten Ebenen, um diese
 			bei neuem Laden wieder einstellen zu können.<br />
 			• privacy_accepted: true oder false: Speichert, ob die Datenschutzbestimmungen bereits akzeptiert

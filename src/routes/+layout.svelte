@@ -29,7 +29,7 @@
 		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const expires = new Date();
 		expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
-		document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
+		document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/;SameSite=Lax;Secure`;
 	}
 
 	function getCookie(name: string): string | null {

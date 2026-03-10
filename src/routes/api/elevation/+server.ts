@@ -2,6 +2,7 @@
 
 import { json, error } from '@sveltejs/kit';
 import { env } from '$env/dynamic/private';
+import { checkRateLimit } from '$lib/server/ratelimit';
 import type { RequestHandler } from './$types';
 
 const OPENTOPODATA_API_URL = 'https://api.opentopodata.org/v1/mapzen';
@@ -59,7 +60,13 @@ function bicubicInterpolate(matrix: number[][], x: number, y: number): number {
  * GET endpoint for elevation data
  * Query parameters: north, south, east, west
  */
-export const GET: RequestHandler = async ({ url }) => {
+export const GET: RequestHandler = async ({ url, getClientAddress }) => {
+	// Rate limiting: 20 requests per IP per minute
+	const clientIP = getClientAddress();
+	if (!checkRateLimit(clientIP, 20, 60 * 1000)) {
+		throw error(429, 'Too many requests');
+	}
+
 	// Extract bounds from query parameters
 	const north = parseFloat(url.searchParams.get('north') || '');
 	const south = parseFloat(url.searchParams.get('south') || '');
@@ -77,6 +84,11 @@ export const GET: RequestHandler = async ({ url }) => {
 
 	if (north > 90 || south < -90 || east > 180 || west < -180) {
 		throw error(400, 'Bounds out of valid range');
+	}
+
+	// Limit bounding box size to prevent abuse (max ~50km x 50km)
+	if (north - south > 0.5 || east - west > 0.5) {
+		throw error(400, 'Bounding box too large');
 	}
 
 	try {
@@ -164,6 +176,6 @@ export const GET: RequestHandler = async ({ url }) => {
 		return json(outputMatrix);
 	} catch (err: unknown) {
 		console.error('Elevation API error:', err);
-		throw error(502, err instanceof Error ? err.message : 'Failed to fetch elevation data');
+		throw error(502, 'Failed to fetch elevation data');
 	}
 };

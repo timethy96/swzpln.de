@@ -74,7 +74,9 @@ export async function downloadOSMData(
 		response = await fetch(url);
 
 		if (!response.ok) {
-			throw new Error(`Overpass API error (fallback): ${response.status} ${response.statusText}`);
+			throw new Error(`Overpass API error (fallback): ${response.status} ${response.statusText}`, {
+				cause: primaryError
+			});
 		}
 	}
 
@@ -124,6 +126,6 @@ export async function downloadOSMData(
 		const data = JSON.parse(text) as OSMData;
 		return data;
 	} catch (error) {
-		throw new Error(`Failed to parse OSM data: ${error}`);
+		throw new Error('Failed to parse OSM data', { cause: error });
 	}
 }
