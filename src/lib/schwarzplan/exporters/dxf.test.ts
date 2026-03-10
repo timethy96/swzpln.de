@@ -65,6 +65,51 @@ describe('DXF exporter', () => {
 		expect(result).toContain('LWPOLYLINE');
 	});
 
+	it('should contain SOLID hatches for fillable areas', () => {
+		const result = exportToDXF([makeBuilding()], null, testBounds, 14);
+		expect(result).toContain('HATCH');
+		expect(result).toContain('SOLID');
+	});
+
+	it('should contain SOLID hatches for all fillable layer types', () => {
+		const objects: GeometryObject[] = [
+			makeBuilding(),
+			{
+				type: 'water',
+				path: [
+					{ x: 30, y: 30 },
+					{ x: 40, y: 30 },
+					{ x: 40, y: 40 },
+					{ x: 30, y: 40 }
+				]
+			},
+			{
+				type: 'green',
+				path: [
+					{ x: 50, y: 50 },
+					{ x: 60, y: 50 },
+					{ x: 60, y: 60 },
+					{ x: 50, y: 60 }
+				]
+			}
+		];
+		const result = exportToDXF(objects, null, testBounds, 14);
+		const hatchCount = (result.match(/\nHATCH\n/g) || []).length;
+		expect(hatchCount).toBeGreaterThanOrEqual(3);
+	});
+
+	it('should not add hatches for non-fillable layers', () => {
+		const railway: GeometryObject = {
+			type: 'railway',
+			path: [
+				{ x: 0, y: 0 },
+				{ x: 50, y: 50 }
+			]
+		};
+		const result = exportToDXF([railway], null, testBounds, 14);
+		expect(result).not.toContain('HATCH');
+	});
+
 	it('should handle multiple object types', () => {
 		const result = exportToDXF([makeBuilding(), makeHighway()], null, testBounds, 14);
 		expect(result).toContain('LWPOLYLINE');

@@ -1,6 +1,16 @@
 // DXF exporter using @tarikjabiri/dxf
 
-import { DxfWriter, Units, point3d, LWPolylineFlags } from '@tarikjabiri/dxf';
+import {
+	DxfWriter,
+	Units,
+	point3d,
+	LWPolylineFlags,
+	HatchBoundaryPaths,
+	HatchPolylineBoundary,
+	HatchPredefinedPatterns,
+	vertex,
+	pattern
+} from '@tarikjabiri/dxf';
 import type { Bounds, ContourData, GeometryObject, ProgressCallback } from '../types';
 import { LAYER_CONFIG, isLayerFillable, sortObjectsByLayer } from '../layers';
 import { latLngToXY, getMaxXY } from '../geometry/coordinates';
@@ -11,8 +21,7 @@ export function exportToDXF(
 	contours: ContourData | null,
 	bounds: Bounds,
 	zoom: number,
-	onProgress?: ProgressCallback,
-	_buildingStyle?: 'filled' | 'outline'
+	onProgress?: ProgressCallback
 ): string {
 	notify(onProgress, 0, m.progress_dxf_init());
 
@@ -96,24 +105,43 @@ function fromContours(contours: ContourData, maxXY: { x: number; y: number }): G
 function renderDXFObj(dxf: DxfWriter, obj: GeometryObject, _maxXY: { x: number; y: number }) {
 	if (obj.path.length === 0) return;
 
-	// In DXF land, our coordinates are already meters from SW.
-	// But check logic for specific inversions.
-	// Standard latLngToXY gives Y+ = North. This is satisfying for DXF.
-
-	const vertices = obj.path.map((p) => ({ point: point3d(p.x, p.y, 0) }));
-
-	// Check closure
-	// Use config directly instead of re-importing isLayerFillable if preferred, but isLayerFillable is fine.
 	const shouldClose = isLayerFillable(obj.type);
 	const flags = shouldClose ? LWPolylineFlags.Closed : 0;
 
+	// Outline polyline
+	const vertices = obj.path.map((p) => ({ point: point3d(p.x, p.y, 0) }));
 	dxf.addLWPolyline(vertices, { flags });
 
-	// Add holes as separate polylines
+	// Holes as separate closed polylines
 	if (obj.holes) {
 		for (const hole of obj.holes) {
 			const holeVertices = hole.map((p) => ({ point: point3d(p.x, p.y, 0) }));
 			dxf.addLWPolyline(holeVertices, { flags: LWPolylineFlags.Closed });
 		}
+	}
+
+	// SOLID hatch for fillable areas
+	if (shouldClose) {
+		const boundaryPaths = new HatchBoundaryPaths();
+
+		// Outer boundary
+		const outer = new HatchPolylineBoundary();
+		for (const p of obj.path) {
+			outer.add(vertex(p.x, p.y));
+		}
+		boundaryPaths.addPolylineBoundary(outer);
+
+		// Inner boundaries (holes)
+		if (obj.holes) {
+			for (const hole of obj.holes) {
+				const inner = new HatchPolylineBoundary();
+				for (const p of hole) {
+					inner.add(vertex(p.x, p.y));
+				}
+				boundaryPaths.addPolylineBoundary(inner);
+			}
+		}
+
+		dxf.addHatch(boundaryPaths, pattern({ name: HatchPredefinedPatterns.SOLID }));
 	}
 }

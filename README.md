@@ -4,17 +4,17 @@
 
 ## About
 
-**swzpln.de** / **opencityplans.com** provides free, instant access to professional site plans (Schwarzplan / figure-ground plans) for everyone. Plans are generated entirely client-side using OpenStreetMap data -- no data is sent to our servers. Privacy-first by design.
+**swzpln.de** / **opencityplans.com** provides free, instant access to professional site plans (Schwarzplan / figure-ground plans) for everyone. Plans are generated entirely client-side using OpenStreetMap data. No data is sent to our servers. Privacy-first by design.
 
 ## Features
 
 - **2D Export:** SVG, PDF, DXF (with scale selection for SVG/PDF)
 - **3D Export:** IFC (BIM), OBJ (Wavefront), 3D-DXF
-- **Layers:** Buildings (filled/outline), green areas, forests, water, farmland, roads, railways
+- **Layers:** Buildings, green areas, forests, water, farmland, roads, railways. All areas exported with SOLID hatches in DXF.
 - **Elevation:** Contour lines (1m / 5m / 10m / 20m / 50m), 3D terrain mesh
-- **3D Buildings:** Extruded from OSM height/levels data, terrain-aware
+- **3D Buildings:** Complex multi-part buildings generated from OSM height/levels data, including roof shapes and terrain-aware placement
 - **i18n:** German (swzpln.de) and English (opencityplans.com)
-- **Privacy:** All generation runs in Web Workers -- no user data collected
+- **Privacy:** All generation runs in Web Workers. No user data collected.
 
 ## Quick Start
 
@@ -71,11 +71,11 @@ static/                   # Public assets, robots.txt, llms.txt
 
 **Plan Generation (client-side):**
 
-- [@tarikjabiri/dxf](https://github.com/tarikjabiri/dxf) -- DXF export
-- [jsPDF](https://github.com/parallax/jsPDF) -- PDF export
-- [earcut](https://github.com/mapbox/earcut) -- Polygon triangulation
-- [polygon-clipping](https://github.com/mfogel/polygon-clipping) -- Boolean polygon operations
-- [ml-conrec](https://github.com/mljs/conrec/) -- Contour line generation
+- [@tarikjabiri/dxf](https://github.com/tarikjabiri/dxf): DXF export
+- [jsPDF](https://github.com/parallax/jsPDF): PDF export
+- [earcut](https://github.com/mapbox/earcut): Polygon triangulation
+- [polygon-clipping](https://github.com/mfogel/polygon-clipping): Boolean polygon operations
+- [ml-conrec](https://github.com/mljs/conrec/): Contour line generation
 - Custom IFC-SPF writer (IFC4X3_ADD2)
 - Custom OBJ writer (Wavefront)
 
@@ -103,15 +103,17 @@ pnpm format       # Auto-format code
 pnpm check        # Svelte type checking
 ```
 
+## Roadmap
+
+- **PostGIS backend:** Replace Overpass API with a self-hosted PostGIS instance for improved privacy, faster data downloads, and more reliable query performance independent of third-party infrastructure
+
 ## Credits
 
 (c) Timo Bilhoefer
 
 Supported by TAB Studio UG (haftungsbeschraenkt)
 
-Published under **GNU AFFERO GENERAL PUBLIC LICENSE v3**
-
-Thanks to Nicholas Coulange aka Vestibule for contributing the search functions as well as the positions saving functions.
+Published under **[GNU AFFERO GENERAL PUBLIC LICENSE v3](LICENSE)**
 
 ### Map Data
 

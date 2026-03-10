@@ -26,7 +26,7 @@ export async function exportGeometry(
 ): Promise<string | Uint8Array> {
 	switch (format) {
 		case 'dxf':
-			return exportToDXF(objects, contours, bounds, zoom, onProgress, buildingStyle);
+			return exportToDXF(objects, contours, bounds, zoom, onProgress);
 
 		case 'svg':
 			if (!scale) {
