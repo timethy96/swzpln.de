@@ -32,7 +32,7 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 			// Fonts: self
 			"font-src 'self'",
 			// Connect: APIs used by the app
-			"connect-src 'self' https://*.basemaps.cartocdn.com https://tile.openstreetmap.org https://overpass.private.coffee https://overpass-api.de https://api.opentopodata.org https://photon.komoot.io blob:",
+			"connect-src 'self' https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com https://tile.openstreetmap.org https://overpass.private.coffee https://overpass-api.de https://api.opentopodata.org https://photon.komoot.io blob:",
 			// Workers: self + blob (Web Workers for export processing)
 			"worker-src 'self' blob:",
 			// Child/frame: none (no iframes needed)

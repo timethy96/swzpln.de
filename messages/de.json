@@ -45,6 +45,8 @@
 	"export_progress_title": "Generiere Schwarzplan...",
 	"export_error_title": "Fehler",
 	"export_error_close": "Schließen",
+	"export_error_hint": "Bitte lade die Seite neu und versuche es erneut.",
+	"export_error_report": "Fehler melden",
 	"export_cancel": "Abbrechen",
 	"export_complete": "Fertig",
 	"error_bounds_not_determined": "Kartengrenzen konnten nicht ermittelt werden",

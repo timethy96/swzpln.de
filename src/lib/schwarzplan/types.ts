@@ -158,6 +158,7 @@ export interface ProgressInfo {
 	step: ProgressStep;
 	percent?: number;
 	message?: string;
+	stack?: string;
 }
 
 export type ProgressCallback = (info: ProgressInfo) => void;

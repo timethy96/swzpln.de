@@ -144,7 +144,7 @@
 	</div>
 
 	<div
-		class="absolute right-0 bottom-4 left-0 flex h-40 flex-col items-center justify-end overflow-hidden"
+		class="absolute right-0 bottom-4 left-0 flex h-52 flex-col items-center justify-end overflow-hidden"
 	>
 		{#if isOpen}
 			<div class="w-[312px] px-3 py-5 text-sm leading-tight text-muted-foreground select-none">

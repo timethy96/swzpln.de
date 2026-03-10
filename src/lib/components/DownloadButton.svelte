@@ -167,7 +167,8 @@
 				appState.progress = {
 					step: 'error',
 					percent: 0,
-					message: error instanceof Error ? error.message : m.error_general()
+					message: error instanceof Error ? error.message : m.error_general(),
+					stack: error instanceof Error ? error.stack : String(error)
 				};
 			}
 		}
@@ -309,13 +310,44 @@
 				{/if}
 
 				{#if appState.progress.step === 'error'}
-					<Button
-						variant="destructive"
-						class="mt-4 w-full"
-						onclick={() => (appState.progress = null)}
-					>
-						{m.export_error_close()}
-					</Button>
+					<p class="text-sm text-muted-foreground">{m.export_error_hint()}</p>
+					<div class="mt-4 flex gap-2">
+						<Button
+							variant="destructive"
+							class="flex-1"
+							onclick={() => (appState.progress = null)}
+						>
+							{m.export_error_close()}
+						</Button>
+						<Button
+							variant="outline"
+							class="flex-1"
+							onclick={() => {
+								const user = 'error1';
+								const domain = 'swzpln';
+								const tld = 'de';
+								const addr = `${user}@${domain}.${tld}`;
+								const subject = encodeURIComponent('Export Error Report');
+								const body = encodeURIComponent(
+									[
+										`Error: ${appState.progress?.message || 'N/A'}`,
+										`URL: ${window.location.href}`,
+										`Time: ${new Date().toISOString()}`,
+										`User-Agent: ${navigator.userAgent}`,
+										'',
+										'--- Stack Trace ---',
+										appState.progress?.stack || 'N/A',
+										'',
+										'--- Please describe what you were doing when this error occurred: ---',
+										''
+									].join('\n')
+								);
+								window.location.href = `mailto:${addr}?subject=${subject}&body=${body}`;
+							}}
+						>
+							{m.export_error_report()}
+						</Button>
+					</div>
 				{:else}
 					<p class="mt-2 text-sm text-muted-foreground">
 						{m.progress_waiting()}

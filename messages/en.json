@@ -45,6 +45,8 @@
 	"export_progress_title": "Generating site plan...",
 	"export_error_title": "Error",
 	"export_error_close": "Close",
+	"export_error_hint": "Please reload the page and try again.",
+	"export_error_report": "Report error",
 	"export_cancel": "Cancel",
 	"export_complete": "Complete",
 	"error_bounds_not_determined": "Could not determine map bounds",

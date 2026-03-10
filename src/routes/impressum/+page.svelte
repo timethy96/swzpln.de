@@ -3,6 +3,14 @@
 	import type { PageData } from './$types';
 
 	let { data }: { data: PageData } = $props();
+
+	// Obfuscate email: assembled from parts so bots can't scrape it from HTML source
+	const emailAddr = $derived.by(() => {
+		const user = 'timo';
+		const domain = 'swzpln';
+		const tld = 'de';
+		return `${user}@${domain}.${tld}`;
+	});
 </script>
 
 <!-- SEO for legal page -->
@@ -17,7 +25,7 @@
 			Timo Bilhöfer<br />
 			Wühlischstr. 20<br />
 			10245 Berlin<br /><br />
-			E-Mail: timo ø swzpln · de
+			E-Mail: <a href="mailto:{emailAddr}">{emailAddr}</a>
 		</p>
 
 		<h3>Haftung für Inhalte</h3>
@@ -179,7 +187,7 @@
 		<p>Wühlischstr. 20</p>
 		<p>10245 Berlin</p>
 		<p>Deutschland</p>
-		<p>E-Mail: timo ø swzpln · de</p>
+		<p>E-Mail: <a href="mailto:{emailAddr}">{emailAddr}</a></p>
 		<p>Website: swzpln.de</p>
 
 		<h4>3. Cookies</h4>
