@@ -12,4 +12,3 @@ export const GET: RequestHandler = async () => {
 		return json({ total: 0 }, { status: 500 });
 	}
 };
-

@@ -1,6 +1,6 @@
 // Coordinate conversion utilities using Haversine formula
 
-import type { Bounds, Coordinate, LatLng } from '../types';
+import type { Bounds, Coordinate } from '../types';
 
 const EARTH_RADIUS_METERS = 6371000;
 
@@ -20,10 +20,7 @@ function haversineDistance(lat1: number, lon1: number, lat2: number, lon2: numbe
 
 	const a =
 		Math.sin(dLat / 2) * Math.sin(dLat / 2) +
-		Math.cos(toRadians(lat1)) *
-			Math.cos(toRadians(lat2)) *
-			Math.sin(dLon / 2) *
-			Math.sin(dLon / 2);
+		Math.cos(toRadians(lat1)) * Math.cos(toRadians(lat2)) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
 
 	const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 	return EARTH_RADIUS_METERS * c;
@@ -96,5 +93,3 @@ export function getContourInterval(zoom: number): number {
 	if (zoom >= 12) return 100;
 	return 200;
 }
-
-

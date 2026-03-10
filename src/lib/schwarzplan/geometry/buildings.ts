@@ -8,7 +8,14 @@ const EPSILON = 0.01;
  * Extrude multiple buildings with terrain support and grouping for multi-part structures.
  */
 export function extrudeBuildings(
-	buildings: Array<{ footprint: Coordinate[]; metadata: BuildingMetadata; id?: number; relationId?: number; isOutline?: boolean; holes?: Coordinate[][] }>,
+	buildings: Array<{
+		footprint: Coordinate[];
+		metadata: BuildingMetadata;
+		id?: number;
+		relationId?: number;
+		isOutline?: boolean;
+		holes?: Coordinate[][];
+	}>,
 	terrainMesh?: { vertices: Coordinate3D[] },
 	gridSize?: { rows: number; cols: number },
 	maxXY?: { x: number; y: number }
@@ -37,7 +44,7 @@ export function extrudeBuildings(
 	}
 
 	// 3. Process groups (Shared Elevation)
-	for (const [_, group] of groups) {
+	for (const [, group] of groups) {
 		const groundElevation = getGroupElevation(group, terrainMesh, gridSize, maxXY);
 		for (const b of group) {
 			const mesh = extrudeSingleBuilding(b.footprint, b.metadata, groundElevation, b.holes);
@@ -97,17 +104,17 @@ export function extrudeSingleBuilding(
 	} else if (roofShape !== 'flat') {
 		// Auto-calculate default roof height if not plain flat
 		const radius = calculateAverageRadius(cleanFootprint, calculateCentroid(cleanFootprint));
-		roofHeight = Math.min(3, (topHeight - baseHeight), radius);
+		roofHeight = Math.min(3, topHeight - baseHeight, radius);
 	}
 
-	// Adjust wall top if roof is purely additive or subtractive? 
+	// Adjust wall top if roof is purely additive or subtractive?
 	// Standard OSM model: 'height' is top of roof. So walls stop at height - roof_height.
 	if (roofShape !== 'flat' && roofHeight > 0) {
 		wallTopZ = Math.max(baseHeight, topHeight - roofHeight);
 	}
 
 	// Clean holes
-	const cleanHoles = holes?.map(h => cleanPolygon(h)).filter(h => h.length >= 3);
+	const cleanHoles = holes?.map((h) => cleanPolygon(h)).filter((h) => h.length >= 3);
 
 	// 1. Generate Walls (outer + inner hole walls)
 	generateWalls(mesh, cleanFootprint, baseHeight, wallTopZ);
@@ -152,7 +159,10 @@ function getGroupElevation(
 ): number {
 	if (!terrain || !grid || !max) return 0;
 
-	let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+	let minX = Infinity,
+		minY = Infinity,
+		maxX = -Infinity,
+		maxY = -Infinity;
 	for (const part of group) {
 		for (const p of part.footprint) {
 			if (p.x < minX) minX = p.x;
@@ -170,7 +180,7 @@ function getGroupElevation(
 
 function getBaseHeight(m: BuildingMetadata, ground: number): number {
 	if (m.minHeight !== undefined) return ground + m.minHeight;
-	if (m.minLevel !== undefined) return ground + (m.minLevel * 3);
+	if (m.minLevel !== undefined) return ground + m.minLevel * 3;
 	return ground;
 }
 
@@ -179,7 +189,7 @@ function getTopHeight(m: BuildingMetadata, base: number, ground: number): number
 		const absHeight = ground + m.height;
 		return absHeight > base ? absHeight : base + m.height;
 	}
-	if (m.levels !== undefined) return base + (m.levels * 3);
+	if (m.levels !== undefined) return base + m.levels * 3;
 	return base + 10;
 }
 
@@ -212,7 +222,13 @@ function generateWalls(mesh: BuildingMesh, footprint: Coordinate[], zBottom: num
 	}
 }
 
-function generateCap(mesh: BuildingMesh, footprint: Coordinate[], z: number, reverse: boolean, holes?: Coordinate[][]) {
+function generateCap(
+	mesh: BuildingMesh,
+	footprint: Coordinate[],
+	z: number,
+	reverse: boolean,
+	holes?: Coordinate[][]
+) {
 	const flatCoords: number[] = [];
 	for (const p of footprint) flatCoords.push(p.x, p.y);
 
@@ -248,7 +264,13 @@ function generateCap(mesh: BuildingMesh, footprint: Coordinate[], z: number, rev
 	}
 }
 
-function generateRoofGeometry(mesh: BuildingMesh, footprint: Coordinate[], type: string, zBase: number, zApex: number) {
+function generateRoofGeometry(
+	mesh: BuildingMesh,
+	footprint: Coordinate[],
+	type: string,
+	zBase: number,
+	zApex: number
+) {
 	const center = calculateCentroid(footprint);
 
 	// Dome/Sphere/Onion (Hemispherical Cap)
@@ -279,7 +301,13 @@ function generateRoofGeometry(mesh: BuildingMesh, footprint: Coordinate[], type:
 	}
 }
 
-function generateDome(mesh: BuildingMesh, footprint: Coordinate[], center: Coordinate, zBase: number, zTop: number) {
+function generateDome(
+	mesh: BuildingMesh,
+	footprint: Coordinate[],
+	center: Coordinate,
+	zBase: number,
+	zTop: number
+) {
 	// Average radius for natural dome size
 	const domeCenter = calculateAreaCentroid(footprint);
 	const radius = calculateAverageRadius(footprint, domeCenter);
@@ -335,7 +363,13 @@ function generateDome(mesh: BuildingMesh, footprint: Coordinate[], center: Coord
 	}
 }
 
-function generateBarrelVault(mesh: BuildingMesh, footprint: Coordinate[], center: Coordinate, zBase: number, zTop: number) {
+function generateBarrelVault(
+	mesh: BuildingMesh,
+	footprint: Coordinate[],
+	center: Coordinate,
+	zBase: number,
+	zTop: number
+) {
 	const roofHeight = zTop - zBase;
 	if (roofHeight < 0.1) return;
 
@@ -356,8 +390,10 @@ function generateBarrelVault(mesh: BuildingMesh, footprint: Coordinate[], center
 	const spanDir = { x: -ridgeDir.y, y: ridgeDir.x };
 
 	// Project all footprint vertices onto oriented axes
-	let minRidge = Infinity, maxRidge = -Infinity;
-	let minSpan = Infinity, maxSpan = -Infinity;
+	let minRidge = Infinity,
+		maxRidge = -Infinity;
+	let minSpan = Infinity,
+		maxSpan = -Infinity;
 	for (const p of footprint) {
 		const rProj = (p.x - center.x) * ridgeDir.x + (p.y - center.y) * ridgeDir.y;
 		const sProj = (p.x - center.x) * spanDir.x + (p.y - center.y) * spanDir.y;
@@ -418,7 +454,12 @@ function generateBarrelVault(mesh: BuildingMesh, footprint: Coordinate[], center
 	}
 }
 
-function generateVolumetricMesh(footprint: Coordinate[], shape: string, zBottom: number, zTop: number): BuildingMesh {
+function generateVolumetricMesh(
+	footprint: Coordinate[],
+	shape: string,
+	zBottom: number,
+	zTop: number
+): BuildingMesh {
 	// Sphere, Cone, Pyramid
 	const mesh: BuildingMesh = { vertices: [], faces: [] };
 	const center = calculateCentroid(footprint);
@@ -507,7 +548,6 @@ function generateVolumetricMesh(footprint: Coordinate[], shape: string, zBottom:
 	return mesh;
 }
 
-
 // --- Geom Utils ---
 
 function cleanPolygon(points: Coordinate[]): Coordinate[] {
@@ -538,8 +578,12 @@ function distSq(p1: Coordinate, p2: Coordinate) {
 }
 
 function calculateCentroid(polygon: Coordinate[]): Coordinate {
-	let sx = 0, sy = 0;
-	for (const p of polygon) { sx += p.x; sy += p.y; }
+	let sx = 0,
+		sy = 0;
+	for (const p of polygon) {
+		sx += p.x;
+		sy += p.y;
+	}
 	return { x: sx / polygon.length, y: sy / polygon.length };
 }
 
@@ -558,14 +602,17 @@ function calculateInscribedRadius(polygon: Coordinate[], center: Coordinate): nu
 		const dy = polygon[j].y - polygon[i].y;
 		const edgeLen = Math.sqrt(dx * dx + dy * dy);
 		if (edgeLen < 1e-10) continue;
-		const dist = Math.abs((center.x - polygon[i].x) * dy - (center.y - polygon[i].y) * dx) / edgeLen;
+		const dist =
+			Math.abs((center.x - polygon[i].x) * dy - (center.y - polygon[i].y) * dx) / edgeLen;
 		if (dist < minDist) minDist = dist;
 	}
 	return minDist === Infinity ? 0 : minDist;
 }
 
 function calculateAreaCentroid(polygon: Coordinate[]): Coordinate {
-	let cx = 0, cy = 0, signedArea = 0;
+	let cx = 0,
+		cy = 0,
+		signedArea = 0;
 	const n = polygon.length;
 	for (let i = 0; i < n; i++) {
 		const j = (i + 1) % n;
@@ -576,9 +623,7 @@ function calculateAreaCentroid(polygon: Coordinate[]): Coordinate {
 	}
 	signedArea /= 2;
 	if (Math.abs(signedArea) < 1e-10) return calculateCentroid(polygon); // Degenerate fallback
-	cx /= (6 * signedArea);
-	cy /= (6 * signedArea);
+	cx /= 6 * signedArea;
+	cy /= 6 * signedArea;
 	return { x: cx, y: cy };
 }
-
-

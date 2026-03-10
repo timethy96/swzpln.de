@@ -35,7 +35,7 @@
 	"download_format_svg": "SVG",
 	"download_format_dxf": "DXF",
 	"download_format_ifc": "IFC",
-	"download_format_3dm": "3DM",
+
 	"download_format_3d_dxf": "3D-DXF",
 	"export_scale_selection_title": "Select scale",
 	"export_scale_selection_cancel": "Cancel",

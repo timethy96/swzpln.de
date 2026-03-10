@@ -1,7 +1,7 @@
 // Contour line generation using ml-conrec
 
 import { Conrec } from 'ml-conrec';
-import type { ContourData, ContourLine, Coordinate, ProgressCallback } from '../types';
+import type { ContourData, ContourLine, ProgressCallback } from '../types';
 import { getContourInterval } from '../geometry/coordinates';
 import * as m from '$lib/paraglide/messages';
 
@@ -91,11 +91,13 @@ export function generateContours(
 
 		// Convert contours to our coordinate format
 		// ml-conrec returns: { contours: [{ lines: [{x, y}, ...], level, k }, ...] }
-		let contours: ContourLine[] = [];
-		
+		const contours: ContourLine[] = [];
+
 		if (rawContours && typeof rawContours === 'object') {
-			const contourData = rawContours as { contours: Array<{ lines: Array<{ x: number; y: number }> }> };
-			
+			const contourData = rawContours as {
+				contours: Array<{ lines: Array<{ x: number; y: number }> }>;
+			};
+
 			if (contourData.contours && Array.isArray(contourData.contours)) {
 				// Extract all lines from all contour levels
 				for (const contour of contourData.contours) {
@@ -130,4 +132,3 @@ export function generateContours(
 		return null;
 	}
 }
-

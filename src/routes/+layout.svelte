@@ -6,11 +6,17 @@
 	import HelpOverlay from '$lib/components/HelpOverlay.svelte';
 	import SEO from '$lib/components/SEO.svelte';
 	import StructuredData from '$lib/components/StructuredData.svelte';
-	import { Globe, Map, Moon, Heart, CodeXml, FileText, CircleQuestionMark } from 'lucide-svelte';
+	import Globe from '@lucide/svelte/icons/globe';
+	import Map from '@lucide/svelte/icons/map';
+	import Moon from '@lucide/svelte/icons/moon';
+	import Heart from '@lucide/svelte/icons/heart';
+	import CodeXml from '@lucide/svelte/icons/code-xml';
+	import FileText from '@lucide/svelte/icons/file-text';
+	import CircleHelp from '@lucide/svelte/icons/circle-help';
 	import { appState } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
-	import { setLocale, getLocale } from '$lib/paraglide/runtime';
+	import { setLocale } from '$lib/paraglide/runtime';
 	import { browser } from '$app/environment';
 
 	let { children } = $props();
@@ -20,6 +26,7 @@
 	// Cookie utilities (browser-only)
 	function setCookie(name: string, value: string, days: number): void {
 		if (typeof document === 'undefined') return;
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const expires = new Date();
 		expires.setTime(expires.getTime() + days * 24 * 60 * 60 * 1000);
 		document.cookie = `${name}=${value};expires=${expires.toUTCString()};path=/`;
@@ -79,7 +86,7 @@
 
 	const navigationItems = [
 		{ icon: Map, label: m.nav_home(), href: '/' },
-		{ icon: CircleQuestionMark, label: m.nav_help(), onClick: () => appState.toggleHelpOverlay() },
+		{ icon: CircleHelp, label: m.nav_help(), onClick: () => appState.toggleHelpOverlay() },
 		{ icon: Globe, label: m.nav_english(), href: 'https://opencityplans.com' },
 		{ icon: Heart, label: m.nav_donate(), href: 'https://ko-fi.com/swzpln' },
 		{ icon: Moon, label: m.nav_dark_mode(), onClick: toggleDarkMode },

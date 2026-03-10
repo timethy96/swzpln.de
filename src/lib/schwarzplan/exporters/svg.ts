@@ -46,7 +46,11 @@ export function exportToSVG(
 
 		count++;
 		if (count % 200 === 0) {
-			notify(onProgress, 20 + Math.round((count / total) * 70), m.progress_dxf_exporting({ current: count.toString(), total: total.toString() }));
+			notify(
+				onProgress,
+				20 + Math.round((count / total) * 70),
+				m.progress_dxf_exporting({ current: count.toString(), total: total.toString() })
+			);
 		}
 	}
 
@@ -67,20 +71,24 @@ function notify(cb: ProgressCallback | undefined, percent: number, message: stri
 	if (cb) cb({ step: 'export', percent, message });
 }
 
-function fromContours(contours: ContourData, maxXY: { x: number, y: number }, scale: number): GeometryObject[] {
+function fromContours(
+	contours: ContourData,
+	maxXY: { x: number; y: number },
+	_scale: number
+): GeometryObject[] {
 	// Temporarily map to layer 'contours' to sort correctly
-	return contours.contours.map(c => ({
+	return contours.contours.map((c) => ({
 		type: 'contours',
-		path: c.map(p => ({
+		path: c.map((p) => ({
 			x: (p.x * maxXY.x) / contours.sizeX,
-			y: (p.y * maxXY.y) / contours.sizeY  // Normalized relative to maxXY for uniform scaling later
+			y: (p.y * maxXY.y) / contours.sizeY // Normalized relative to maxXY for uniform scaling later
 		}))
 	}));
 }
 
 function objToSVGPath(
 	obj: GeometryObject,
-	maxXY: { x: number, y: number },
+	maxXY: { x: number; y: number },
 	scale: number,
 	buildingStyle?: 'filled' | 'outline'
 ): string {
@@ -90,24 +98,23 @@ function objToSVGPath(
 	const color = config?.color || '#FF0000';
 
 	// Transform: Scale and Flip Y
-	const transformFn = (p: { x: number, y: number }) => [
+	const transformFn = (p: { x: number; y: number }) => [
 		p.x * 1000 * scale,
 		(p.y - maxXY.y) * -1 * 1000 * scale
 	];
 
 	const points = obj.path.map(transformFn);
-	let d = 'M' + points.map(p => p.join(',')).join(' ') + 'z';
+	let d = 'M' + points.map((p) => p.join(',')).join(' ') + 'z';
 
 	// Add holes if any
 	if (obj.holes && obj.holes.length > 0) {
 		for (const hole of obj.holes) {
 			const holePoints = hole.map(transformFn);
 			if (holePoints.length > 0) {
-				d += ' M' + holePoints.map(p => p.join(',')).join(' ') + 'z';
+				d += ' M' + holePoints.map((p) => p.join(',')).join(' ') + 'z';
 			}
 		}
 	}
-
 
 	if (layer === 'highway') {
 		// Stroke

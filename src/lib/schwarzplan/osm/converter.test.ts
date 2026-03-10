@@ -172,7 +172,7 @@ describe('OSM converter', () => {
 
 			// The multipolygon relation creates a building from the way,
 			// suppressing its original highway classification
-			const buildings = result.filter(r => r.type === 'building');
+			const buildings = result.filter((r) => r.type === 'building');
 			expect(buildings).toHaveLength(1);
 		});
 
@@ -193,7 +193,7 @@ describe('OSM converter', () => {
 			};
 
 			const result = osmDataToGeometry(osmData, testBounds);
-			const buildings = result.filter(r => r.type === 'building');
+			const buildings = result.filter((r) => r.type === 'building');
 			expect(buildings).toHaveLength(0);
 		});
 
@@ -214,7 +214,7 @@ describe('OSM converter', () => {
 			};
 
 			const result = osmDataToGeometry(osmData, testBounds);
-			const buildings = result.filter(r => r.type === 'building');
+			const buildings = result.filter((r) => r.type === 'building');
 			expect(buildings).toHaveLength(0);
 		});
 
@@ -241,7 +241,7 @@ describe('OSM converter', () => {
 			};
 
 			const result = osmDataToGeometry(osmData, testBounds);
-			const buildings = result.filter(r => r.type === 'building');
+			const buildings = result.filter((r) => r.type === 'building');
 			expect(buildings).toHaveLength(2);
 		});
 
@@ -269,7 +269,7 @@ describe('OSM converter', () => {
 			};
 
 			const result = osmDataToGeometry(osmData, testBounds);
-			const buildings = result.filter(r => r.type === 'building');
+			const buildings = result.filter((r) => r.type === 'building');
 			expect(buildings).toHaveLength(0);
 		});
 
@@ -292,5 +292,3 @@ describe('OSM converter', () => {
 		});
 	});
 });
-
-

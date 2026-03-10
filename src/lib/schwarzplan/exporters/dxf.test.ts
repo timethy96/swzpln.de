@@ -78,12 +78,14 @@ describe('DXF exporter', () => {
 	it('should handle buildings with holes', () => {
 		const building: GeometryObject = {
 			...makeBuilding(),
-			holes: [[
-				{ x: 12, y: 12 },
-				{ x: 14, y: 12 },
-				{ x: 14, y: 14 },
-				{ x: 12, y: 14 }
-			]]
+			holes: [
+				[
+					{ x: 12, y: 12 },
+					{ x: 14, y: 12 },
+					{ x: 14, y: 14 },
+					{ x: 12, y: 14 }
+				]
+			]
 		};
 		const result = exportToDXF([building], null, testBounds, 14);
 		// Building + hole = at least 2 LWPOLYLINE entities

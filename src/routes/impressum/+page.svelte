@@ -6,14 +6,10 @@
 </script>
 
 <!-- SEO for legal page -->
-<SEO 
-	title={data.seo.title}
-	description={data.seo.description}
-	noindex={data.seo.noindex}
-/>
+<SEO title={data.seo.title} description={data.seo.description} noindex={data.seo.noindex} />
 
 <!-- Content -->
-<div class="flex-1 overflow-y-auto p-8 max-h-[90vh] border border-gray-200 rounded-lg mr-4">
+<div class="mr-4 max-h-[90vh] flex-1 overflow-y-auto rounded-lg border border-gray-200 p-8">
 	<div class="prose prose-slate dark:prose-invert mx-auto max-w-4xl">
 		<h1 id="imprint">Impressum</h1>
 		<p>Angaben gemäß § 5 TMG</p>
@@ -92,10 +88,8 @@
 				>Private.coffee</a
 			>
 			übermittelt. Bei Nutzung der Suchfunktion wird der Suchbegriff an die
-			<a
-				href="https://photon.komoot.io/"
-				target="_blank"
-				rel="noopener noreferrer">Photon API von Komoot</a
+			<a href="https://photon.komoot.io/" target="_blank" rel="noopener noreferrer"
+				>Photon API von Komoot</a
 			>
 			übermittelt. Die Vorschaukarte wird von
 			<a href="https://openstreetmaps.org" target="_blank" rel="noopener noreferrer"

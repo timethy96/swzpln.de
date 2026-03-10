@@ -16,7 +16,7 @@ export function exportToDXF3D(
 	bounds: Bounds,
 	zoom: number,
 	onProgress?: ProgressCallback,
-	contours?: ContourData | null
+	_contours?: ContourData | null
 ): string {
 	// 1. Init
 	notify(onProgress, 0, m.progress_dxf_init());
@@ -44,7 +44,7 @@ export function exportToDXF3D(
 	notify(onProgress, 20, 'Processing buildings...');
 	const buildings = objects
 		.filter((obj) => obj.type === 'building' && obj.buildingMetadata)
-		.map(b => ({
+		.map((b) => ({
 			footprint: b.path,
 			metadata: b.buildingMetadata!,
 			id: undefined, // Building IDs not strictly needed for DXF export visual
@@ -54,7 +54,12 @@ export function exportToDXF3D(
 		}));
 
 	// Batch process buildings (handles grouping & terrain offset internally)
-	const meshes = extrudeBuildings(buildings, terrainMesh || undefined, gridSize || undefined, maxXY);
+	const meshes = extrudeBuildings(
+		buildings,
+		terrainMesh || undefined,
+		gridSize || undefined,
+		maxXY
+	);
 
 	// Write meshes to DXF
 	dxf.setCurrentLayerName('BUILDINGS-3D');
@@ -80,8 +85,13 @@ export function exportToDXF3D(
 
 		processed++;
 		if (processed % 50 === 0) {
-			notify(onProgress, 20 + Math.round((processed / buildings.length) * 50),
-				m.progress_dxf_exporting({ current: processed.toString(), total: buildings.length.toString() })
+			notify(
+				onProgress,
+				20 + Math.round((processed / buildings.length) * 50),
+				m.progress_dxf_exporting({
+					current: processed.toString(),
+					total: buildings.length.toString()
+				})
 			);
 		}
 	}
@@ -109,7 +119,11 @@ export function exportToDXF3D(
 	dxf.setCurrentLayerName('OTHER');
 	const txtXY = latLngToXY(bounds, bounds.south, bounds.east);
 	const txtSize = (19 - zoom) * 10;
-	dxf.addText(point3d(txtXY.x, txtXY.y - txtSize, 0), txtSize, '(c) OpenStreetMap.org contributors');
+	dxf.addText(
+		point3d(txtXY.x, txtXY.y - txtSize, 0),
+		txtSize,
+		'(c) OpenStreetMap.org contributors'
+	);
 
 	// 7. Finish
 	notify(onProgress, 100, '3D DXF export complete');

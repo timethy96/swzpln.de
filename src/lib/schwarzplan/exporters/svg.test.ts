@@ -89,12 +89,14 @@ describe('SVG exporter', () => {
 	it('should handle buildings with holes using evenodd fill-rule', () => {
 		const building: GeometryObject = {
 			...makeBuilding(),
-			holes: [[
-				{ x: 12, y: 12 },
-				{ x: 14, y: 12 },
-				{ x: 14, y: 14 },
-				{ x: 12, y: 14 }
-			]]
+			holes: [
+				[
+					{ x: 12, y: 12 },
+					{ x: 14, y: 12 },
+					{ x: 14, y: 14 },
+					{ x: 12, y: 14 }
+				]
+			]
 		};
 		const result = exportToSVG([building], null, testBounds, 14, 0.001);
 		expect(result).toContain('fill-rule:evenodd');

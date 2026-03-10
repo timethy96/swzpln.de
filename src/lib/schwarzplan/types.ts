@@ -125,7 +125,7 @@ export interface BuildingMetadata {
 // Export Types
 // ============================================================================
 
-export type ExportFormat = 'dxf' | 'svg' | 'pdf' | 'ifc' | '3dm' | 'dxf3d';
+export type ExportFormat = 'dxf' | 'svg' | 'pdf' | 'ifc' | 'obj' | 'dxf3d';
 
 export interface ExportOptions {
 	format: ExportFormat;
@@ -238,4 +238,3 @@ export interface BuildingMesh {
 	faces: number[][]; // Face indices (each face is an array of vertex indices)
 	buildingId?: number; // OSM way/relation ID
 }
-

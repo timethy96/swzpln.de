@@ -54,9 +54,9 @@ describe('bounds', () => {
 		it('should return larger area for larger bounds', () => {
 			const smallBounds: Bounds = {
 				north: 48.71,
-				south: 48.70,
+				south: 48.7,
 				east: 9.11,
-				west: 9.10
+				west: 9.1
 			};
 			const largeBounds: Bounds = {
 				north: 49.0,
@@ -93,9 +93,9 @@ describe('bounds', () => {
 		it('should return smaller scales for larger bounds', () => {
 			const smallBounds: Bounds = {
 				north: 48.705,
-				south: 48.700,
+				south: 48.7,
 				east: 9.105,
-				west: 9.100
+				west: 9.1
 			};
 			const largeBounds: Bounds = {
 				north: 49.0,
@@ -136,4 +136,3 @@ describe('bounds', () => {
 		});
 	});
 });
-

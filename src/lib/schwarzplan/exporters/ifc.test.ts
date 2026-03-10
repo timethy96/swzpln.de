@@ -174,7 +174,8 @@ describe('exportToIFC', () => {
 		it('should use building name from OSM tags when available', async () => {
 			const result = await exportToIFC(
 				[makeBuilding({ tags: { building: 'yes', name: 'City Hall' } })],
-				null, testBounds
+				null,
+				testBounds
 			);
 			const ifc = decodeIfc(result);
 
@@ -191,7 +192,8 @@ describe('exportToIFC', () => {
 		it('should set ObjectType from building tag', async () => {
 			const result = await exportToIFC(
 				[makeBuilding({ tags: { building: 'church' } })],
-				null, testBounds
+				null,
+				testBounds
 			);
 			const ifc = decodeIfc(result);
 
@@ -298,7 +300,8 @@ describe('exportToIFC', () => {
 		it('should include material from OSM tags', async () => {
 			const result = await exportToIFC(
 				[makeBuilding({ tags: { building: 'yes', 'building:material': 'brick' } })],
-				null, testBounds
+				null,
+				testBounds
 			);
 			const ifc = decodeIfc(result);
 
@@ -322,16 +325,19 @@ describe('exportToIFC', () => {
 	describe('address', () => {
 		it('should include separate address fields in pset', async () => {
 			const result = await exportToIFC(
-				[makeBuilding({
-					tags: {
-						building: 'yes',
-						'addr:street': 'Hauptstrasse',
-						'addr:housenumber': '42',
-						'addr:postcode': '70173',
-						'addr:city': 'Stuttgart'
-					}
-				})],
-				null, testBounds
+				[
+					makeBuilding({
+						tags: {
+							building: 'yes',
+							'addr:street': 'Hauptstrasse',
+							'addr:housenumber': '42',
+							'addr:postcode': '70173',
+							'addr:city': 'Stuttgart'
+						}
+					})
+				],
+				null,
+				testBounds
 			);
 			const ifc = decodeIfc(result);
 
@@ -349,7 +355,8 @@ describe('exportToIFC', () => {
 		it('should not include address properties without addr tags', async () => {
 			const result = await exportToIFC(
 				[makeBuilding({ tags: { building: 'yes' } })],
-				null, testBounds
+				null,
+				testBounds
 			);
 			const ifc = decodeIfc(result);
 

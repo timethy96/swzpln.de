@@ -3,14 +3,15 @@
 	import { Progress } from '$lib/components/ui/progress';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { Dialog, DialogContent, DialogHeader, DialogTitle } from '$lib/components/ui/dialog';
-	import { Download, Loader2 } from 'lucide-svelte';
+	import Download from '@lucide/svelte/icons/download';
+	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 	import { appState } from '$lib/state.svelte';
 	import { downloadOSMData } from '$lib/schwarzplan/osm/overpass';
 	import { fetchElevationData } from '$lib/schwarzplan/elevation/client';
 	import { SchwarzplanWorker } from '$lib/schwarzplan/worker/client';
 	import { getSuitableScales } from '$lib/schwarzplan/geometry/bounds';
 	import { downloadFile, getMimeType, getFilename } from '$lib/schwarzplan/exporters/base';
-	import type { ExportFormat, ProgressInfo } from '$lib/schwarzplan/types';
+	import type { ExportFormat, ProgressInfo, ScaleOption } from '$lib/schwarzplan/types';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
 
@@ -18,7 +19,7 @@
 	let worker: SchwarzplanWorker | null = null;
 	let scaleDialogOpen = $state(false);
 	let selectedFormat = $state<ExportFormat>('dxf');
-	let availableScales = $state<any[]>([]);
+	let availableScales = $state<ScaleOption[]>([]);
 	let cumulativeProgress = $state(0);
 	let isLoading = $state(true);
 	let isCancelled = $state(false);
@@ -202,7 +203,7 @@
 				</Button>
 				<Button
 					class="absolute right-3 bottom-42 h-14 w-14 cursor-pointer rounded-lg text-xs font-bold shadow-lg hover:scale-105 active:scale-95"
-					onclick={() => handleFormatClick('3dm')}
+					onclick={() => handleFormatClick('obj')}
 				>
 					OBJ
 				</Button>
@@ -257,7 +258,7 @@
 			<DialogTitle>{m.export_scale_selection_title()}</DialogTitle>
 		</DialogHeader>
 		<div class="space-y-2">
-			{#each availableScales as scaleOption}
+			{#each availableScales as scaleOption (scaleOption.scale)}
 				<Button
 					variant="outline"
 					class="w-full"
@@ -289,7 +290,7 @@
 					{/if}
 				</DialogTitle>
 				{#if appState.progress?.step === 'osm-download' || appState.progress?.step === 'elevation-download'}
-					<Loader2 class="size-5 animate-spin text-muted-foreground" />
+					<LoaderCircle class="size-5 animate-spin text-muted-foreground" />
 				{/if}
 			</div>
 		</DialogHeader>

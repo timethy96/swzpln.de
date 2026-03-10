@@ -144,4 +144,3 @@ export class SchwarzplanWorker {
 		this.cancel();
 	}
 }
-

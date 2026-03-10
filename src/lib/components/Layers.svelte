@@ -2,26 +2,23 @@
 	import LayerButton from './LayerButton.svelte';
 	import SplitLayerButton from './SplitLayerButton.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton';
-	import {
-		Building,
-		Sprout,
-		TreePine,
-		Waves,
-		Wheat,
-		Car,
-		TramFront,
-		Mountain,
-		Box,
-		TrendingUp,
-		Activity,
-		ChartColumn,
-		Minus,
-		Plus,
-		Square,
-		SquareDashed
-	} from 'lucide-svelte';
+	import Building from '@lucide/svelte/icons/building';
+	import Sprout from '@lucide/svelte/icons/sprout';
+	import TreePine from '@lucide/svelte/icons/tree-pine';
+	import Waves from '@lucide/svelte/icons/waves';
+	import Wheat from '@lucide/svelte/icons/wheat';
+	import Car from '@lucide/svelte/icons/car';
+	import TramFront from '@lucide/svelte/icons/tram-front';
+	import Mountain from '@lucide/svelte/icons/mountain';
+	import Box from '@lucide/svelte/icons/box';
+	import TrendingUp from '@lucide/svelte/icons/trending-up';
+	import Activity from '@lucide/svelte/icons/activity';
+	import ChartColumn from '@lucide/svelte/icons/chart-column';
+	import Minus from '@lucide/svelte/icons/minus';
+	import Plus from '@lucide/svelte/icons/plus';
+	import Square from '@lucide/svelte/icons/square';
+	import SquareDashed from '@lucide/svelte/icons/square-dashed';
 	import { appState } from '$lib/state.svelte';
-	import type { Layer } from '$lib/schwarzplan/types';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
 
@@ -100,7 +97,7 @@
 <div class="absolute top-18 z-10 m-4 flex max-w-[calc(90%-96px)] flex-row flex-wrap gap-2">
 	{#if isLoading}
 		<!-- Skeleton loading state -->
-		{#each Array(9) as _, i}
+		{#each Array.from({ length: 9 }, (_, i) => i) as i (i)}
 			<Skeleton class="h-10 w-32 rounded-3xl" />
 		{/each}
 	{:else if !appState.is3DMode}

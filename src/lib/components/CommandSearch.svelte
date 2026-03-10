@@ -1,24 +1,24 @@
 <script lang="ts">
 	import * as Command from '$lib/components/ui/command';
 	import { appState } from '$lib/state.svelte';
-	import { searchLocation as searchLocationUtil } from '$lib/utils/search';
+	import { searchLocation as searchLocationUtil, type PhotonFeature } from '$lib/utils/search';
 	import * as m from '$lib/paraglide/messages';
-	import { Loader2 } from 'lucide-svelte';
+	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
 
 	let { open = $bindable(false) } = $props();
 
+	interface SearchResult {
+		name: string;
+		city?: string;
+		country?: string;
+		coordinates: [number, number];
+		properties: PhotonFeature['properties'];
+	}
+
 	let searchValue = $state('');
-	let searchResults = $state<
-		Array<{
-			name: string;
-			city?: string;
-			country?: string;
-			coordinates: [number, number];
-			properties: Record<string, any>;
-		}>
-	>([]);
+	let searchResults = $state<SearchResult[]>([]);
 	let isLoading = $state(false);
-	let searchTimeout: any;
+	let searchTimeout: ReturnType<typeof setTimeout>;
 
 	// Debounced search function
 	async function performSearch(query: string) {
@@ -34,7 +34,7 @@
 			const features = await searchLocationUtil(query, 5);
 
 			// Transform results to our format
-			searchResults = features.map((feature: any) => ({
+			searchResults = features.map((feature) => ({
 				name: feature.properties.name || m.search_unknown_location(),
 				city: feature.properties.city,
 				country: feature.properties.country,
@@ -88,7 +88,7 @@
 	<Command.List>
 		{#if isLoading}
 			<div class="flex items-center justify-center py-6">
-				<Loader2 class="size-6 animate-spin text-muted-foreground" />
+				<LoaderCircle class="size-6 animate-spin text-muted-foreground" />
 			</div>
 		{:else if searchValue.length >= 2 && searchResults.length === 0 && !isLoading}
 			<Command.Empty>{m.search_no_results()}</Command.Empty>
@@ -98,7 +98,7 @@
 
 		{#if searchResults.length > 0}
 			<Command.Group heading={m.search_locations_group()}>
-				{#each searchResults as result}
+				{#each searchResults as result (result.coordinates.join(','))}
 					<Command.Item value={result.name} onSelect={() => selectLocation(result)}>
 						<div class="flex flex-col">
 							<span class="font-medium">{result.name}</span>

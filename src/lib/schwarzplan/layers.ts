@@ -39,8 +39,15 @@ export const LAYER_CONFIG: Record<Layer, LayerConfig> = {
 		dxfColor: 254,
 		matchTags: {
 			railway: [
-				'tram', 'subway', 'rail', 'preserved', 'narrow_gauge',
-				'monorail', 'miniature', 'light_rail', 'funicular'
+				'tram',
+				'subway',
+				'rail',
+				'preserved',
+				'narrow_gauge',
+				'monorail',
+				'miniature',
+				'light_rail',
+				'funicular'
 			]
 		}
 	},
@@ -70,8 +77,15 @@ export const LAYER_CONFIG: Record<Layer, LayerConfig> = {
 		matchTags: {
 			leisure: ['park'],
 			landuse: [
-				'allotments', 'meadow', 'orchard', 'vineyard', 'cemetery',
-				'grass', 'plant_nursery', 'recreation_ground', 'village_green'
+				'allotments',
+				'meadow',
+				'orchard',
+				'vineyard',
+				'cemetery',
+				'grass',
+				'plant_nursery',
+				'recreation_ground',
+				'village_green'
 			]
 		}
 	},

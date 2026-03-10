@@ -2,12 +2,13 @@
 	import { MapLibre } from 'svelte-maplibre';
 	import { NavigationControl } from 'svelte-maplibre';
 	import { AttributionControl } from 'svelte-maplibre';
+	import type { Map as MaplibreMap } from 'maplibre-gl';
 	import DownloadButton from './DownloadButton.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { appState } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
 
-	let mapInstance = $state<any>(null);
+	let mapInstance = $state<MaplibreMap | null>(null);
 	let isLoading = $state(true);
 
 	onMount(() => {
@@ -93,10 +94,8 @@
 			bind:map={mapInstance}
 			dragRotate={false}
 		>
-			{#snippet children({ map })}
-				<NavigationControl position="top-right" showCompass={false} />
-				<AttributionControl position="bottom-left" />
-			{/snippet}
+			<NavigationControl position="top-right" showCompass={false} />
+			<AttributionControl position="bottom-left" />
 		</MapLibre>
 		<DownloadButton />
 	{/if}

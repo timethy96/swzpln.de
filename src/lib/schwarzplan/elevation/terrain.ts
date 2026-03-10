@@ -7,10 +7,7 @@ import { getMaxXY } from '../geometry/coordinates';
  * Generate a triangulated terrain mesh from elevation matrix
  * Uses simple grid triangulation (2 triangles per quad)
  */
-export function generateTerrainMesh(
-	elevationMatrix: number[][],
-	bounds: Bounds
-): TerrainMesh {
+export function generateTerrainMesh(elevationMatrix: number[][], bounds: Bounds): TerrainMesh {
 	const vertices: Coordinate3D[] = [];
 	const triangles: number[] = [];
 
@@ -51,7 +48,6 @@ export function generateTerrainMesh(
 		}
 	}
 
-
 	return { vertices, triangles };
 }
 
@@ -91,6 +87,3 @@ export function interpolateTerrainElevation(
 
 	return z0 * (1 - fy) + z1 * fy;
 }
-
-
-

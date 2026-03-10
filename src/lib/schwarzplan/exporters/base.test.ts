@@ -1,7 +1,7 @@
 // Tests for base exporter utilities
 
-import { describe, it, expect, beforeEach, afterEach, vi } from 'vitest';
-import { getMimeType, getFilename, downloadFile } from './base';
+import { describe, it, expect } from 'vitest';
+import { getMimeType, getFilename } from './base';
 
 describe('base exporter', () => {
 	describe('getMimeType', () => {
@@ -25,8 +25,8 @@ describe('base exporter', () => {
 			expect(getMimeType('dxf3d')).toBe('application/dxf');
 		});
 
-		it('should return correct mime type for 3dm', () => {
-			expect(getMimeType('3dm')).toBe('model/obj');
+		it('should return correct mime type for obj', () => {
+			expect(getMimeType('obj')).toBe('model/obj');
 		});
 	});
 
@@ -51,8 +51,8 @@ describe('base exporter', () => {
 			expect(getFilename('dxf3d')).toBe('swzpln.dxf');
 		});
 
-		it('should return correct filename for 3dm', () => {
-			expect(getFilename('3dm')).toBe('swzpln.obj');
+		it('should return correct filename for obj', () => {
+			expect(getFilename('obj')).toBe('swzpln.obj');
 		});
 	});
 
@@ -75,4 +75,3 @@ describe('base exporter', () => {
 		});
 	});
 });
-

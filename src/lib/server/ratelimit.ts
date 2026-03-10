@@ -9,14 +9,17 @@ interface RateLimitEntry {
 const limits = new Map<string, RateLimitEntry>();
 
 // Cleanup old entries every 5 minutes
-setInterval(() => {
-	const now = Date.now();
-	for (const [key, entry] of limits.entries()) {
-		if (entry.resetAt < now) {
-			limits.delete(key);
+setInterval(
+	() => {
+		const now = Date.now();
+		for (const [key, entry] of limits.entries()) {
+			if (entry.resetAt < now) {
+				limits.delete(key);
+			}
 		}
-	}
-}, 5 * 60 * 1000);
+	},
+	5 * 60 * 1000
+);
 
 /**
  * Check if request is rate limited
@@ -42,4 +45,3 @@ export function checkRateLimit(key: string, maxRequests: number, windowMs: numbe
 	entry.count++;
 	return true;
 }
-

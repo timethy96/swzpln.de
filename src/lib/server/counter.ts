@@ -69,4 +69,3 @@ export function getTotalDownloads(): number {
 	const result = stmt.get() as { count: number };
 	return result.count;
 }
-

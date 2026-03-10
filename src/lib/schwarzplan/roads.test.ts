@@ -40,7 +40,7 @@ describe('lineToPolygon', () => {
 		// First point should be extended backward (negative x)
 		expect(polygon[0].x).toBeLessThan(0);
 		expect(polygon[3].x).toBeLessThan(0);
-		
+
 		// Last point should be extended forward (beyond x=1)
 		expect(polygon[1].x).toBeGreaterThan(1);
 		expect(polygon[2].x).toBeGreaterThan(1);
@@ -121,4 +121,3 @@ describe('shouldConvertToPolygon', () => {
 		expect(shouldConvertToPolygon(line)).toBe(false);
 	});
 });
-

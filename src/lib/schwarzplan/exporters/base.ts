@@ -1,18 +1,12 @@
 // Base exporter that delegates to specific format exporters
 
-import type {
-	Bounds,
-	ContourData,
-	ExportFormat,
-	GeometryObject,
-	ProgressCallback
-} from '../types';
+import type { Bounds, ContourData, ExportFormat, GeometryObject, ProgressCallback } from '../types';
 import { exportToDXF } from './dxf';
 import { exportToSVG } from './svg';
 import { exportToPDF } from './pdf';
 import { exportToDXF3D } from './dxf3d';
 import { exportToIFC } from './ifc';
-import { exportTo3DM } from './rhino3dm';
+import { exportToOBJ } from './obj';
 import * as m from '$lib/paraglide/messages';
 
 /**
@@ -52,8 +46,8 @@ export async function exportGeometry(
 		case 'ifc':
 			return await exportToIFC(objects, elevationMatrix, bounds, onProgress);
 
-		case '3dm':
-			return await exportTo3DM(objects, elevationMatrix, bounds, onProgress);
+		case 'obj':
+			return await exportToOBJ(objects, elevationMatrix, bounds, onProgress);
 
 		default:
 			throw new Error(m.error_unsupported_format({ format }));
@@ -84,7 +78,7 @@ export function downloadFile(
 		}
 		blob = new Blob([content], { type: mimeType });
 	} else if (content instanceof Uint8Array) {
-		blob = new Blob([content as any], { type: mimeType });
+		blob = new Blob([content], { type: mimeType });
 	} else {
 		blob = content;
 	}
@@ -116,8 +110,8 @@ export function getMimeType(format: ExportFormat): string {
 			return 'application/pdf';
 		case 'ifc':
 			return 'application/x-step'; // IFC uses STEP format
-		case '3dm':
-			return 'model/obj'; // OBJ format (more compatible than 3DM)
+		case 'obj':
+			return 'model/obj';
 		default:
 			return 'application/octet-stream';
 	}
@@ -134,11 +128,9 @@ export function getFilename(format: ExportFormat): string {
 		pdf: 'pdf',
 		dxf3d: 'dxf',
 		ifc: 'ifc',
-		'3dm': 'obj' // Export as OBJ format for universal compatibility
+		obj: 'obj'
 	};
 
 	const extension = extensionMap[format] || format;
 	return `swzpln.${extension}`;
 }
-
-

@@ -29,3 +29,9 @@ src/lib/paraglide
 /data
 
 *_old
+
+# Inlang cache
+project.inlang/cache/
+
+# Logs
+*.log

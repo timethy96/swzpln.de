@@ -95,7 +95,7 @@ export const GET: RequestHandler = async ({ url }) => {
 
 		// Prepare headers
 		const headers: Record<string, string> = {
-			'Connection': 'close',
+			Connection: 'close',
 			'User-Agent': 'SWZPLN-Elevation-Fetcher/1.0'
 		};
 		if (env.OPENTOPODATA_API_KEY) {
@@ -162,9 +162,8 @@ export const GET: RequestHandler = async ({ url }) => {
 		}
 
 		return json(outputMatrix);
-	} catch (err: any) {
+	} catch (err: unknown) {
 		console.error('Elevation API error:', err);
-		throw error(502, err.message || 'Failed to fetch elevation data');
+		throw error(502, err instanceof Error ? err.message : 'Failed to fetch elevation data');
 	}
 };
-

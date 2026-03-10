@@ -2,7 +2,14 @@
 // Generates valid STEP format with IfcTriangulatedFaceSet for buildings
 // and IfcTriangulatedIrregularNetwork for terrain
 
-import type { Bounds, GeometryObject, ProgressCallback, BuildingMetadata, BuildingMesh, TerrainMesh } from '../types';
+import type {
+	Bounds,
+	GeometryObject,
+	ProgressCallback,
+	BuildingMetadata,
+	BuildingMesh,
+	TerrainMesh
+} from '../types';
 import { extrudeBuildings } from '../geometry/buildings';
 import { generateTerrainMesh } from '../elevation/terrain';
 import { getMaxXY } from '../geometry/coordinates';
@@ -115,8 +122,8 @@ DATA;`;
 
 /** Convert WGS84 lat/lon to EPSG:3857 (Web Mercator) meters */
 function toEpsg3857(lat: number, lon: number): { easting: number; northing: number } {
-	const easting = lon * 20037508.34 / 180;
-	const northing = Math.log(Math.tan((90 + lat) * Math.PI / 360)) / Math.PI * 20037508.34;
+	const easting = (lon * 20037508.34) / 180;
+	const northing = (Math.log(Math.tan(((90 + lat) * Math.PI) / 360)) / Math.PI) * 20037508.34;
 	return { easting, northing };
 }
 
@@ -128,14 +135,20 @@ function writeGlobalEntities(w: IfcWriter, bounds: Bounds): SharedIds {
 	const org = w.write('IFCORGANIZATION', "$,'swzpln.de',$,$,$");
 	const personOrg = w.write('IFCPERSONANDORGANIZATION', `#${person},#${org},$`);
 	const app = w.write('IFCAPPLICATION', `#${org},'1.0','swzpln','swzpln'`);
-	const ownerHistory = w.write('IFCOWNERHISTORY', `#${personOrg},#${app},$,.ADDED.,${timestamp},#${personOrg},#${app},${timestamp}`);
+	const ownerHistory = w.write(
+		'IFCOWNERHISTORY',
+		`#${personOrg},#${app},$,.ADDED.,${timestamp},#${personOrg},#${app},${timestamp}`
+	);
 
 	// Units
 	const unitLength = w.write('IFCSIUNIT', '*,.LENGTHUNIT.,$,.METRE.');
 	const unitArea = w.write('IFCSIUNIT', '*,.AREAUNIT.,$,.SQUARE_METRE.');
 	const unitVolume = w.write('IFCSIUNIT', '*,.VOLUMEUNIT.,$,.CUBIC_METRE.');
 	const unitAngle = w.write('IFCSIUNIT', '*,.PLANEANGLEUNIT.,$,.RADIAN.');
-	const units = w.write('IFCUNITASSIGNMENT', `(#${unitLength},#${unitArea},#${unitVolume},#${unitAngle})`);
+	const units = w.write(
+		'IFCUNITASSIGNMENT',
+		`(#${unitLength},#${unitArea},#${unitVolume},#${unitAngle})`
+	);
 
 	// Shared geometry primitives
 	const origin = w.write('IFCCARTESIANPOINT', '(0.,0.,0.)');
@@ -144,25 +157,51 @@ function writeGlobalEntities(w: IfcWriter, bounds: Bounds): SharedIds {
 	const worldPlacement = w.write('IFCAXIS2PLACEMENT3D', `#${origin},#${zAxis},#${xAxis}`);
 
 	// Representation context
-	const context = w.write('IFCGEOMETRICREPRESENTATIONCONTEXT', `$,'Model',3,0.00001,#${worldPlacement},$`);
-	const subContext = w.write('IFCGEOMETRICREPRESENTATIONSUBCONTEXT', `'Body','Model',*,*,*,*,#${context},$,.MODEL_VIEW.,$`);
+	const context = w.write(
+		'IFCGEOMETRICREPRESENTATIONCONTEXT',
+		`$,'Model',3,0.00001,#${worldPlacement},$`
+	);
+	const subContext = w.write(
+		'IFCGEOMETRICREPRESENTATIONSUBCONTEXT',
+		`'Body','Model',*,*,*,*,#${context},$,.MODEL_VIEW.,$`
+	);
 
 	// Coordinate reference system — places model at real-world position
 	const origin3857 = toEpsg3857(bounds.south, bounds.west);
 	const crs = w.write('IFCPROJECTEDCRS', `'EPSG:3857',$,'WGS 84',$,$,$,#${unitLength}`);
-	w.write('IFCMAPCONVERSION', `#${context},#${crs},${fmtR(origin3857.easting)},${fmtR(origin3857.northing)},0.,$,$,$`);
+	w.write(
+		'IFCMAPCONVERSION',
+		`#${context},#${crs},${fmtR(origin3857.easting)},${fmtR(origin3857.northing)},0.,$,$,$`
+	);
 
 	// Site placement & entity
 	const sitePlacement = w.write('IFCLOCALPLACEMENT', `$,#${worldPlacement}`);
-	const site = w.write('IFCSITE', `'${generateIfcGuid()}',#${ownerHistory},'Site',$,$,#${sitePlacement},$,$,.ELEMENT.,$,$,$,$,$`);
+	const site = w.write(
+		'IFCSITE',
+		`'${generateIfcGuid()}',#${ownerHistory},'Site',$,$,#${sitePlacement},$,$,.ELEMENT.,$,$,$,$,$`
+	);
 
 	// Project (references context + units)
-	const project = w.write('IFCPROJECT', `'${generateIfcGuid()}',#${ownerHistory},'swzpln Export',$,$,$,$,(#${context}),#${units}`);
+	const project = w.write(
+		'IFCPROJECT',
+		`'${generateIfcGuid()}',#${ownerHistory},'swzpln Export',$,$,$,$,(#${context}),#${units}`
+	);
 
 	// Project → Site aggregation
 	w.write('IFCRELAGGREGATES', `'${generateIfcGuid()}',#${ownerHistory},$,$,#${project},(#${site})`);
 
-	return { ownerHistory, origin, zAxis, xAxis, worldPlacement, context, subContext, sitePlacement, site, project };
+	return {
+		ownerHistory,
+		origin,
+		zAxis,
+		xAxis,
+		worldPlacement,
+		context,
+		subContext,
+		sitePlacement,
+		site,
+		project
+	};
 }
 
 // ============================================================================
@@ -170,16 +209,19 @@ function writeGlobalEntities(w: IfcWriter, bounds: Bounds): SharedIds {
 // ============================================================================
 
 function writeMeshFaceSet(w: IfcWriter, mesh: BuildingMesh): number {
-	const coordList = mesh.vertices.map(v => `(${fmtR(v.x)},${fmtR(v.y)},${fmtR(v.z)})`).join(',');
+	const coordList = mesh.vertices.map((v) => `(${fmtR(v.x)},${fmtR(v.y)},${fmtR(v.z)})`).join(',');
 	const pointListId = w.write('IFCCARTESIANPOINTLIST3D', `(${coordList}),$`);
-	const coordIndex = mesh.faces.map(f => `(${f[0] + 1},${f[1] + 1},${f[2] + 1})`).join(',');
+	const coordIndex = mesh.faces.map((f) => `(${f[0] + 1},${f[1] + 1},${f[2] + 1})`).join(',');
 	return w.write('IFCTRIANGULATEDFACESET', `#${pointListId},$,.F.,(${coordIndex}),$`);
 }
 
 function writeBuildingGeometry(w: IfcWriter, meshes: BuildingMesh[], shared: SharedIds): number {
-	const faceSetIds = meshes.map(mesh => writeMeshFaceSet(w, mesh));
-	const itemRefs = faceSetIds.map(id => `#${id}`).join(',');
-	const shapeRep = w.write('IFCSHAPEREPRESENTATION', `#${shared.subContext},'Body','Tessellation',(${itemRefs})`);
+	const faceSetIds = meshes.map((mesh) => writeMeshFaceSet(w, mesh));
+	const itemRefs = faceSetIds.map((id) => `#${id}`).join(',');
+	const shapeRep = w.write(
+		'IFCSHAPEREPRESENTATION',
+		`#${shared.subContext},'Body','Tessellation',(${itemRefs})`
+	);
 	return w.write('IFCPRODUCTDEFINITIONSHAPE', `$,$,(#${shapeRep})`);
 }
 
@@ -199,15 +241,20 @@ function writeBuilding(
 	const shapeId = writeBuildingGeometry(w, meshes, shared);
 
 	// Placement (relative to site, at origin since geometry is in world coords)
-	const placement = w.write('IFCAXIS2PLACEMENT3D', `#${shared.origin},#${shared.zAxis},#${shared.xAxis}`);
+	const placement = w.write(
+		'IFCAXIS2PLACEMENT3D',
+		`#${shared.origin},#${shared.zAxis},#${shared.xAxis}`
+	);
 	const localPlacement = w.write('IFCLOCALPLACEMENT', `#${shared.sitePlacement},#${placement}`);
 
 	// Building name from OSM or fallback
 	const name = escapeIfcString(tags?.name || `Building_${index + 1}`);
-	const objectType = tags?.building && tags.building !== 'yes' ? `'${escapeIfcString(tags.building)}'` : '$';
+	const objectType =
+		tags?.building && tags.building !== 'yes' ? `'${escapeIfcString(tags.building)}'` : '$';
 
 	// IfcBuilding entity (BuildingAddress=$, deprecated in IFC4X3 — address goes in Pset_Address)
-	const buildingId = w.write('IFCBUILDING',
+	const buildingId = w.write(
+		'IFCBUILDING',
 		`'${generateIfcGuid()}',#${shared.ownerHistory},'${name}',$,${objectType},#${localPlacement},#${shapeId},$,.ELEMENT.,$,$,$`
 	);
 
@@ -233,17 +280,44 @@ function writePsets(
 	// --- Geometry metadata ---
 	if (metadata) {
 		if (metadata.height !== undefined)
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'Height',$,IFCLENGTHMEASURE(${fmtStepReal(metadata.height)}),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'Height',$,IFCLENGTHMEASURE(${fmtStepReal(metadata.height)}),$`
+				)
+			);
 		if (metadata.minHeight !== undefined)
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'MinHeight',$,IFCLENGTHMEASURE(${fmtStepReal(metadata.minHeight)}),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'MinHeight',$,IFCLENGTHMEASURE(${fmtStepReal(metadata.minHeight)}),$`
+				)
+			);
 		if (metadata.levels !== undefined)
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'Levels',$,IFCINTEGER(${Math.round(metadata.levels)}),$`));
+			props.push(
+				w.write('IFCPROPERTYSINGLEVALUE', `'Levels',$,IFCINTEGER(${Math.round(metadata.levels)}),$`)
+			);
 		if (metadata.roofShape)
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'RoofShape',$,IFCLABEL('${escapeIfcString(metadata.roofShape)}'),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'RoofShape',$,IFCLABEL('${escapeIfcString(metadata.roofShape)}'),$`
+				)
+			);
 		if (metadata.roofHeight !== undefined)
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'RoofHeight',$,IFCLENGTHMEASURE(${fmtStepReal(metadata.roofHeight)}),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'RoofHeight',$,IFCLENGTHMEASURE(${fmtStepReal(metadata.roofHeight)}),$`
+				)
+			);
 		if (metadata.shape)
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'BuildingShape',$,IFCLABEL('${escapeIfcString(metadata.shape)}'),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'BuildingShape',$,IFCLABEL('${escapeIfcString(metadata.shape)}'),$`
+				)
+			);
 	}
 
 	// --- OSM tags ---
@@ -256,7 +330,7 @@ function writePsets(
 		['architect', 'Architect', 'label'],
 		['amenity', 'Amenity', 'label'],
 		['heritage', 'Heritage', 'label'],
-		['description', 'Description', 'text'],
+		['description', 'Description', 'text']
 	];
 
 	if (tags) {
@@ -264,7 +338,12 @@ function writePsets(
 			const val = tags[osmKey];
 			if (val && !(osmKey === 'building' && val === 'yes')) {
 				const ifcType = type === 'text' ? 'IFCTEXT' : 'IFCLABEL';
-				props.push(w.write('IFCPROPERTYSINGLEVALUE', `'${ifcName}',$,${ifcType}('${escapeIfcString(val)}'),$`));
+				props.push(
+					w.write(
+						'IFCPROPERTYSINGLEVALUE',
+						`'${ifcName}',$,${ifcType}('${escapeIfcString(val)}'),$`
+					)
+				);
 			}
 		}
 	}
@@ -272,34 +351,86 @@ function writePsets(
 	// --- Address (replaces deprecated IfcPostalAddress in IFC4X3) ---
 	if (tags) {
 		if (tags['addr:street'])
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'Street',$,IFCLABEL('${escapeIfcString(tags['addr:street'])}'),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'Street',$,IFCLABEL('${escapeIfcString(tags['addr:street'])}'),$`
+				)
+			);
 		if (tags['addr:housenumber'])
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'HouseNumber',$,IFCLABEL('${escapeIfcString(tags['addr:housenumber'])}'),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'HouseNumber',$,IFCLABEL('${escapeIfcString(tags['addr:housenumber'])}'),$`
+				)
+			);
 		if (tags['addr:postcode'])
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'PostalCode',$,IFCLABEL('${escapeIfcString(tags['addr:postcode'])}'),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'PostalCode',$,IFCLABEL('${escapeIfcString(tags['addr:postcode'])}'),$`
+				)
+			);
 		if (tags['addr:city'])
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'City',$,IFCLABEL('${escapeIfcString(tags['addr:city'])}'),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'City',$,IFCLABEL('${escapeIfcString(tags['addr:city'])}'),$`
+				)
+			);
 		if (tags['addr:country'])
-			props.push(w.write('IFCPROPERTYSINGLEVALUE', `'Country',$,IFCLABEL('${escapeIfcString(tags['addr:country'])}'),$`));
+			props.push(
+				w.write(
+					'IFCPROPERTYSINGLEVALUE',
+					`'Country',$,IFCLABEL('${escapeIfcString(tags['addr:country'])}'),$`
+				)
+			);
 	}
 
 	// --- Attribution (always present) ---
 	props.push(w.write('IFCPROPERTYSINGLEVALUE', "'Source',$,IFCLABEL('OpenStreetMap'),$"));
-	props.push(w.write('IFCPROPERTYSINGLEVALUE', `'Copyright',$,IFCTEXT('${escapeIfcString('© OpenStreetMap contributors, ODbL')}'),$`));
+	props.push(
+		w.write(
+			'IFCPROPERTYSINGLEVALUE',
+			`'Copyright',$,IFCTEXT('${escapeIfcString('© OpenStreetMap contributors, ODbL')}'),$`
+		)
+	);
 
-	const propRefs = props.map(p => `#${p}`).join(',');
-	const psetId = w.write('IFCPROPERTYSET', `'${generateIfcGuid()}',#${shared.ownerHistory},'swzpln',$,(${propRefs})`);
-	w.write('IFCRELDEFINESBYPROPERTIES', `'${generateIfcGuid()}',#${shared.ownerHistory},$,$,(#${buildingId}),#${psetId}`);
+	const propRefs = props.map((p) => `#${p}`).join(',');
+	const psetId = w.write(
+		'IFCPROPERTYSET',
+		`'${generateIfcGuid()}',#${shared.ownerHistory},'swzpln',$,(${propRefs})`
+	);
+	w.write(
+		'IFCRELDEFINESBYPROPERTIES',
+		`'${generateIfcGuid()}',#${shared.ownerHistory},$,$,(#${buildingId}),#${psetId}`
+	);
 }
 
 function writeTerrainPset(w: IfcWriter, terrainId: number, shared: SharedIds): void {
 	const props: number[] = [];
-	props.push(w.write('IFCPROPERTYSINGLEVALUE', "'Source',$,IFCLABEL('OpenTopoData / Mapzen Terrain Tiles'),$"));
-	props.push(w.write('IFCPROPERTYSINGLEVALUE', `'Copyright',$,IFCTEXT('${escapeIfcString('© OpenStreetMap contributors, © Mapzen')}'),$`));
+	props.push(
+		w.write(
+			'IFCPROPERTYSINGLEVALUE',
+			"'Source',$,IFCLABEL('OpenTopoData / Mapzen Terrain Tiles'),$"
+		)
+	);
+	props.push(
+		w.write(
+			'IFCPROPERTYSINGLEVALUE',
+			`'Copyright',$,IFCTEXT('${escapeIfcString('© OpenStreetMap contributors, © Mapzen')}'),$`
+		)
+	);
 
-	const propRefs = props.map(p => `#${p}`).join(',');
-	const psetId = w.write('IFCPROPERTYSET', `'${generateIfcGuid()}',#${shared.ownerHistory},'swzpln',$,(${propRefs})`);
-	w.write('IFCRELDEFINESBYPROPERTIES', `'${generateIfcGuid()}',#${shared.ownerHistory},$,$,(#${terrainId}),#${psetId}`);
+	const propRefs = props.map((p) => `#${p}`).join(',');
+	const psetId = w.write(
+		'IFCPROPERTYSET',
+		`'${generateIfcGuid()}',#${shared.ownerHistory},'swzpln',$,(${propRefs})`
+	);
+	w.write(
+		'IFCRELDEFINESBYPROPERTIES',
+		`'${generateIfcGuid()}',#${shared.ownerHistory},$,$,(#${terrainId}),#${psetId}`
+	);
 }
 
 // ============================================================================
@@ -308,31 +439,43 @@ function writeTerrainPset(w: IfcWriter, terrainId: number, shared: SharedIds): v
 
 function writeTerrain(w: IfcWriter, terrainMesh: TerrainMesh, shared: SharedIds): number {
 	// IfcCartesianPointList3D — all terrain vertices (CoordList, TagList)
-	const coordList = terrainMesh.vertices.map(v => `(${fmtR(v.x)},${fmtR(v.y)},${fmtR(v.z)})`).join(',');
+	const coordList = terrainMesh.vertices
+		.map((v) => `(${fmtR(v.x)},${fmtR(v.y)},${fmtR(v.z)})`)
+		.join(',');
 	const pointListId = w.write('IFCCARTESIANPOINTLIST3D', `(${coordList}),$`);
 
 	// IfcTriangulatedIrregularNetwork — triangle indices (1-based) + flags
 	const numTriangles = terrainMesh.triangles.length / 3;
 	const indexTuples: string[] = [];
 	for (let i = 0; i < terrainMesh.triangles.length; i += 3) {
-		indexTuples.push(`(${terrainMesh.triangles[i] + 1},${terrainMesh.triangles[i + 1] + 1},${terrainMesh.triangles[i + 2] + 1})`);
+		indexTuples.push(
+			`(${terrainMesh.triangles[i] + 1},${terrainMesh.triangles[i + 1] + 1},${terrainMesh.triangles[i + 2] + 1})`
+		);
 	}
 	const flags = new Array(numTriangles).fill('0').join(',');
 
-	const tinId = w.write('IFCTRIANGULATEDIRREGULARNETWORK',
+	const tinId = w.write(
+		'IFCTRIANGULATEDIRREGULARNETWORK',
 		`#${pointListId},$,.F.,(${indexTuples.join(',')}),$,(${flags})`
 	);
 
 	// Shape representation
-	const shapeRep = w.write('IFCSHAPEREPRESENTATION', `#${shared.subContext},'Body','Tessellation',(#${tinId})`);
+	const shapeRep = w.write(
+		'IFCSHAPEREPRESENTATION',
+		`#${shared.subContext},'Body','Tessellation',(#${tinId})`
+	);
 	const prodShape = w.write('IFCPRODUCTDEFINITIONSHAPE', `$,$,(#${shapeRep})`);
 
 	// Placement
-	const placement = w.write('IFCAXIS2PLACEMENT3D', `#${shared.origin},#${shared.zAxis},#${shared.xAxis}`);
+	const placement = w.write(
+		'IFCAXIS2PLACEMENT3D',
+		`#${shared.origin},#${shared.zAxis},#${shared.xAxis}`
+	);
 	const localPlacement = w.write('IFCLOCALPLACEMENT', `#${shared.sitePlacement},#${placement}`);
 
 	// IfcGeographicElement with TERRAIN type
-	const terrainId = w.write('IFCGEOGRAPHICELEMENT',
+	const terrainId = w.write(
+		'IFCGEOGRAPHICELEMENT',
 		`'${generateIfcGuid()}',#${shared.ownerHistory},'Terrain',$,$,#${localPlacement},#${prodShape},$,.TERRAIN.`
 	);
 
@@ -347,8 +490,10 @@ function escapeIfcString(s: string): string {
 	let result = '';
 	for (const char of s) {
 		const code = char.codePointAt(0)!;
-		if (code === 0x27) result += "''"; // single quote
-		else if (code === 0x5c) result += '\\\\'; // backslash
+		if (code === 0x27)
+			result += "''"; // single quote
+		else if (code === 0x5c)
+			result += '\\\\'; // backslash
 		else if (code > 0x7e || code < 0x20) {
 			// Non-ASCII / control chars → STEP \X2\ encoding
 			result += `\\X2\\${code.toString(16).toUpperCase().padStart(4, '0')}\\X0\\`;
@@ -400,7 +545,7 @@ export async function exportToIFC(
 
 	// --- Extrude buildings ---
 	notify(onProgress, 10, 'Extruding buildings...');
-	const buildingObjects = objects.filter(obj => obj.type === 'building' && obj.buildingMetadata);
+	const buildingObjects = objects.filter((obj) => obj.type === 'building' && obj.buildingMetadata);
 
 	const buildingInputs = buildingObjects.map((b, i) => ({
 		footprint: b.path,
@@ -411,7 +556,12 @@ export async function exportToIFC(
 		holes: b.holes
 	}));
 
-	const meshes = extrudeBuildings(buildingInputs, terrainMesh || undefined, gridSize || undefined, maxXY);
+	const meshes = extrudeBuildings(
+		buildingInputs,
+		terrainMesh || undefined,
+		gridSize || undefined,
+		maxXY
+	);
 
 	// --- Write IFC ---
 	notify(onProgress, 20, 'Writing IFC entities...');
@@ -453,7 +603,9 @@ export async function exportToIFC(
 		buildingCounter++;
 
 		if (buildingCounter % 50 === 0) {
-			notify(onProgress, 20 + Math.round((buildingCounter / totalBuildings) * 60),
+			notify(
+				onProgress,
+				20 + Math.round((buildingCounter / totalBuildings) * 60),
 				`Processing buildings: ${buildingCounter}/${totalBuildings}`
 			);
 		}
@@ -462,7 +614,7 @@ export async function exportToIFC(
 	// Grouped buildings (relation parts merged into one IfcBuilding)
 	for (const [relationId, groupMeshes] of relationGroups) {
 		// Find outline object for relation-level tags (name, address, building type)
-		const outline = buildingObjects.find(b => b.relationId === relationId && b.isOutline);
+		const outline = buildingObjects.find((b) => b.relationId === relationId && b.isOutline);
 		// Fall back to first part's data
 		const firstPartIdx = groupMeshes[0].buildingId ?? 0;
 		const tags = outline?.tags ?? buildingObjects[firstPartIdx]?.tags;
@@ -473,7 +625,9 @@ export async function exportToIFC(
 		buildingCounter++;
 
 		if (buildingCounter % 50 === 0) {
-			notify(onProgress, 20 + Math.round((buildingCounter / totalBuildings) * 60),
+			notify(
+				onProgress,
+				20 + Math.round((buildingCounter / totalBuildings) * 60),
 				`Processing buildings: ${buildingCounter}/${totalBuildings}`
 			);
 		}
@@ -492,13 +646,17 @@ export async function exportToIFC(
 
 	// Site → Buildings (IfcRelAggregates)
 	if (buildingIds.length > 0) {
-		const buildingRefs = buildingIds.map(id => `#${id}`).join(',');
-		w.write('IFCRELAGGREGATES', `'${generateIfcGuid()}',#${shared.ownerHistory},$,$,#${shared.site},(${buildingRefs})`);
+		const buildingRefs = buildingIds.map((id) => `#${id}`).join(',');
+		w.write(
+			'IFCRELAGGREGATES',
+			`'${generateIfcGuid()}',#${shared.ownerHistory},$,$,#${shared.site},(${buildingRefs})`
+		);
 	}
 
 	// Site → Terrain (IfcRelContainedInSpatialStructure)
 	if (terrainElementId !== null) {
-		w.write('IFCRELCONTAINEDINSPATIALSTRUCTURE',
+		w.write(
+			'IFCRELCONTAINEDINSPATIALSTRUCTURE',
 			`'${generateIfcGuid()}',#${shared.ownerHistory},$,$,(#${terrainElementId}),#${shared.site}`
 		);
 	}

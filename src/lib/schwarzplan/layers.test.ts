@@ -150,22 +150,20 @@ describe('layers', () => {
 	});
 
 	describe('isLayerFillable', () => {
-	it('should return true for fillable layers', () => {
-		expect(isLayerFillable('building')).toBe(true);
-		expect(isLayerFillable('water')).toBe(true);
-		expect(isLayerFillable('green')).toBe(true);
-		expect(isLayerFillable('forest')).toBe(true);
-		expect(isLayerFillable('farmland')).toBe(true);
-		expect(isLayerFillable('highway')).toBe(true); // Highways are rendered as polygons
-	});
+		it('should return true for fillable layers', () => {
+			expect(isLayerFillable('building')).toBe(true);
+			expect(isLayerFillable('water')).toBe(true);
+			expect(isLayerFillable('green')).toBe(true);
+			expect(isLayerFillable('forest')).toBe(true);
+			expect(isLayerFillable('farmland')).toBe(true);
+			expect(isLayerFillable('highway')).toBe(true); // Highways are rendered as polygons
+		});
 
-	it('should return false for non-fillable layers', () => {
-		// Note: highway is now fillable (rendered as polygons with width)
-		expect(isLayerFillable('railway')).toBe(false);
-		expect(isLayerFillable('waterway')).toBe(false);
-		expect(isLayerFillable('contours')).toBe(false);
-	});
+		it('should return false for non-fillable layers', () => {
+			// Note: highway is now fillable (rendered as polygons with width)
+			expect(isLayerFillable('railway')).toBe(false);
+			expect(isLayerFillable('waterway')).toBe(false);
+			expect(isLayerFillable('contours')).toBe(false);
+		});
 	});
 });
-
-

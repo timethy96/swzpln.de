@@ -1,30 +1,38 @@
 <script lang="ts">
 	import { Button } from '$lib/components/ui/button';
 	import { Badge } from '$lib/components/ui/badge';
-	import { TooltipProvider, Tooltip, TooltipTrigger, TooltipContent } from '$lib/components/ui/tooltip';
-	import { Menu, X } from 'lucide-svelte';
+	import {
+		TooltipProvider,
+		Tooltip,
+		TooltipTrigger,
+		TooltipContent
+	} from '$lib/components/ui/tooltip';
+	import Menu from '@lucide/svelte/icons/menu';
+	import X from '@lucide/svelte/icons/x';
 	import { goto } from '$app/navigation';
-	import { onMount } from 'svelte';
+	import { onMount, type Component } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
 
+	interface NavItem {
+		icon: Component;
+		label: string;
+		href?: string;
+		onClick?: () => void;
+		active?: boolean;
+	}
+
 	// Props for controlling the drawer
-	let { 
+	let {
 		isOpen = $bindable(false),
 		navigationItems = []
 	}: {
 		isOpen?: boolean;
-		navigationItems?: Array<{
-			icon: any;
-			label: string;
-			href?: string;
-			onClick?: () => void;
-			active?: boolean;
-		}>;
+		navigationItems?: NavItem[];
 	} = $props();
 
 	// Download counter
 	let downloadCount = $state(0);
-	
+
 	// Fetch download count
 	async function fetchDownloadCount() {
 		try {
@@ -35,7 +43,7 @@
 			console.warn('Failed to fetch download count:', error);
 		}
 	}
-	
+
 	// Fetch on mount and poll every 5 seconds
 	onMount(() => {
 		fetchDownloadCount();
@@ -48,13 +56,14 @@
 		isOpen = false;
 	}
 
-	function handleItemClick(item: any) {
+	function handleItemClick(item: NavItem) {
 		if (item.onClick) {
 			item.onClick();
 		}
 		if (item.href) {
 			if (item.href.startsWith('/')) {
-				goto(item.href);
+				// eslint-disable-next-line svelte/no-navigation-without-resolve
+				goto(item.href, { invalidateAll: false });
 			} else {
 				window.open(item.href, '_blank');
 			}
@@ -66,8 +75,8 @@
 </script>
 
 {#if isOpen}
-	<div 
-		class="absolute inset-0 backdrop-blur-xs z-40 bg-black/10 md:hidden"
+	<div
+		class="absolute inset-0 z-40 bg-black/10 backdrop-blur-xs md:hidden"
 		role="button"
 		tabindex="0"
 		onclick={closeDrawer}
@@ -76,16 +85,21 @@
 {/if}
 
 <!-- Navigation Rail -->
-<nav 
-	class="left-0 top-0 h-screen z-50 rounded-r-3xl bg-[var(--background)] transition-all duration-300 ease-in-out w-[64px] relative shrink-0"
+<nav
+	aria-label="Main navigation"
+	class="relative top-0 left-0 z-50 h-screen w-[64px] shrink-0 rounded-r-3xl bg-[var(--background)] transition-all duration-300 ease-in-out"
 	class:w-[320px]={isOpen}
 	class:absolute={isOpen}
 	class:md:relative={isOpen}
 >
-	
 	<!-- Navigation Items -->
-	<div class="pt-4 pl-2 space-y-2 flex flex-col place-items-start gap-4 w-full">
-		<Button variant="ghost" class="self-start h-12 w-12 p-0" onclick={() => isOpen = !isOpen}>
+	<div class="flex w-full flex-col place-items-start gap-4 space-y-2 pt-4 pl-2">
+		<Button
+			variant="ghost"
+			class="h-12 w-12 self-start p-0"
+			aria-label={isOpen ? 'Close menu' : 'Open menu'}
+			onclick={() => (isOpen = !isOpen)}
+		>
 			{#if isOpen}
 				<X class="h-6 w-6" />
 			{:else}
@@ -93,15 +107,15 @@
 			{/if}
 		</Button>
 		<TooltipProvider delayDuration={300}>
-			{#each navigationItems as item}
+			{#each navigationItems as item (item.label)}
 				{#if isOpen}
 					<Button
 						variant="ghost"
-						class="h-12 w-[calc(100%-8px)] justify-start overflow-hidden m-0"
+						class="m-0 h-12 w-[calc(100%-8px)] justify-start overflow-hidden"
 						onclick={() => handleItemClick(item)}
 					>
 						{@const IconComponent = item.icon}
-						<IconComponent class="h-6 w-6 mx-1" />
+						<IconComponent class="mx-1 h-6 w-6" />
 						<span class="text-base">{item.label}</span>
 					</Button>
 				{:else}
@@ -111,11 +125,12 @@
 								<Button
 									{...props}
 									variant="ghost"
-									class="h-12 w-12 px-0 justify-start overflow-hidden m-0"
+									class="m-0 h-12 w-12 justify-start overflow-hidden px-0"
+									aria-label={item.label}
 									onclick={() => handleItemClick(item)}
 								>
 									{@const IconComponent = item.icon}
-									<IconComponent class="h-6 w-6 mx-1" />
+									<IconComponent class="mx-1 h-6 w-6" />
 								</Button>
 							{/snippet}
 						</TooltipTrigger>
@@ -128,23 +143,33 @@
 		</TooltipProvider>
 	</div>
 
-	<div class="absolute bottom-4 left-0 right-0 h-40 flex flex-col items-center justify-end overflow-hidden">
+	<div
+		class="absolute right-0 bottom-4 left-0 flex h-40 flex-col items-center justify-end overflow-hidden"
+	>
 		{#if isOpen}
-			<div class="px-3 py-5 w-[312px] text-sm text-muted-foreground leading-tight select-none">
-				<span>{m.nav_footer_copyright({year: new Date().getFullYear().toString()})}<br>
-				{m.nav_footer_created_by()} <a href="https://timo.bilhoefer.de" target="_blank" class="text-primary">Timo Bilhöfer</a><br>
-				{m.nav_footer_supported_by()} <a href="https://tabstudio.de" target="_blank" class="text-primary">TAB Studio UG (haftungsbeschränkt)</a>.<br><br>
-				{m.nav_footer_open_source()}<br>
-				{m.nav_footer_license()}</span>
+			<div class="w-[312px] px-3 py-5 text-sm leading-tight text-muted-foreground select-none">
+				<span
+					>{m.nav_footer_copyright({ year: new Date().getFullYear().toString() })}<br />
+					{m.nav_footer_created_by()}
+					<a href="https://timo.bilhoefer.de" target="_blank" class="text-primary">Timo Bilhöfer</a
+					><br />
+					{m.nav_footer_supported_by()}
+					<a href="https://tabstudio.de" target="_blank" class="text-primary"
+						>TAB Studio UG (haftungsbeschränkt)</a
+					>.<br /><br />
+					{m.nav_footer_open_source()}<br />
+					{m.nav_footer_license()}</span
+				>
 			</div>
 		{/if}
-		<Badge 
-			variant="outline" 
-			class="font-mono tabular-nums cursor-pointer {isOpen ? 'text-sm px-3 py-1' : 'text-[10px] px-2 py-1 min-w-12'}"
-			onclick={() => isOpen = !isOpen}
+		<Badge
+			variant="outline"
+			class="cursor-pointer font-mono tabular-nums {isOpen
+				? 'px-3 py-1 text-sm'
+				: 'min-w-12 px-2 py-1 text-[10px]'}"
+			onclick={() => (isOpen = !isOpen)}
 		>
 			{downloadCount.toLocaleString('de-DE')}+{isOpen ? ' ' + m.nav_footer_plans_created() : ''}
-		</Badge> 
+		</Badge>
 	</div>
 </nav>
-

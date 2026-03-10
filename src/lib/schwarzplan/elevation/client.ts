@@ -60,5 +60,3 @@ export async function fetchElevationData(
 		return null;
 	}
 }
-
-

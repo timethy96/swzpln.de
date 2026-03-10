@@ -6,7 +6,13 @@ import { getLocale } from '$lib/paraglide/runtime';
  * @param limit - Maximum number of results to return (default: 1)
  * @returns The search results, or empty array if search fails
  */
-export async function searchLocation(query: string, limit: number = 1): Promise<any[]> {
+export interface PhotonFeature {
+	type: string;
+	geometry: { type: string; coordinates: [number, number] };
+	properties: Record<string, string | number | number[] | undefined>;
+}
+
+export async function searchLocation(query: string, limit: number = 1): Promise<PhotonFeature[]> {
 	try {
 		const lang = getLocale();
 
@@ -38,7 +44,7 @@ export async function searchLocation(query: string, limit: number = 1): Promise<
  * @param limit - Maximum number of results to return (default: 5)
  * @returns The search results, or empty array if search fails
  */
-export async function performSearch(query: string, limit: number = 5): Promise<any[]> {
+export async function performSearch(query: string, limit: number = 5): Promise<PhotonFeature[]> {
 	try {
 		const lang = getLocale();
 
@@ -57,4 +63,3 @@ export async function performSearch(query: string, limit: number = 5): Promise<a
 		return [];
 	}
 }
-

@@ -46,8 +46,8 @@ export function osmDataToGeometry(
 	const linearSegments: Map<string, Coordinate[][]> = new Map();
 
 	const wayObjects = Array.from(ways.values())
-		.filter(w => w.layer !== null) // Skip suppressed ways
-		.map(w => {
+		.filter((w) => w.layer !== null) // Skip suppressed ways
+		.map((w) => {
 			// If it's a linear layer, we buffer it for stitching
 			if (linearLayers.includes(w.layer!) && !w.tags?.area) {
 				// If special highway type (e.g. roundabout), maybe keep separate?
@@ -80,7 +80,7 @@ export function osmDataToGeometry(
 
 		for (const path of stitched) {
 			geometryObjects.push({
-				type: layer as any,
+				type: layer as Layer,
 				path,
 				highwayType: type
 			});
@@ -96,9 +96,9 @@ export function osmDataToGeometry(
 	notify(onProgress, 98, 'Resolving 3D building parts...');
 
 	// 6. Resolve Building Outlines vs Parts via Spatial Containment
-	const buildings = mergedObjects.filter(o => o.type === 'building' && o.buildingMetadata);
-	const parts = buildings.filter(b => b.buildingMetadata!.isPart);
-	const potentialOutlines = buildings.filter(b => !b.buildingMetadata!.isPart && !b.isOutline);
+	const buildings = mergedObjects.filter((o) => o.type === 'building' && o.buildingMetadata);
+	const parts = buildings.filter((b) => b.buildingMetadata!.isPart);
+	const potentialOutlines = buildings.filter((b) => !b.buildingMetadata!.isPart && !b.isOutline);
 
 	for (const outline of potentialOutlines) {
 		const outlineBBox = getBBox(outline.path);
@@ -109,14 +109,16 @@ export function osmDataToGeometry(
 				const centroid = calculateCentroid(part.path);
 				if (isPointInPolygon(centroid, outline.path)) {
 					// Don't let parts from other building relations suppress this outline
-					if (part.relationId && outline.relationId && part.relationId !== outline.relationId) continue;
+					if (part.relationId && outline.relationId && part.relationId !== outline.relationId)
+						continue;
 
 					// Only suppress outline if the part has a meaningful 3D body.
 					// Dome-only parts (height == roofHeight, no levels) are roof decorations,
 					// not full building replacements — they shouldn't suppress the outline.
 					const partMeta = part.buildingMetadata;
 					if (!partMeta) continue;
-					const hasBody = (partMeta.height && partMeta.height > (partMeta.roofHeight || 0)) || !!partMeta.levels;
+					const hasBody =
+						(partMeta.height && partMeta.height > (partMeta.roofHeight || 0)) || !!partMeta.levels;
 					if (!hasBody) continue;
 
 					outline.isOutline = true;
@@ -130,7 +132,6 @@ export function osmDataToGeometry(
 					} else if (!outline.relationId) {
 						outline.relationId = part.relationId;
 					}
-
 
 					// Continue checking other parts in this outline
 				}
@@ -193,7 +194,11 @@ function linkBuildingParts(rel: OSMRelation, ways: Map<number, ParsedWay>) {
 	for (const member of rel.members) {
 		if (member.type !== 'way') continue;
 		const way = ways.get(member.ref);
-		if (way?.tags?.['building:part'] && way.tags['building:part'] !== 'no' && !isUnderground(way.tags)) {
+		if (
+			way?.tags?.['building:part'] &&
+			way.tags['building:part'] !== 'no' &&
+			!isUnderground(way.tags)
+		) {
 			hasParts = true;
 			way.relationId = rel.id;
 			way.layer = 'building';
@@ -204,7 +209,12 @@ function linkBuildingParts(rel: OSMRelation, ways: Map<number, ParsedWay>) {
 		for (const member of rel.members) {
 			if (member.type !== 'way') continue;
 			const way = ways.get(member.ref);
-			if (way && (member.role === 'outline' || !way.tags?.['building:part'] || way.tags['building:part'] === 'no')) {
+			if (
+				way &&
+				(member.role === 'outline' ||
+					!way.tags?.['building:part'] ||
+					way.tags['building:part'] === 'no')
+			) {
 				way.isOutline = true;
 				// Also group the outline with the relation so it belongs to the same building
 				way.relationId = rel.id;
@@ -244,8 +254,8 @@ function createMultipolygonObjects(
 	const buildingMeta = layer === 'building' ? extractBuildingMetadata(rel.tags) : undefined;
 
 	// Assign holes to containing outer rings
-	return stitchedOuter.map(poly => {
-		const holes = stitchedInner.filter(hole => isPointInPolygon(hole[0], poly));
+	return stitchedOuter.map((poly) => {
+		const holes = stitchedInner.filter((hole) => isPointInPolygon(hole[0], poly));
 
 		const obj: GeometryObject = {
 			type: layer,
@@ -284,18 +294,16 @@ function createWayObject(way: ParsedWay, nodes: Map<number, Coordinate>): Geomet
 }
 
 function getWayCoords(way: ParsedWay, nodes: Map<number, Coordinate>): Coordinate[] {
-	return way.nodes
-		.map(id => nodes.get(id))
-		.filter((c): c is Coordinate => c !== undefined);
+	return way.nodes.map((id) => nodes.get(id)).filter((c): c is Coordinate => c !== undefined);
 }
 
 // --- Geometry Helpers ---
 
-/** 
- * Stitches segments into closed polygons. 
- * Greedy endpoint matching. 
+/**
+ * Stitches segments into closed polygons.
+ * Greedy endpoint matching.
  */
-/** 
+/**
  * Stitches segments into combined paths.
  * Supports both closed rings and open linear chains.
  */
@@ -352,11 +360,12 @@ function pointsEqual(a: Coordinate, b: Coordinate): boolean {
 function isPointInPolygon(p: Coordinate, polygon: Coordinate[]): boolean {
 	let inside = false;
 	for (let i = 0, j = polygon.length - 1; i < polygon.length; j = i++) {
-		const xi = polygon[i].x, yi = polygon[i].y;
-		const xj = polygon[j].x, yj = polygon[j].y;
+		const xi = polygon[i].x,
+			yi = polygon[i].y;
+		const xj = polygon[j].x,
+			yj = polygon[j].y;
 
-		const intersect = ((yi > p.y) !== (yj > p.y)) &&
-			(p.x < (xj - xi) * (p.y - yi) / (yj - yi) + xi);
+		const intersect = yi > p.y !== yj > p.y && p.x < ((xj - xi) * (p.y - yi)) / (yj - yi) + xi;
 		if (intersect) inside = !inside;
 	}
 	return inside;
@@ -374,7 +383,8 @@ function notify(cb: ProgressCallback | undefined, percent: number, message: stri
 
 function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadata | undefined {
 	if (!tags) return undefined;
-	if (!tags.building && (!tags['building:part'] || tags['building:part'] === 'no')) return undefined;
+	if (!tags.building && (!tags['building:part'] || tags['building:part'] === 'no'))
+		return undefined;
 
 	const getVal = (k: string) => parseFloat(tags[k]);
 
@@ -389,11 +399,14 @@ function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadat
 		shape: ['sphere', 'cone', 'pyramid', 'cylinder'].includes(tags['building:shape'] || '')
 			? tags['building:shape']
 			: undefined,
-		isPart: (tags['building:part'] && tags['building:part'] !== 'no' && !tags.building) ? true : undefined
+		isPart:
+			tags['building:part'] && tags['building:part'] !== 'no' && !tags.building ? true : undefined
 	};
 
 	// Clean undefined keys
-	Object.keys(meta).forEach(key => (meta as any)[key] === undefined && delete (meta as any)[key]);
+	(Object.keys(meta) as Array<keyof BuildingMetadata>).forEach(
+		(key) => meta[key] === undefined && delete meta[key]
+	);
 
 	// Defaults if missing
 	if (!meta.height && !meta.levels && (!tags['building:part'] || tags['building:part'] === 'no')) {
@@ -422,7 +435,10 @@ interface BBox {
 }
 
 function getBBox(polygon: Coordinate[]): BBox {
-	let minX = Infinity, minY = Infinity, maxX = -Infinity, maxY = -Infinity;
+	let minX = Infinity,
+		minY = Infinity,
+		maxX = -Infinity,
+		maxY = -Infinity;
 	for (const p of polygon) {
 		if (p.x < minX) minX = p.x;
 		if (p.x > maxX) maxX = p.x;
@@ -437,9 +453,12 @@ function bboxIntersect(a: BBox, b: BBox): boolean {
 }
 
 function calculateCentroid(polygon: Coordinate[]): Coordinate {
-	let sx = 0, sy = 0;
+	let sx = 0,
+		sy = 0;
 	if (polygon.length === 0) return { x: 0, y: 0 };
-	const len = pointsEqual(polygon[0], polygon[polygon.length - 1]) ? polygon.length - 1 : polygon.length;
+	const len = pointsEqual(polygon[0], polygon[polygon.length - 1])
+		? polygon.length - 1
+		: polygon.length;
 	const count = len > 0 ? len : polygon.length;
 	for (let i = 0; i < count; i++) {
 		sx += polygon[i].x;

@@ -16,8 +16,17 @@ function progressCallback(info: ProgressInfo): void {
 // Handle messages from main thread
 self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 	try {
-		const { format, osmData, elevationMatrix, bounds, layers, zoom, scale, contourInterval, buildingStyle } =
-			event.data;
+		const {
+			format,
+			osmData,
+			elevationMatrix,
+			bounds,
+			layers,
+			zoom,
+			scale,
+			contourInterval,
+			buildingStyle
+		} = event.data;
 
 		// Step 1: Convert OSM data to geometry
 		const geometryObjects = osmDataToGeometry(osmData, bounds, progressCallback);
@@ -63,4 +72,3 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 		postMessage(message);
 	}
 };
-

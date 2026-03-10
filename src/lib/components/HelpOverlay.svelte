@@ -1,7 +1,7 @@
 <script lang="ts">
 	import { appState } from '$lib/state.svelte';
 	import { Button } from '$lib/components/ui/button';
-	import { X } from 'lucide-svelte';
+	import X from '@lucide/svelte/icons/x';
 	import * as m from '$lib/paraglide/messages';
 
 	function handleBackdropClick() {
@@ -30,7 +30,7 @@
 		<div
 			class="relative z-10 w-full max-w-lg rounded-2xl bg-background p-8 shadow-2xl"
 			onclick={(e) => e.stopPropagation()}
-			onkeydown={(e) => {}}
+			onkeydown={() => {}}
 			role="none"
 		>
 			<!-- Close button -->

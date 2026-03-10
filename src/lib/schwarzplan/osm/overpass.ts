@@ -66,7 +66,7 @@ export async function downloadOSMData(
 
 		if (typeof window !== 'undefined') {
 			// Optional: Notify user about fallback if desired, though user asked to just switch
-			// alert(m.error_overpass_fallback()); 
+			// alert(m.error_overpass_fallback());
 		}
 
 		// Try Fallback API
@@ -127,4 +127,3 @@ export async function downloadOSMData(
 		throw new Error(`Failed to parse OSM data: ${error}`);
 	}
 }
-

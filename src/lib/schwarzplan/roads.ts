@@ -105,7 +105,10 @@ export function lineToPolygon(path: Coordinate[], width: number): Coordinate[] {
 
 	// End
 	const lastIdx = path.length - 1;
-	const lastDir = { x: path[lastIdx].x - path[lastIdx - 1].x, y: path[lastIdx].y - path[lastIdx - 1].y };
+	const lastDir = {
+		x: path[lastIdx].x - path[lastIdx - 1].x,
+		y: path[lastIdx].y - path[lastIdx - 1].y
+	};
 	const extendedEnd = extendPoint(path[lastIdx], lastDir, extensionDistance);
 	const lastOffset = getPerpendicularOffset(path[lastIdx - 1], path[lastIdx], width);
 
@@ -146,9 +149,9 @@ export function convertAndMergeRoads(objects: GeometryObject[]): GeometryObject[
 		return result;
 	}
 
-	const polygonCoords = roadPolygons.map(({ polygon }) =>
-		[polygon.map(p => [p.x, p.y] as [number, number])]
-	);
+	const polygonCoords = roadPolygons.map(({ polygon }) => [
+		polygon.map((p) => [p.x, p.y] as [number, number])
+	]);
 
 	try {
 		const merged = polygonClipping.union(polygonCoords[0], ...polygonCoords.slice(1));
@@ -173,4 +176,3 @@ export function convertAndMergeRoads(objects: GeometryObject[]): GeometryObject[
 
 	return result;
 }
-

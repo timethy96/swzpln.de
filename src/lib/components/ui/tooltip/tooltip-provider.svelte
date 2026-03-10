@@ -1,7 +1,9 @@
 <script lang="ts">
-	import { Tooltip } from "bits-ui";
+	import { Tooltip } from 'bits-ui';
 
-	let { delayDuration = 200, children }: { delayDuration?: number; children: any } = $props();
+	import type { Snippet } from 'svelte';
+
+	let { delayDuration = 200, children }: { delayDuration?: number; children: Snippet } = $props();
 </script>
 
 <Tooltip.Provider {delayDuration}>

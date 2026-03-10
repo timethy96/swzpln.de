@@ -14,15 +14,15 @@ Open Topo Data
 CARTO
 
 /* SITE */
-Last update: 2025/01/27
+Last update: 2026/03/10
 Language: German / English
 Doctype: HTML5
 IDE: Cursor, VS Code
 Standards: HTML5, CSS3, ES2024
-Components: SvelteKit, MapLibre GL JS, Paraglide.js
-Software: DXF Writer, PDF-lib, jsPDF
-Description: Free professional site plan generator for architects and designers. Export as DXF, SVG, or PDF.
-Keywords: site plan, schwarzplan, architecture, urban planning, DXF export, CAD, OpenStreetMap, free tools, architects, city planning, 3D terrain, contour lines, building footprints
+Components: SvelteKit 2, Svelte 5, MapLibre GL JS, Paraglide.js, shadcn-svelte
+Software: @tarikjabiri/dxf, jsPDF, earcut, polygon-clipping, ml-conrec
+Description: Free professional site plan generator for architects and designers. Export as DXF, SVG, PDF, IFC (BIM), OBJ, and 3D-DXF. Includes 3D city models with terrain.
+Keywords: site plan, schwarzplan, architecture, urban planning, DXF export, CAD, OpenStreetMap, free tools, architects, city planning, 3D terrain, contour lines, building footprints, IFC, BIM, OBJ, 3D city model
 Author: Timo Bilhöfer
 Author URI: https://timo.bilhoefer.de
 Author Email: contact(at)swzpln.de

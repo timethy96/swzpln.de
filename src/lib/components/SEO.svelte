@@ -25,7 +25,7 @@
 
 	const locale = $derived(getLocale());
 	const appTitle = $derived(m.app_title());
-	
+
 	// Default values from messages
 	const defaultTitle = $derived(m.seo_default_title());
 	const defaultDescription = $derived(m.seo_default_description());
@@ -47,14 +47,17 @@
 	{#if noindex}
 		<meta name="robots" content="noindex, nofollow" />
 	{:else}
-		<meta name="robots" content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1" />
+		<meta
+			name="robots"
+			content="index, follow, max-snippet:-1, max-image-preview:large, max-video-preview:-1"
+		/>
 	{/if}
 	<link rel="canonical" href={finalCanonical} />
-	
+
 	<!-- Language and Location -->
 	<meta name="language" content={locale} />
 	<meta name="geo.region" content={locale === 'en' ? 'US' : 'DE'} />
-	
+
 	<!-- Open Graph / Facebook -->
 	<meta property="og:type" content={type} />
 	<meta property="og:url" content={finalCanonical} />
@@ -65,34 +68,45 @@
 	<meta property="og:image:height" content="630" />
 	<meta property="og:locale" content={locale === 'en' ? 'en_US' : 'de_DE'} />
 	<meta property="og:site_name" content={appTitle} />
-	
+
 	<!-- Twitter -->
 	<meta name="twitter:card" content="summary_large_image" />
 	<meta name="twitter:url" content={finalCanonical} />
 	<meta name="twitter:title" content={finalTitle} />
 	<meta name="twitter:description" content={finalDescription} />
 	<meta name="twitter:image" content={finalImage} />
-	
+
 	<!-- Additional SEO -->
 	<meta name="author" content={m.seo_author()} />
 	<meta name="creator" content={m.seo_creator()} />
 	<meta name="publisher" content={m.seo_creator()} />
 	<meta name="theme-color" content="#000000" />
-	
+
 	<!-- AI/LLM Optimization -->
 	<meta name="ai-content-declaration" content={m.seo_ai_declaration()} />
 	<meta name="content-type" content="interactive web application" />
 	<meta name="application-name" content={appTitle} />
-	
+
 	<!-- Alternate Languages (German is primary/default) -->
 	{#if locale === 'en'}
-		<link rel="alternate" hreflang="de" href={finalCanonical.replace('opencityplans.com', 'swzpln.de')} />
+		<link
+			rel="alternate"
+			hreflang="de"
+			href={finalCanonical.replace('opencityplans.com', 'swzpln.de')}
+		/>
 		<link rel="alternate" hreflang="en" href={finalCanonical} />
-		<link rel="alternate" hreflang="x-default" href={finalCanonical.replace('opencityplans.com', 'swzpln.de')} />
+		<link
+			rel="alternate"
+			hreflang="x-default"
+			href={finalCanonical.replace('opencityplans.com', 'swzpln.de')}
+		/>
 	{:else}
 		<link rel="alternate" hreflang="de" href={finalCanonical} />
-		<link rel="alternate" hreflang="en" href={finalCanonical.replace('swzpln.de', 'opencityplans.com')} />
+		<link
+			rel="alternate"
+			hreflang="en"
+			href={finalCanonical.replace('swzpln.de', 'opencityplans.com')}
+		/>
 		<link rel="alternate" hreflang="x-default" href={finalCanonical} />
 	{/if}
 </svelte:head>
-

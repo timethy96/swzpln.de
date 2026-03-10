@@ -26,4 +26,3 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		return json({ success: false, error: 'Failed to record download' }, { status: 500 });
 	}
 };
-

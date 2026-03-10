@@ -34,4 +34,3 @@ export const GET: RequestHandler = async ({ url }) => {
 		return new Response('Error generating CSV', { status: 500 });
 	}
 };
-

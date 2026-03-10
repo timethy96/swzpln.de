@@ -82,5 +82,3 @@ export function estimateOsmFilesize(zoom: number): number {
 	const zoomFactor = 19 - zoom;
 	return 1.1 * 100000 * Math.pow(3, zoomFactor);
 }
-
-

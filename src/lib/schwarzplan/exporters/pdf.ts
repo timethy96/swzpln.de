@@ -45,7 +45,11 @@ export function exportToPDF(
 
 		count++;
 		if (count % 200 === 0) {
-			notify(onProgress, 20 + Math.round((count / total) * 70), m.progress_dxf_exporting({ current: count.toString(), total: total.toString() }));
+			notify(
+				onProgress,
+				20 + Math.round((count / total) * 70),
+				m.progress_dxf_exporting({ current: count.toString(), total: total.toString() })
+			);
 		}
 	}
 
@@ -67,10 +71,10 @@ function notify(cb: ProgressCallback | undefined, percent: number, message: stri
 	if (cb) cb({ step: 'export', percent, message });
 }
 
-function fromContours(contours: ContourData, maxXY: { x: number, y: number }): GeometryObject[] {
-	return contours.contours.map(c => ({
+function fromContours(contours: ContourData, maxXY: { x: number; y: number }): GeometryObject[] {
+	return contours.contours.map((c) => ({
 		type: 'contours',
-		path: c.map(p => ({
+		path: c.map((p) => ({
 			// Normalize to match other objects logic
 			x: (p.x * maxXY.x) / contours.sizeX,
 			y: (p.y * maxXY.y) / contours.sizeY
@@ -81,7 +85,7 @@ function fromContours(contours: ContourData, maxXY: { x: number, y: number }): G
 function renderObj(
 	doc: jsPDF,
 	obj: GeometryObject,
-	maxXY: { x: number, y: number },
+	maxXY: { x: number; y: number },
 	scale: number,
 	buildingStyle?: 'filled' | 'outline'
 ) {
@@ -92,9 +96,9 @@ function renderObj(
 
 	// Construct Path ops
 	// Construct Path ops
-	const ops: any[] = [];
+	const ops: { op: string; c?: number[] }[] = [];
 
-	const addPath = (pts: { x: number, y: number }[]) => {
+	const addPath = (pts: { x: number; y: number }[]) => {
 		pts.forEach((p, i) => {
 			const x = p.x * 1000 * scale;
 			const y = (p.y - maxXY.y) * -1 * 1000 * scale;
@@ -130,7 +134,6 @@ function renderObj(
 		// Advanced API might be needed or just assuming non-zero winding if manual 'm' is used.
 		// However, standard PDF 'f*' operator corresponds to even-odd.
 		// In jsPDF, .fill('evenodd') should work if supported, or passing it as option.
-
 
 		// 'evenodd' rule would be preferred ('f*') but typing issues prevent easy usage here.
 		// We rely on standard non-zero winding. If stitching produces correct alternating winding, holes work.

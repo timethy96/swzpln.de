@@ -11,7 +11,7 @@ import * as m from '$lib/paraglide/messages';
  * Export geometry objects and terrain to OBJ format
  * OBJ is universally supported by Rhino, Blender, and all major 3D software
  */
-export async function exportTo3DM(
+export async function exportToOBJ(
 	objects: GeometryObject[],
 	elevationMatrix: number[][] | null,
 	bounds: Bounds,
@@ -41,7 +41,7 @@ export async function exportTo3DM(
 	// Filter and process buildings
 	const buildings = objects
 		.filter((obj) => obj.type === 'building' && obj.buildingMetadata)
-		.map(b => ({
+		.map((b) => ({
 			footprint: b.path,
 			metadata: b.buildingMetadata!,
 			id: undefined,
@@ -53,7 +53,12 @@ export async function exportTo3DM(
 	obj += `o Buildings\n`;
 
 	// Process all buildings (grouped + terrain)
-	const meshes = extrudeBuildings(buildings, terrainMesh || undefined, gridSize || undefined, maxXY);
+	const meshes = extrudeBuildings(
+		buildings,
+		terrainMesh || undefined,
+		gridSize || undefined,
+		maxXY
+	);
 
 	let processedCount = 0;
 	for (const mesh of meshes) {
@@ -79,7 +84,11 @@ export async function exportTo3DM(
 		processedCount++;
 
 		if (processedCount % 50 === 0) {
-			notify(onProgress, 10 + Math.round((processedCount / meshes.length) * 60), `Exporting buildings: ${processedCount}/${meshes.length}`);
+			notify(
+				onProgress,
+				10 + Math.round((processedCount / meshes.length) * 60),
+				`Exporting buildings: ${processedCount}/${meshes.length}`
+			);
 		}
 	}
 
