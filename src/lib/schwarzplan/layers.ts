@@ -178,8 +178,9 @@ export const LAYER_RENDER_ORDER: Layer[] = [
 	'forest',
 	'railway',
 	'highway',
-	'contours',
-	'building'
+	'building_parts',
+	'building',
+	'contours'
 ];
 
 export function sortObjectsByLayer<T extends { type: Layer }>(objects: T[]): T[] {

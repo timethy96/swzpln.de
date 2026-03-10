@@ -16,8 +16,6 @@
 	import ChartColumn from '@lucide/svelte/icons/chart-column';
 	import Minus from '@lucide/svelte/icons/minus';
 	import Plus from '@lucide/svelte/icons/plus';
-	import Square from '@lucide/svelte/icons/square';
-	import SquareDashed from '@lucide/svelte/icons/square-dashed';
 	import { appState } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
@@ -73,25 +71,6 @@
 			onSelect: () => (appState.contourInterval = 50)
 		}
 	];
-	// Building style dropdown options
-	const buildingOptions = [
-		{
-			icon: Square,
-			label: m.layer_building_filled(),
-			id: 'building-filled',
-			color: '#222222',
-			value: 'filled',
-			onSelect: () => (appState.buildingStyle = 'filled')
-		},
-		{
-			icon: SquareDashed,
-			label: m.layer_building_outline(),
-			id: 'building-outline',
-			color: '#222222',
-			value: 'outline',
-			onSelect: () => (appState.buildingStyle = 'outline')
-		}
-	];
 </script>
 
 <div class="absolute top-18 z-10 m-4 flex max-w-[calc(90%-96px)] flex-row flex-wrap gap-2">
@@ -101,17 +80,15 @@
 			<Skeleton class="h-10 w-32 rounded-3xl" />
 		{/each}
 	{:else if !appState.is3DMode}
-		<SplitLayerButton
+		<LayerButton
 			icon={Building}
 			id="building"
 			color="#222222"
 			initialSelected={appState.layers.includes('building')}
 			onToggle={() => appState.toggleLayer('building')}
-			dropdownItems={buildingOptions}
-			selectedValue={appState.buildingStyle}
 		>
 			{m.layer_building()}
-		</SplitLayerButton>
+		</LayerButton>
 		<LayerButton
 			icon={Sprout}
 			id="green"

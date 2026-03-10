@@ -322,6 +322,69 @@ describe('OSM converter', () => {
 			expect(buildings[0].path.length).toBeGreaterThan(0);
 		});
 
+		it('should not lose building when skeleton data follows body data', () => {
+			// Overpass ">;out skel qt;" re-emits relation member ways without tags.
+			// The church (building) is an inner member of a highway multipolygon.
+			// When skeleton data arrives after body data, it must not overwrite tags.
+			const osmData: OSMData = {
+				version: 0.6,
+				generator: 'test',
+				elements: [
+					// Body data (from "out body"): nodes + ways + relations with full tags
+					{ type: 'node', id: 1, lat: 48.75, lon: 9.15 },
+					{ type: 'node', id: 2, lat: 48.76, lon: 9.15 },
+					{ type: 'node', id: 3, lat: 48.76, lon: 9.16 },
+					{ type: 'node', id: 4, lat: 48.75, lon: 9.16 },
+					{ type: 'node', id: 5, lat: 48.752, lon: 9.152 },
+					{ type: 'node', id: 6, lat: 48.758, lon: 9.152 },
+					{ type: 'node', id: 7, lat: 48.758, lon: 9.158 },
+					{ type: 'node', id: 8, lat: 48.752, lon: 9.158 },
+					// Plaza outer way
+					{
+						type: 'way',
+						id: 100,
+						nodes: [1, 2, 3, 4, 1],
+						tags: { highway: 'pedestrian' }
+					},
+					// Church way (building) - body data with tags
+					{
+						type: 'way',
+						id: 101,
+						nodes: [5, 6, 7, 8, 5],
+						tags: { building: 'church' }
+					},
+					// Highway multipolygon relation
+					{
+						type: 'relation',
+						id: 200,
+						members: [
+							{ type: 'way', ref: 100, role: 'outer' },
+							{ type: 'way', ref: 101, role: 'inner' }
+						],
+						tags: { highway: 'pedestrian', type: 'multipolygon' }
+					},
+					// Skeleton data (from ">;out skel qt;"): same ways WITHOUT tags
+					{
+						type: 'way',
+						id: 100,
+						nodes: [1, 2, 3, 4, 1]
+						// no tags!
+					},
+					{
+						type: 'way',
+						id: 101,
+						nodes: [5, 6, 7, 8, 5]
+						// no tags! This must NOT overwrite the building tags above.
+					}
+				]
+			};
+
+			const result = osmDataToGeometry(osmData, testBounds);
+			const buildings = result.filter((r) => r.type === 'building');
+			expect(buildings).toHaveLength(1);
+			expect(buildings[0].path.length).toBeGreaterThan(0);
+		});
+
 		it('should skip ways with missing nodes', () => {
 			const osmData: OSMData = {
 				version: 0.6,

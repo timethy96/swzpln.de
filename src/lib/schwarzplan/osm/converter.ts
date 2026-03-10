@@ -154,11 +154,16 @@ function indexElements(osmData: OSMData, bounds: Bounds) {
 		if (el.type === 'node') {
 			nodes.set(el.id, latLngToXY(bounds, el.lat, el.lon));
 		} else if (el.type === 'way') {
-			ways.set(el.id, {
-				layer: resolveLayer(classifyTags(el.tags)),
-				nodes: el.nodes,
-				tags: el.tags
-			});
+			// Overpass ">;out skel qt;" re-emits ways referenced by relations
+			// WITHOUT tags. Don't let skeleton data overwrite body data.
+			const existing = ways.get(el.id);
+			if (!existing || el.tags) {
+				ways.set(el.id, {
+					layer: resolveLayer(classifyTags(el.tags)),
+					nodes: el.nodes,
+					tags: el.tags
+				});
+			}
 		} else if (el.type === 'relation') {
 			relations.push(el);
 		}

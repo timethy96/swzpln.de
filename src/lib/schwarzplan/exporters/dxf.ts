@@ -12,7 +12,7 @@ import {
 	pattern
 } from '@tarikjabiri/dxf';
 import type { Bounds, ContourData, GeometryObject, ProgressCallback } from '../types';
-import { LAYER_CONFIG, isLayerFillable, sortObjectsByLayer } from '../layers';
+import { LAYER_CONFIG, LAYER_RENDER_ORDER, isLayerFillable, sortObjectsByLayer } from '../layers';
 import { latLngToXY, getMaxXY } from '../geometry/coordinates';
 import * as m from '$lib/paraglide/messages';
 
@@ -29,9 +29,10 @@ export function exportToDXF(
 	const dxf = new DxfWriter();
 	dxf.setUnits(Units.Meters);
 
-	// Add layers dynamically based on config
-	for (const [key, conf] of Object.entries(LAYER_CONFIG)) {
-		dxf.addLayer(key, conf.dxfColor || 7, conf.lineType || 'CONTINUOUS');
+	// Add layers in render order so the layer panel in CAD programs shows them correctly
+	for (const layer of LAYER_RENDER_ORDER) {
+		const conf = LAYER_CONFIG[layer];
+		dxf.addLayer(layer, conf.dxfColor || 7, conf.lineType || 'CONTINUOUS');
 	}
 	dxf.addLayer('other', 1, 'CONTINUOUS');
 
