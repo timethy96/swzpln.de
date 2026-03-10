@@ -45,7 +45,7 @@
 		},
 		contactPoint: {
 			'@type': 'ContactPoint',
-			email: 'contact(at)swzpln.de',
+			url: 'https://swzpln.de/impressum',
 			contactType: 'Customer Service'
 		}
 	});

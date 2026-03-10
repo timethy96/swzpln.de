@@ -25,6 +25,5 @@ Description: Free professional site plan generator for architects and designers.
 Keywords: site plan, schwarzplan, architecture, urban planning, DXF export, CAD, OpenStreetMap, free tools, architects, city planning, 3D terrain, contour lines, building footprints, IFC, BIM, OBJ, 3D city model
 Author: Timo Bilhöfer
 Author URI: https://timo.bilhoefer.de
-Author Email: contact(at)swzpln.de
 Author GitHub: https://github.com/timethy96
 Author LinkedIn: https://www.linkedin.com/in/tbilh
