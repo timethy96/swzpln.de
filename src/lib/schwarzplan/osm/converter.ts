@@ -9,6 +9,7 @@ import type {
 } from '../types';
 import { classifyTags, isUnderground } from '../layers';
 import { latLngToXY } from '../geometry/coordinates';
+import { resolveBuildingOutlines } from '../geometry/outlines';
 import * as m from '$lib/paraglide/messages';
 import type { Layer } from '$lib/schwarzplan/types';
 import { convertAndMergeRoads } from '../roads';
@@ -96,48 +97,7 @@ export function osmDataToGeometry(
 	notify(onProgress, 98, 'Resolving 3D building parts...');
 
 	// 6. Resolve Building Outlines vs Parts via Spatial Containment
-	const buildings = mergedObjects.filter((o) => o.type === 'building' && o.buildingMetadata);
-	const parts = buildings.filter((b) => b.buildingMetadata!.isPart);
-	const potentialOutlines = buildings.filter((b) => !b.buildingMetadata!.isPart && !b.isOutline);
-
-	for (const outline of potentialOutlines) {
-		const outlineBBox = getBBox(outline.path);
-
-		for (const part of parts) {
-			const partBBox = getBBox(part.path);
-			if (bboxIntersect(outlineBBox, partBBox)) {
-				const centroid = calculateCentroid(part.path);
-				if (isPointInPolygon(centroid, outline.path)) {
-					// Don't let parts from other building relations suppress this outline
-					if (part.relationId && outline.relationId && part.relationId !== outline.relationId)
-						continue;
-
-					// Only suppress outline if the part has a meaningful 3D body.
-					// Dome-only parts (height == roofHeight, no levels) are roof decorations,
-					// not full building replacements — they shouldn't suppress the outline.
-					const partMeta = part.buildingMetadata;
-					if (!partMeta) continue;
-					const hasBody =
-						(partMeta.height && partMeta.height > (partMeta.roofHeight || 0)) || !!partMeta.levels;
-					if (!hasBody) continue;
-
-					outline.isOutline = true;
-
-					// Group them so they share base elevation
-					if (!part.relationId) {
-						// Create a pseudo relation ID
-						const pseudoId = outline.relationId || Math.floor(Math.random() * -1000000);
-						outline.relationId = pseudoId;
-						part.relationId = pseudoId;
-					} else if (!outline.relationId) {
-						outline.relationId = part.relationId;
-					}
-
-					// Continue checking other parts in this outline
-				}
-			}
-		}
-	}
+	resolveBuildingOutlines(mergedObjects);
 
 	notify(onProgress, 100, `Done: ${mergedObjects.length} objects`);
 	return mergedObjects;
@@ -432,42 +392,3 @@ function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadat
 	return Object.keys(meta).length > 0 ? meta : undefined;
 }
 
-interface BBox {
-	minX: number;
-	minY: number;
-	maxX: number;
-	maxY: number;
-}
-
-function getBBox(polygon: Coordinate[]): BBox {
-	let minX = Infinity,
-		minY = Infinity,
-		maxX = -Infinity,
-		maxY = -Infinity;
-	for (const p of polygon) {
-		if (p.x < minX) minX = p.x;
-		if (p.x > maxX) maxX = p.x;
-		if (p.y < minY) minY = p.y;
-		if (p.y > maxY) maxY = p.y;
-	}
-	return { minX, minY, maxX, maxY };
-}
-
-function bboxIntersect(a: BBox, b: BBox): boolean {
-	return a.minX <= b.maxX && a.maxX >= b.minX && a.minY <= b.maxY && a.maxY >= b.minY;
-}
-
-function calculateCentroid(polygon: Coordinate[]): Coordinate {
-	let sx = 0,
-		sy = 0;
-	if (polygon.length === 0) return { x: 0, y: 0 };
-	const len = pointsEqual(polygon[0], polygon[polygon.length - 1])
-		? polygon.length - 1
-		: polygon.length;
-	const count = len > 0 ? len : polygon.length;
-	for (let i = 0; i < count; i++) {
-		sx += polygon[i].x;
-		sy += polygon[i].y;
-	}
-	return { x: sx / count, y: sy / count };
-}

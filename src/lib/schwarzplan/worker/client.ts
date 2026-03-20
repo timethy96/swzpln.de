@@ -3,6 +3,7 @@
 import type {
 	Bounds,
 	ExportFormat,
+	GeoDataResponse,
 	Layer,
 	OSMData,
 	ProgressCallback,
@@ -72,7 +73,8 @@ export class SchwarzplanWorker {
 	 */
 	async generate(
 		format: ExportFormat,
-		osmData: OSMData,
+		osmData: OSMData | null,
+		geodata: GeoDataResponse | null,
 		elevationMatrix: number[][] | null,
 		bounds: Bounds,
 		layers: Layer[],
@@ -109,6 +111,7 @@ export class SchwarzplanWorker {
 				type: 'generate',
 				format,
 				osmData,
+				geodata,
 				elevationMatrix,
 				bounds,
 				layers,

@@ -25,6 +25,7 @@
 		"@tailwindcss/vite": "^4.2.1",
 		"@types/earcut": "^3.0.0",
 		"@types/node": "^25.4.0",
+		"@types/pg": "^8.11.0",
 		"@vitest/browser": "^4.0.18",
 		"@vitest/browser-playwright": "^4.0.18",
 		"bits-ui": "^2.16.3",
@@ -58,6 +59,7 @@
 		"earcut": "^3.0.2",
 		"jspdf": "^4.2.0",
 		"ml-conrec": "^5.0.3",
+		"pg": "^8.13.0",
 		"polygon-clipping": "^0.15.7",
 		"sql.js": "^1.14.1",
 		"svelte-maplibre": "^1.2.6"

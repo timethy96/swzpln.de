@@ -2,6 +2,7 @@
 
 import type { WorkerRequest, WorkerMessage, ProgressInfo } from '../types';
 import { osmDataToGeometry } from '../osm/converter';
+import { geojsonToGeometry } from '../geojson/converter';
 import { generateContours } from '../elevation/contours';
 import { exportGeometry } from '../exporters/base';
 
@@ -19,6 +20,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 		const {
 			format,
 			osmData,
+			geodata,
 			elevationMatrix,
 			bounds,
 			layers,
@@ -28,8 +30,10 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 			buildingStyle
 		} = event.data;
 
-		// Step 1: Convert OSM data to geometry
-		const geometryObjects = osmDataToGeometry(osmData, bounds, progressCallback);
+		// Step 1: Convert data to geometry (PostGIS or Overpass path)
+		const geometryObjects = geodata
+			? geojsonToGeometry(geodata, bounds, progressCallback)
+			: osmDataToGeometry(osmData!, bounds, progressCallback);
 
 		// Step 2: Generate contours if elevation data is available (for 2D formats)
 		let contours = null;

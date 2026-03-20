@@ -14,7 +14,13 @@
 	import { SchwarzplanWorker } from '$lib/schwarzplan/worker/client';
 	import { getSuitableScales } from '$lib/schwarzplan/geometry/bounds';
 	import { downloadFile, getMimeType, getFilename } from '$lib/schwarzplan/exporters/base';
-	import type { ExportFormat, ProgressInfo, ScaleOption } from '$lib/schwarzplan/types';
+	import type {
+		ExportFormat,
+		GeoDataResponse,
+		Layer,
+		ProgressInfo,
+		ScaleOption
+	} from '$lib/schwarzplan/types';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
 
@@ -167,7 +173,43 @@
 			const cleanBounds = JSON.parse(JSON.stringify(bounds));
 			const cleanLayers = JSON.parse(JSON.stringify(layers));
 
-			const osmData = await downloadOSMData(cleanBounds, cleanLayers, progressWrapper);
+			// Try PostGIS first, fall back to Overpass
+			let geodata: GeoDataResponse | null = null;
+			let osmData = null;
+
+			try {
+				progressWrapper({
+					step: 'osm-download',
+					percent: 0,
+					message: m.progress_geodata_download()
+				});
+				const params = new URLSearchParams({
+					north: String(cleanBounds.north),
+					south: String(cleanBounds.south),
+					east: String(cleanBounds.east),
+					west: String(cleanBounds.west),
+					layers: cleanLayers.join(',')
+				});
+				const response = await fetch(`/api/geodata?${params}`);
+				if (response.ok) {
+					const data = await response.json();
+					if (data.source === 'postgis') {
+						geodata = data;
+						progressWrapper({
+							step: 'osm-download',
+							percent: 100,
+							message: m.progress_geodata_downloaded()
+						});
+					}
+				}
+			} catch (e) {
+				console.warn('PostGIS geodata fetch failed, falling back to Overpass:', e);
+			}
+
+			// Fallback to Overpass if PostGIS unavailable
+			if (!geodata) {
+				osmData = await downloadOSMData(cleanBounds, cleanLayers, progressWrapper);
+			}
 			if (isCancelled) return;
 
 			let elevationMatrix: number[][] | null = null;
@@ -184,6 +226,7 @@
 			const result = await worker.generate(
 				format,
 				osmData,
+				geodata,
 				elevationMatrix,
 				cleanBounds,
 				cleanLayers,

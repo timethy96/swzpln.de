@@ -188,7 +188,8 @@ export interface ElevationMatrix {
 export interface WorkerRequest {
 	type: 'generate';
 	format: ExportFormat;
-	osmData: OSMData;
+	osmData: OSMData | null;
+	geodata: GeoDataResponse | null;
 	elevationMatrix: number[][] | null;
 	bounds: Bounds;
 	layers: Layer[];
@@ -196,6 +197,20 @@ export interface WorkerRequest {
 	scale?: number;
 	contourInterval?: number;
 	buildingStyle?: 'filled' | 'outline';
+}
+
+// ============================================================================
+// PostGIS Geodata Types
+// ============================================================================
+
+export interface GeoDataFeature {
+	geojson: GeoJSON.Geometry;
+	properties: Record<string, string | number | null>;
+}
+
+export interface GeoDataResponse {
+	source: 'postgis' | 'unavailable';
+	layers: Record<string, GeoDataFeature[]>;
 }
 
 export interface WorkerProgressMessage {

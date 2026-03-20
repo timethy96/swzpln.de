@@ -54,6 +54,8 @@
 	"error_general": "An error occurred",
 	"error_overpass_fallback": "The primary Overpass API is not available. Switching to fallback API (overpass-api.de). Please note that you may experience slower downloads and may be subject to additional usage restrictions. More information at overpass-api.de",
 	"progress_init": "Initializing...",
+	"progress_geodata_download": "Loading map data...",
+	"progress_geodata_downloaded": "Map data loaded",
 	"progress_osm_download": "Downloading OSM data...",
 	"progress_osm_downloaded": "OSM data downloaded",
 	"progress_osm_download_progress": "Downloading OSM data: {size}KB",

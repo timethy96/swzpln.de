@@ -35,7 +35,6 @@
 	"download_format_svg": "SVG",
 	"download_format_dxf": "DXF",
 	"download_format_ifc": "IFC",
-
 	"download_format_3d_dxf": "3D-DXF",
 	"export_scale_selection_title": "Maßstab wählen",
 	"export_scale_selection_cancel": "Abbrechen",
@@ -54,6 +53,8 @@
 	"error_general": "Ein Fehler ist aufgetreten",
 	"error_overpass_fallback": "Die primäre Overpass API ist nicht verfügbar. Es wird auf eine Ausweich-API (overpass-api.de) umgeschaltet. Bitte beachten Sie, dass Sie möglicherweise langsamere Downloads erfahren und weiteren Nutzungsbeschränkungen unterliegen könnten. Weitere Informationen auf overpass-api.de",
 	"progress_init": "Initialisierung...",
+	"progress_geodata_download": "Kartendaten werden geladen...",
+	"progress_geodata_downloaded": "Kartendaten geladen",
 	"progress_osm_download": "OSM-Daten werden heruntergeladen...",
 	"progress_osm_downloaded": "OSM-Daten heruntergeladen",
 	"progress_osm_download_progress": "OSM-Daten werden heruntergeladen: {size}KB",
