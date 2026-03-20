@@ -9,6 +9,9 @@
 	} from '$lib/components/ui/tooltip';
 	import Menu from '@lucide/svelte/icons/menu';
 	import X from '@lucide/svelte/icons/x';
+	import ExternalLink from '@lucide/svelte/icons/external-link';
+	import Heart from '@lucide/svelte/icons/heart';
+	import ShoppingCart from '@lucide/svelte/icons/shopping-cart';
 	import { goto } from '$app/navigation';
 	import { onMount, type Component } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
@@ -109,28 +112,54 @@
 		<TooltipProvider delayDuration={300}>
 			{#each navigationItems as item (item.label)}
 				{#if isOpen}
+					{@const isExternal = item.href && !item.href.startsWith('/')}
+					{@const isDonate = item.icon === Heart}
+					{@const isShop = item.icon === ShoppingCart}
 					<Button
 						variant="ghost"
-						class="m-0 h-12 w-[calc(100%-8px)] justify-start overflow-hidden"
+						class="group m-0 h-12 w-[calc(100%-8px)] justify-start overflow-hidden"
 						onclick={() => handleItemClick(item)}
 					>
 						{@const IconComponent = item.icon}
-						<IconComponent class="mx-1 h-6 w-6" />
+						{#if isDonate}
+							<IconComponent class="mx-1 h-6 w-6 transition-colors group-hover:fill-red-500" />
+						{:else if isShop}
+							<IconComponent
+								class="mx-1 h-6 w-6 transition-colors group-hover:text-[oklch(0.55_0.25_300)]"
+							/>
+						{:else}
+							<IconComponent class="mx-1 h-6 w-6" />
+						{/if}
 						<span class="text-base">{item.label}</span>
+						{#if isExternal}
+							<ExternalLink class="ml-auto size-3 text-muted-foreground" />
+						{/if}
 					</Button>
 				{:else}
+					{@const isDonateCollapsed = item.icon === Heart}
+					{@const isShopCollapsed = item.icon === ShoppingCart}
 					<Tooltip>
 						<TooltipTrigger>
 							{#snippet child({ props })}
 								<Button
 									{...props}
 									variant="ghost"
-									class="m-0 h-12 w-12 justify-start overflow-hidden px-0"
+									class="group m-0 h-12 w-12 justify-start overflow-hidden px-0"
 									aria-label={item.label}
 									onclick={() => handleItemClick(item)}
 								>
 									{@const IconComponent = item.icon}
-									<IconComponent class="mx-1 h-6 w-6" />
+									{#if isDonateCollapsed}
+										<IconComponent
+											class="mx-1 h-6 w-6 transition-colors group-hover:fill-red-500"
+										/>
+									{:else if isShopCollapsed}
+										<IconComponent
+											class="mx-1 h-6 w-6 transition-colors group-hover:text-[oklch(0.55_0.25_300)]"
+										/>
+									{:else}
+										<IconComponent class="mx-1 h-6 w-6" />
+									{/if}
 								</Button>
 							{/snippet}
 						</TooltipTrigger>

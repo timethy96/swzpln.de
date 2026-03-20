@@ -5,6 +5,9 @@
 	import { Dialog, DialogContent, DialogHeader, DialogTitle } from '$lib/components/ui/dialog';
 	import Download from '@lucide/svelte/icons/download';
 	import LoaderCircle from '@lucide/svelte/icons/loader-circle';
+	import ShoppingCart from '@lucide/svelte/icons/shopping-cart';
+	import Heart from '@lucide/svelte/icons/heart';
+	import ExternalLink from '@lucide/svelte/icons/external-link';
 	import { appState } from '$lib/state.svelte';
 	import { downloadOSMData } from '$lib/schwarzplan/osm/overpass';
 	import { fetchElevationData } from '$lib/schwarzplan/elevation/client';
@@ -23,6 +26,47 @@
 	let cumulativeProgress = $state(0);
 	let isLoading = $state(true);
 	let isCancelled = $state(false);
+	let completionDialogOpen = $state(false);
+	let lastGeneratedResult = $state<ArrayBuffer | string | null>(null);
+	let lastGeneratedMimeType = $state('');
+	let lastGeneratedFilename = $state('');
+
+	// Rotating shop CTA text with fade-in/fade-out
+	let shopCtaIndex = $state(0);
+	let _shopCtaVisible = $state(true);
+	const shopCtas = $derived([
+		m.shop_cta_tshirt(),
+		m.shop_cta_canvas(),
+		m.shop_cta_mug(),
+		m.shop_cta_print()
+	]);
+
+	// Rotating promo text for loading dialog with fade-in/fade-out
+	let promoIndex = $state(0);
+	let promoVisible = $state(true);
+	const promoTexts = $derived([m.shop_promo_1(), m.shop_promo_2(), m.shop_promo_3()]);
+
+	$effect(() => {
+		const interval = setInterval(() => {
+			_shopCtaVisible = false;
+			setTimeout(() => {
+				shopCtaIndex = (shopCtaIndex + 1) % shopCtas.length;
+				_shopCtaVisible = true;
+			}, 1000);
+		}, 8000);
+		return () => clearInterval(interval);
+	});
+
+	$effect(() => {
+		const interval = setInterval(() => {
+			promoVisible = false;
+			setTimeout(() => {
+				promoIndex = (promoIndex + 1) % promoTexts.length;
+				promoVisible = true;
+			}, 1000);
+		}, 10000);
+		return () => clearInterval(interval);
+	});
 
 	// Check if download should be disabled (zoom too low)
 	let isZoomTooLow = $derived(appState.location.zoom < 11);
@@ -156,16 +200,19 @@
 			const filename = getFilename(format);
 			downloadFile(filename, result, mimeType);
 
+			// Store for re-download
+			lastGeneratedResult = result;
+			lastGeneratedMimeType = mimeType;
+			lastGeneratedFilename = filename;
+
 			fetch('/api/counter/record', { method: 'POST' }).catch((err) =>
 				console.warn('Failed to record download:', err)
 			);
 
-			progressWrapper({ step: 'complete', percent: 100, message: m.progress_download_complete() });
-
-			setTimeout(() => {
-				appState.progress = null;
-				cumulativeProgress = 0;
-			}, 2000);
+			// Clear progress and show completion dialog
+			appState.progress = null;
+			cumulativeProgress = 0;
+			completionDialogOpen = true;
 		} catch (error) {
 			if (!isCancelled) {
 				console.error('Generation error:', error);
@@ -184,6 +231,17 @@
 		startGeneration(selectedFormat, scale);
 	}
 
+	function handleReDownload() {
+		if (lastGeneratedResult) {
+			downloadFile(lastGeneratedFilename, lastGeneratedResult, lastGeneratedMimeType);
+		}
+	}
+
+	function handleCompletionClose() {
+		completionDialogOpen = false;
+		lastGeneratedResult = null;
+	}
+
 	function handleCancel() {
 		isCancelled = true;
 		if (worker) {
@@ -194,6 +252,20 @@
 		cumulativeProgress = 0;
 	}
 </script>
+
+<!-- Shop promotion button -->
+<a
+	href="https://shop.swzpln.de"
+	target="_blank"
+	rel="noopener noreferrer"
+	class="animate-shimmer absolute right-28 bottom-4 z-10 hidden h-20 w-20 items-center justify-center rounded-2xl
+		bg-linear-to-br from-[oklch(0.55_0.25_300)] via-[oklch(0.60_0.20_320)] to-[oklch(0.50_0.22_280)]
+		text-white
+		shadow-lg transition-all duration-300 hover:scale-105
+		active:scale-95 sm:flex"
+>
+	<ShoppingCart class="size-6" />
+</a>
 
 <div class="absolute right-4 bottom-4 flex flex-col items-center gap-2">
 	{#if isLoading}
@@ -317,11 +389,7 @@
 				{#if appState.progress.step === 'error'}
 					<p class="text-sm text-muted-foreground">{m.export_error_hint()}</p>
 					<div class="mt-4 flex gap-2">
-						<Button
-							variant="destructive"
-							class="flex-1"
-							onclick={() => (appState.progress = null)}
-						>
+						<Button variant="destructive" class="flex-1" onclick={() => (appState.progress = null)}>
 							{m.export_error_close()}
 						</Button>
 						<Button
@@ -357,6 +425,17 @@
 					<p class="mt-2 text-sm text-muted-foreground">
 						{m.progress_waiting()}
 					</p>
+					<a
+						href="https://shop.swzpln.de"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="mt-3 flex items-center justify-center gap-1 text-center text-xs text-muted-foreground/70 italic transition-all duration-1000 hover:text-muted-foreground"
+					>
+						<span class="transition-opacity duration-1000" class:opacity-0={!promoVisible}>
+							{promoTexts[promoIndex]}
+						</span>
+						<ExternalLink class="size-3 shrink-0" />
+					</a>
 					<Button variant="outline" class="mt-4 w-full" onclick={handleCancel}>
 						{m.export_cancel()}
 					</Button>
@@ -366,10 +445,73 @@
 	</DialogContent>
 </Dialog>
 
+<!-- Completion dialog with shop CTA -->
+<Dialog
+	open={completionDialogOpen}
+	onOpenChange={(open) => {
+		if (!open) handleCompletionClose();
+	}}
+>
+	<DialogContent class="max-w-sm">
+		<DialogHeader>
+			<DialogTitle>{m.shop_complete_title()}</DialogTitle>
+		</DialogHeader>
+		<div class="flex flex-col gap-3 pt-2">
+			<Button variant="outline" class="w-full" onclick={handleReDownload}>
+				<Download class="size-4" />
+				{m.shop_complete_download()}
+			</Button>
+			<div class="flex flex-col gap-2">
+				<p class="text-center text-xs text-muted-foreground">{m.shop_complete_subtitle()}</p>
+				<a
+					href="https://shop.swzpln.de"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="animate-shimmer inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-linear-to-r from-[oklch(0.55_0.25_300)] via-[oklch(0.60_0.20_320)] to-[oklch(0.50_0.22_280)]
+						px-4 text-sm font-medium text-white
+						shadow-xs transition-opacity hover:opacity-90"
+				>
+					<ShoppingCart class="size-4" />
+					{m.shop_complete_buy()}
+					<ExternalLink class="size-3" />
+				</a>
+				<a
+					href="https://ko-fi.com/swzpln"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="group inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+				>
+					<Heart class="size-4 transition-colors group-hover:fill-red-500" />
+					{m.shop_complete_donate()}
+					<ExternalLink class="size-3" />
+				</a>
+			</div>
+			<Button variant="ghost" class="w-full" onclick={handleCompletionClose}>
+				{m.shop_complete_close()}
+			</Button>
+		</div>
+	</DialogContent>
+</Dialog>
+
 <style>
 	:global(.closed > button) {
 		pointer-events: none;
 		opacity: 0;
 		bottom: 0.75rem;
+	}
+
+	@keyframes shimmer {
+		0%,
+		100% {
+			background-position: 0% 50%;
+		}
+		50% {
+			background-position: 100% 50%;
+		}
+	}
+
+	:global(.animate-shimmer) {
+		background-size: 200% 200%;
+		animation: shimmer 12s ease-in-out infinite;
 	}
 </style>

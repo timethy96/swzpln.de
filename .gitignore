@@ -1,4 +1,5 @@
 node_modules
+.pnpm-store
 
 # Output
 .output
@@ -24,6 +25,7 @@ vite.config.ts.timestamp-*
 
 # Paraglide
 src/lib/paraglide
+src/paraglide
 
 # Database
 /data

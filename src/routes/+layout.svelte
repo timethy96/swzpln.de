@@ -12,6 +12,7 @@
 	import Heart from '@lucide/svelte/icons/heart';
 	import CodeXml from '@lucide/svelte/icons/code-xml';
 	import FileText from '@lucide/svelte/icons/file-text';
+	import ShoppingCart from '@lucide/svelte/icons/shopping-cart';
 	import CircleHelp from '@lucide/svelte/icons/circle-help';
 	import { appState } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
@@ -89,6 +90,7 @@
 		{ icon: CircleHelp, label: m.nav_help(), onClick: () => appState.toggleHelpOverlay() },
 		{ icon: Globe, label: m.nav_english(), href: 'https://opencityplans.com' },
 		{ icon: Heart, label: m.nav_donate(), href: 'https://ko-fi.com/swzpln' },
+		{ icon: ShoppingCart, label: m.nav_shop(), href: 'https://shop.swzpln.de' },
 		{ icon: Moon, label: m.nav_dark_mode(), onClick: toggleDarkMode },
 		{ icon: CodeXml, label: m.nav_source(), href: 'https://github.com/timethy96/swzpln.de' },
 		{ icon: FileText, label: m.nav_legal(), href: '/impressum' }
