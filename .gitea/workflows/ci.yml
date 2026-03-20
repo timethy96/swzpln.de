@@ -42,5 +42,18 @@ jobs:
     steps:
       - uses: actions/checkout@v4
 
-      - name: Build Docker image
-        run: docker build -t swzpln .
+      - name: Login to Gitea Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: git.tabstudio.de
+          username: ${{ secrets.REGISTRY_USER }}
+          password: ${{ secrets.REGISTRY_TOKEN }}
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v6
+        with:
+          context: .
+          push: true
+          tags: |
+            git.tabstudio.de/tabstudio/swzpln-web:latest
+            git.tabstudio.de/tabstudio/swzpln-web:${{ github.sha }}
