@@ -302,19 +302,19 @@
 </script>
 
 {#if showShop}
-<!-- Shop promotion button -->
-<a
-	href="https://shop.swzpln.de"
-	target="_blank"
-	rel="noopener noreferrer"
-	class="animate-shimmer absolute right-28 bottom-4 z-10 hidden h-20 w-20 items-center justify-center rounded-2xl
+	<!-- Shop promotion button -->
+	<a
+		href="https://shop.swzpln.de"
+		target="_blank"
+		rel="noopener noreferrer"
+		class="animate-shimmer absolute right-28 bottom-4 z-10 hidden h-20 w-20 items-center justify-center rounded-2xl
 		bg-linear-to-br from-[oklch(0.55_0.25_300)] via-[oklch(0.60_0.20_320)] to-[oklch(0.50_0.22_280)]
 		text-white
 		shadow-lg transition-all duration-300 hover:scale-105
 		active:scale-95 sm:flex"
->
-	<ShoppingCart class="size-6" />
-</a>
+	>
+		<ShoppingCart class="size-6" />
+	</a>
 {/if}
 
 <div class="absolute right-4 bottom-4 flex flex-col items-center gap-2">
@@ -481,17 +481,17 @@
 						{m.progress_waiting()}
 					</p>
 					{#if showShop}
-					<a
-						href="https://shop.swzpln.de"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="mt-3 flex items-center justify-center gap-1 text-center text-xs text-muted-foreground/70 italic transition-all duration-1000 hover:text-muted-foreground"
-					>
-						<span class="transition-opacity duration-1000" class:opacity-0={!promoVisible}>
-							{promoTexts[promoIndex]}
-						</span>
-						<ExternalLink class="size-3 shrink-0" />
-					</a>
+						<a
+							href="https://shop.swzpln.de"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="mt-3 flex items-center justify-center gap-1 text-center text-xs text-muted-foreground/70 italic transition-all duration-1000 hover:text-muted-foreground"
+						>
+							<span class="transition-opacity duration-1000" class:opacity-0={!promoVisible}>
+								{promoTexts[promoIndex]}
+							</span>
+							<ExternalLink class="size-3 shrink-0" />
+						</a>
 					{/if}
 					<Button variant="outline" class="mt-4 w-full" onclick={handleCancel}>
 						{m.export_cancel()}
@@ -519,31 +519,31 @@
 				{m.shop_complete_download()}
 			</Button>
 			{#if showShop}
-			<div class="flex flex-col gap-2">
-				<p class="text-center text-xs text-muted-foreground">{m.shop_complete_subtitle()}</p>
-				<a
-					href="https://shop.swzpln.de"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="animate-shimmer inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-linear-to-r from-[oklch(0.55_0.25_300)] via-[oklch(0.60_0.20_320)] to-[oklch(0.50_0.22_280)]
+				<div class="flex flex-col gap-2">
+					<p class="text-center text-xs text-muted-foreground">{m.shop_complete_subtitle()}</p>
+					<a
+						href="https://shop.swzpln.de"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="animate-shimmer inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-linear-to-r from-[oklch(0.55_0.25_300)] via-[oklch(0.60_0.20_320)] to-[oklch(0.50_0.22_280)]
 						px-4 text-sm font-medium text-white
 						shadow-xs transition-opacity hover:opacity-90"
-				>
-					<ShoppingCart class="size-4" />
-					{m.shop_complete_buy()}
-					<ExternalLink class="size-3" />
-				</a>
-				<a
-					href="https://ko-fi.com/swzpln"
-					target="_blank"
-					rel="noopener noreferrer"
-					class="group inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
-				>
-					<Heart class="size-4 transition-colors group-hover:fill-red-500" />
-					{m.shop_complete_donate()}
-					<ExternalLink class="size-3" />
-				</a>
-			</div>
+					>
+						<ShoppingCart class="size-4" />
+						{m.shop_complete_buy()}
+						<ExternalLink class="size-3" />
+					</a>
+					<a
+						href="https://ko-fi.com/swzpln"
+						target="_blank"
+						rel="noopener noreferrer"
+						class="group inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+					>
+						<Heart class="size-4 transition-colors group-hover:fill-red-500" />
+						{m.shop_complete_donate()}
+						<ExternalLink class="size-3" />
+					</a>
+				</div>
 			{/if}
 			<Button variant="ghost" class="w-full" onclick={handleCompletionClose}>
 				{m.shop_complete_close()}

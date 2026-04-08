@@ -391,4 +391,3 @@ function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadat
 
 	return Object.keys(meta).length > 0 ? meta : undefined;
 }
-
