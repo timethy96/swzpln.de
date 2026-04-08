@@ -4,14 +4,14 @@
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import type { Component } from 'svelte';
 
-	interface DropdownItem {
+	type DropdownItem = {
 		icon?: Component;
 		label: string;
 		id: string;
 		color?: string;
 		value?: string | number;
 		onSelect?: (item: DropdownItem) => void;
-	}
+	};
 
 	// Props interface
 	let {

@@ -30,7 +30,7 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 			buildingStyle
 		} = event.data;
 
-		// Step 1: Convert data to geometry (PostGIS or Overpass path)
+		// Step 1: Convert data to geometry (server-side GeoJSON or client-side Overpass path)
 		const geometryObjects = geodata
 			? geojsonToGeometry(geodata, bounds, progressCallback)
 			: osmDataToGeometry(osmData!, bounds, progressCallback);

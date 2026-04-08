@@ -1,5 +1,5 @@
-// GeoJSON-to-GeometryObject converter for PostGIS data
-// Converts PostGIS GeoJSON responses into the same GeometryObject[] format
+// GeoJSON-to-GeometryObject converter for server-side geodata (Overpass API)
+// Converts GeoJSON responses into the same GeometryObject[] format
 // that the OSM converter produces, so exporters work unchanged.
 
 import type {
@@ -14,7 +14,7 @@ import { resolveBuildingOutlines, buildMetadataFromColumns } from '../geometry/o
 import { convertAndMergeRoads } from '../roads';
 
 /**
- * Convert PostGIS GeoJSON response to GeometryObject array.
+ * Convert server-side GeoJSON response to GeometryObject array.
  * Produces the same output format as osmDataToGeometry().
  */
 export function geojsonToGeometry(

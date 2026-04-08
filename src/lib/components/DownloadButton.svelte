@@ -36,7 +36,7 @@
 	let isLoading = $state(true);
 	let isCancelled = $state(false);
 	let completionDialogOpen = $state(false);
-	let lastGeneratedResult = $state<ArrayBuffer | string | null>(null);
+	let lastGeneratedResult = $state<string | Uint8Array | Blob | null>(null);
 	let lastGeneratedMimeType = $state('');
 	let lastGeneratedFilename = $state('');
 
@@ -178,7 +178,7 @@
 			const cleanBounds = JSON.parse(JSON.stringify(bounds));
 			const cleanLayers = JSON.parse(JSON.stringify(layers));
 
-			// Try PostGIS first, fall back to Overpass
+			// Try server-side Overpass first, fall back to client-side Overpass
 			let geodata: GeoDataResponse | null = null;
 			let osmData = null;
 
@@ -198,7 +198,7 @@
 				const response = await fetch(`/api/geodata?${params}`);
 				if (response.ok) {
 					const data = await response.json();
-					if (data.source === 'postgis') {
+					if (data.source === 'overpass') {
 						geodata = data;
 						progressWrapper({
 							step: 'osm-download',
@@ -208,10 +208,10 @@
 					}
 				}
 			} catch (e) {
-				console.warn('PostGIS geodata fetch failed, falling back to Overpass:', e);
+				console.warn('Server geodata fetch failed, falling back to client-side Overpass:', e);
 			}
 
-			// Fallback to Overpass if PostGIS unavailable
+			// Fallback to client-side Overpass if server unavailable
 			if (!geodata) {
 				osmData = await downloadOSMData(cleanBounds, cleanLayers, progressWrapper);
 			}

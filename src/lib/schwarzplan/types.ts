@@ -200,7 +200,7 @@ export interface WorkerRequest {
 }
 
 // ============================================================================
-// PostGIS Geodata Types
+// Geodata Types
 // ============================================================================
 
 export interface GeoDataFeature {
@@ -209,7 +209,7 @@ export interface GeoDataFeature {
 }
 
 export interface GeoDataResponse {
-	source: 'postgis' | 'unavailable';
+	source: 'overpass' | 'unavailable';
 	layers: Record<string, GeoDataFeature[]>;
 }
 

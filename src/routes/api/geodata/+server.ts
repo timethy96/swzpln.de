@@ -1,9 +1,9 @@
-// Geodata API endpoint - queries PostGIS for map features
-// Returns GeoJSON with metadata, or { source: 'unavailable' } for Overpass fallback
+// Geodata API endpoint - queries Overpass for map features
+// Returns GeoJSON with metadata, or { source: 'unavailable' } for client-side Overpass fallback
 
 import { json, error } from '@sveltejs/kit';
 import { checkRateLimit } from '$lib/server/ratelimit';
-import { queryGeodata } from '$lib/server/postgis';
+import { queryGeodata } from '$lib/server/overpass';
 import type { RequestHandler } from './$types';
 import type { Layer } from '$lib/schwarzplan/types';
 
@@ -21,9 +21,9 @@ const VALID_LAYERS: Set<string> = new Set([
 ]);
 
 export const GET: RequestHandler = async ({ url, getClientAddress }) => {
-	// Rate limiting: 10 requests per IP per minute
+	// Rate limiting: 60 requests per IP per minute
 	const clientIP = getClientAddress();
-	if (!checkRateLimit(clientIP, 10, 60 * 1000)) {
+	if (!checkRateLimit(clientIP, 60, 60 * 1000)) {
 		throw error(429, 'Too many requests');
 	}
 
