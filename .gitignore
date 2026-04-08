@@ -35,5 +35,10 @@ src/paraglide
 # Inlang cache
 project.inlang/cache/
 
+# Security audit artifacts
+static_analysis_semgrep_*/
+.supply-chain-risk-auditor/
+SECURITY_AUDIT_REPORT.md
+
 # Logs
 *.log
