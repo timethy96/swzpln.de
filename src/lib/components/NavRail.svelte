@@ -184,7 +184,7 @@
 					><br />
 					{m.nav_footer_supported_by()}
 					<a href="https://tabstudio.de" target="_blank" class="text-primary"
-						>TAB Studio UG (haftungsbeschränkt)</a
+						>TAB Studio UG i.G. (haftungsbeschränkt)</a
 					>.<br /><br />
 					{m.nav_footer_open_source()}<br />
 					{m.nav_footer_license()}</span

@@ -23,6 +23,9 @@
 	} from '$lib/schwarzplan/types';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
+	import { env } from '$env/dynamic/public';
+
+	const showShop = env.PUBLIC_SHOW_SHOP !== 'false';
 
 	let dlOpen = $state(false);
 	let worker: SchwarzplanWorker | null = null;
@@ -53,6 +56,7 @@
 	const promoTexts = $derived([m.shop_promo_1(), m.shop_promo_2(), m.shop_promo_3()]);
 
 	$effect(() => {
+		if (!showShop) return;
 		const interval = setInterval(() => {
 			_shopCtaVisible = false;
 			setTimeout(() => {
@@ -64,6 +68,7 @@
 	});
 
 	$effect(() => {
+		if (!showShop) return;
 		const interval = setInterval(() => {
 			promoVisible = false;
 			setTimeout(() => {
@@ -296,6 +301,7 @@
 	}
 </script>
 
+{#if showShop}
 <!-- Shop promotion button -->
 <a
 	href="https://shop.swzpln.de"
@@ -309,6 +315,7 @@
 >
 	<ShoppingCart class="size-6" />
 </a>
+{/if}
 
 <div class="absolute right-4 bottom-4 flex flex-col items-center gap-2">
 	{#if isLoading}
@@ -400,7 +407,12 @@
 	open={appState.progress !== null && appState.progress.step !== 'complete'}
 	onOpenChange={() => {}}
 >
-	<DialogContent class="max-w-md" showCloseButton={false}>
+	<DialogContent
+		class="max-w-md"
+		showCloseButton={false}
+		onInteractOutside={(e) => e.preventDefault()}
+		onEscapeKeydown={(e) => e.preventDefault()}
+	>
 		<DialogHeader>
 			<div class="flex items-center justify-between">
 				<DialogTitle>
@@ -468,6 +480,7 @@
 					<p class="mt-2 text-sm text-muted-foreground">
 						{m.progress_waiting()}
 					</p>
+					{#if showShop}
 					<a
 						href="https://shop.swzpln.de"
 						target="_blank"
@@ -479,6 +492,7 @@
 						</span>
 						<ExternalLink class="size-3 shrink-0" />
 					</a>
+					{/if}
 					<Button variant="outline" class="mt-4 w-full" onclick={handleCancel}>
 						{m.export_cancel()}
 					</Button>
@@ -504,6 +518,7 @@
 				<Download class="size-4" />
 				{m.shop_complete_download()}
 			</Button>
+			{#if showShop}
 			<div class="flex flex-col gap-2">
 				<p class="text-center text-xs text-muted-foreground">{m.shop_complete_subtitle()}</p>
 				<a
@@ -529,6 +544,7 @@
 					<ExternalLink class="size-3" />
 				</a>
 			</div>
+			{/if}
 			<Button variant="ghost" class="w-full" onclick={handleCompletionClose}>
 				{m.shop_complete_close()}
 			</Button>

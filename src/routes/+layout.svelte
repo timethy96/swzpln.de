@@ -19,6 +19,9 @@
 	import * as m from '$lib/paraglide/messages';
 	import { setLocale } from '$lib/paraglide/runtime';
 	import { browser } from '$app/environment';
+	import { env } from '$env/dynamic/public';
+
+	const showShop = env.PUBLIC_SHOW_SHOP !== 'false';
 
 	let { children } = $props();
 
@@ -89,8 +92,12 @@
 		{ icon: Map, label: m.nav_home(), href: '/' },
 		{ icon: CircleHelp, label: m.nav_help(), onClick: () => appState.toggleHelpOverlay() },
 		{ icon: Globe, label: m.nav_english(), href: 'https://opencityplans.com' },
-		{ icon: Heart, label: m.nav_donate(), href: 'https://ko-fi.com/swzpln' },
-		{ icon: ShoppingCart, label: m.nav_shop(), href: 'https://shop.swzpln.de' },
+		...(showShop
+			? [
+					{ icon: Heart, label: m.nav_donate(), href: 'https://ko-fi.com/swzpln' },
+					{ icon: ShoppingCart, label: m.nav_shop(), href: 'https://shop.swzpln.de' }
+				]
+			: []),
 		{ icon: Moon, label: m.nav_dark_mode(), onClick: toggleDarkMode },
 		{ icon: CodeXml, label: m.nav_source(), href: 'https://github.com/timethy96/swzpln.de' },
 		{ icon: FileText, label: m.nav_legal(), href: '/impressum' }

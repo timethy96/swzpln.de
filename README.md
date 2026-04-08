@@ -111,7 +111,7 @@ pnpm check        # Svelte type checking
 
 (c) Timo Bilhoefer
 
-Supported by TAB Studio UG (haftungsbeschraenkt)
+Supported by TAB Studio UG i.G. (haftungsbeschraenkt)
 
 Published under **[GNU AFFERO GENERAL PUBLIC LICENSE v3](LICENSE)**
 
