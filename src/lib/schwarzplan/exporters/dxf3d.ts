@@ -1,104 +1,15 @@
-// 3D DXF exporter — writes incrementally to Uint8Array to avoid string allocation overflow
+// 3D DXF exporter using @tarikjabiri/dxf
 
+import { DxfWriter, Units, point3d } from '@tarikjabiri/dxf';
 import type { Bounds, GeometryObject, ProgressCallback, ContourData } from '../types';
 import { extrudeBuildings } from '../geometry/buildings';
 import { generateTerrainMesh } from '../elevation/terrain';
 import { latLngToXY, getMaxXY } from '../geometry/coordinates';
 import * as m from '$lib/paraglide/messages';
 
-// ============================================================================
-// Minimal incremental DXF writer
-// Encodes each entity as a small Uint8Array chunk to avoid one giant string.
-// ============================================================================
-
-class IncrementalDxfWriter {
-	private chunks: Uint8Array[] = [];
-	private encoder = new TextEncoder();
-	private currentLayer = '';
-
-	private write(text: string): void {
-		this.chunks.push(this.encoder.encode(text));
-	}
-
-	writeHeader(units = 4 /* Millimeters */): void {
-		this.write(
-			'0\r\nSECTION\r\n2\r\nHEADER\r\n' +
-				'9\r\n$ACADVER\r\n1\r\nAC1015\r\n' +
-				`9\r\n$INSUNITS\r\n70\r\n${units}\r\n` +
-				'0\r\nENDSEC\r\n'
-		);
-	}
-
-	writeTables(layers: Array<{ name: string; color: number }>): void {
-		let content =
-			'0\r\nSECTION\r\n2\r\nTABLES\r\n' +
-			'0\r\nTABLE\r\n2\r\nLAYER\r\n' +
-			`70\r\n${layers.length}\r\n`;
-
-		for (const layer of layers) {
-			content +=
-				'0\r\nLAYER\r\n' +
-				`2\r\n${layer.name}\r\n` +
-				'70\r\n0\r\n' +
-				`62\r\n${layer.color}\r\n` +
-				'6\r\nCONTINUOUS\r\n';
-		}
-
-		content += '0\r\nENDTABLE\r\n0\r\nENDSEC\r\n';
-		this.write(content);
-	}
-
-	beginEntities(): void {
-		this.write('0\r\nSECTION\r\n2\r\nENTITIES\r\n');
-	}
-
-	setLayer(name: string): void {
-		this.currentLayer = name;
-	}
-
-	add3dFace(
-		v1: { x: number; y: number; z: number },
-		v2: { x: number; y: number; z: number },
-		v3: { x: number; y: number; z: number },
-		v4: { x: number; y: number; z: number }
-	): void {
-		this.write(
-			`0\r\n3DFACE\r\n8\r\n${this.currentLayer}\r\n` +
-				`10\r\n${v1.x}\r\n20\r\n${v1.y}\r\n30\r\n${v1.z}\r\n` +
-				`11\r\n${v2.x}\r\n21\r\n${v2.y}\r\n31\r\n${v2.z}\r\n` +
-				`12\r\n${v3.x}\r\n22\r\n${v3.y}\r\n32\r\n${v3.z}\r\n` +
-				`13\r\n${v4.x}\r\n23\r\n${v4.y}\r\n33\r\n${v4.z}\r\n`
-		);
-	}
-
-	addText(pos: { x: number; y: number; z: number }, height: number, text: string): void {
-		this.write(
-			`0\r\nTEXT\r\n8\r\n${this.currentLayer}\r\n` +
-				`10\r\n${pos.x}\r\n20\r\n${pos.y}\r\n30\r\n${pos.z}\r\n` +
-				`40\r\n${height}\r\n1\r\n${text}\r\n`
-		);
-	}
-
-	endEntities(): void {
-		this.write('0\r\nENDSEC\r\n0\r\nEOF\r\n');
-	}
-
-	toUint8Array(): Uint8Array {
-		const totalLength = this.chunks.reduce((sum, c) => sum + c.length, 0);
-		const result = new Uint8Array(totalLength);
-		let offset = 0;
-		for (const chunk of this.chunks) {
-			result.set(chunk, offset);
-			offset += chunk.length;
-		}
-		return result;
-	}
-}
-
-// ============================================================================
-// Exporter
-// ============================================================================
-
+/**
+ * Export geometry objects and terrain to 3D DXF format
+ */
 export function exportToDXF3D(
 	objects: GeometryObject[],
 	elevationMatrix: number[][] | null,
@@ -106,23 +17,22 @@ export function exportToDXF3D(
 	zoom: number,
 	onProgress?: ProgressCallback,
 	_contours?: ContourData | null
-): Uint8Array {
+): string {
 	// 1. Init
 	notify(onProgress, 0, m.progress_dxf_init());
-	const dxf = new IncrementalDxfWriter();
+	const dxf = new DxfWriter();
+	dxf.setUnits(Units.Meters);
 
-	dxf.writeHeader(6 /* Meters */);
-	dxf.writeTables([
-		{ name: 'BUILDINGS-3D', color: 7 },
-		{ name: 'TERRAIN-3D', color: 3 },
-		{ name: 'OTHER', color: 1 }
-	]);
-	dxf.beginEntities();
+	// 2. Layers
+	notify(onProgress, 10, 'Creating layers...');
+	dxf.addLayer('BUILDINGS-3D', 7, 'CONTINUOUS');
+	dxf.addLayer('TERRAIN-3D', 3, 'CONTINUOUS');
+	dxf.addLayer('OTHER', 1, 'CONTINUOUS');
 
-	// 2. Terrain
-	const maxXY = getMaxXY(bounds);
+	// 3. Terrain
 	let terrainMesh = null;
 	let gridSize = null;
+	const maxXY = getMaxXY(bounds);
 
 	if (elevationMatrix) {
 		notify(onProgress, 15, 'Generating terrain mesh...');
@@ -130,19 +40,20 @@ export function exportToDXF3D(
 		gridSize = { rows: elevationMatrix.length, cols: elevationMatrix[0]?.length || 0 };
 	}
 
-	// 3. Buildings
+	// 4. Buildings
 	notify(onProgress, 20, 'Processing buildings...');
 	const buildings = objects
 		.filter((obj) => obj.type === 'building' && obj.buildingMetadata)
 		.map((b) => ({
 			footprint: b.path,
 			metadata: b.buildingMetadata!,
-			id: undefined,
+			id: undefined, // Building IDs not strictly needed for DXF export visual
 			relationId: b.relationId,
 			isOutline: b.isOutline,
 			holes: b.holes
 		}));
 
+	// Batch process buildings (handles grouping & terrain offset internally)
 	const meshes = extrudeBuildings(
 		buildings,
 		terrainMesh || undefined,
@@ -150,7 +61,8 @@ export function exportToDXF3D(
 		maxXY
 	);
 
-	dxf.setLayer('BUILDINGS-3D');
+	// Write meshes to DXF
+	dxf.setCurrentLayerName('BUILDINGS-3D');
 	let processed = 0;
 
 	for (const mesh of meshes) {
@@ -160,9 +72,15 @@ export function exportToDXF3D(
 			const v1 = mesh.vertices[face[0]];
 			const v2 = mesh.vertices[face[1]];
 			const v3 = mesh.vertices[face[2]];
+			// DXF requires 4 points for a 3dFace; for triangles, repeat the last one
 			const v4 = face.length > 3 ? mesh.vertices[face[3]] : v3;
 
-			dxf.add3dFace(v1, v2, v3, v4);
+			dxf.add3dFace(
+				point3d(v1.x, v1.y, v1.z),
+				point3d(v2.x, v2.y, v2.z),
+				point3d(v3.x, v3.y, v3.z),
+				point3d(v4.x, v4.y, v4.z)
+			);
 		}
 
 		processed++;
@@ -178,36 +96,51 @@ export function exportToDXF3D(
 		}
 	}
 
-	// 4. Terrain mesh
+	// 5. Write Terrain
 	if (terrainMesh) {
 		notify(onProgress, 75, 'Adding terrain mesh...');
-		dxf.setLayer('TERRAIN-3D');
-
+		dxf.setCurrentLayerName('TERRAIN-3D');
 		for (let i = 0; i < terrainMesh.triangles.length; i += 3) {
 			const v1 = terrainMesh.vertices[terrainMesh.triangles[i]];
 			const v2 = terrainMesh.vertices[terrainMesh.triangles[i + 1]];
 			const v3 = terrainMesh.vertices[terrainMesh.triangles[i + 2]];
-			dxf.add3dFace(v1, v2, v3, v3);
+
+			dxf.add3dFace(
+				point3d(v1.x, v1.y, v1.z),
+				point3d(v2.x, v2.y, v2.z),
+				point3d(v3.x, v3.y, v3.z),
+				point3d(v3.x, v3.y, v3.z)
+			);
 		}
 	}
 
-	// 5. Attribution
+	// 6. Attribution
 	notify(onProgress, 85, 'Adding attribution...');
-	dxf.setLayer('OTHER');
+	dxf.setCurrentLayerName('OTHER');
 	const txtXY = latLngToXY(bounds, bounds.south, bounds.east);
 	const txtSize = (19 - zoom) * 10;
 	dxf.addText(
-		{ x: txtXY.x, y: txtXY.y - txtSize, z: 0 },
+		point3d(txtXY.x, txtXY.y - txtSize, 0),
 		txtSize,
 		'(c) OpenStreetMap.org contributors'
 	);
 
-	dxf.endEntities();
-
+	// 7. Finish — may throw RangeError for very large areas
 	notify(onProgress, 100, '3D DXF export complete');
-	return dxf.toUint8Array();
+	try {
+		return dxf.stringify();
+	} catch (err) {
+		if (err instanceof RangeError) {
+			throw new Error(
+				'The selected area is too large for 3D DXF export. Please zoom in and select a smaller area.',
+				{ cause: err }
+			);
+		}
+		throw err;
+	}
 }
 
+// Helper to keep main function clean
 function notify(cb: ProgressCallback | undefined, percent: number, message: string) {
 	if (cb) cb({ step: 'export', percent, message });
 }
