@@ -48,10 +48,10 @@
 		}
 	}
 
-	// Fetch on mount and poll every 5 seconds
+	// Fetch on mount and poll every 30 seconds
 	onMount(() => {
 		fetchDownloadCount();
-		const interval = setInterval(fetchDownloadCount, 5000);
+		const interval = setInterval(fetchDownloadCount, 30000);
 		return () => clearInterval(interval);
 	});
 

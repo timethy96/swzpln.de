@@ -5,9 +5,9 @@ import { checkRateLimit } from '$lib/server/ratelimit';
 import type { RequestHandler } from './$types';
 
 export const GET: RequestHandler = async ({ getClientAddress }) => {
-	// Rate limiting: 30 requests per IP per minute
+	// Rate limiting: 8 requests per IP per minute (2 tabs × 2 req/min × 2 buffer)
 	const clientIP = getClientAddress();
-	if (!checkRateLimit(`counter:${clientIP}`, 30, 60 * 1000)) {
+	if (!checkRateLimit(`counter:${clientIP}`, 8, 60 * 1000)) {
 		throw error(429, 'Too many requests');
 	}
 
