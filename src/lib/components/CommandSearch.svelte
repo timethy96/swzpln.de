@@ -37,7 +37,8 @@
 			searchResults = features.map((feature) => ({
 				name: String(feature.properties.name || m.search_unknown_location()),
 				city: feature.properties.city != null ? String(feature.properties.city) : undefined,
-				country: feature.properties.country != null ? String(feature.properties.country) : undefined,
+				country:
+					feature.properties.country != null ? String(feature.properties.country) : undefined,
 				coordinates: feature.geometry.coordinates,
 				properties: feature.properties
 			}));

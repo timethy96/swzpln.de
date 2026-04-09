@@ -37,10 +37,10 @@ export async function isOverpassAvailable(): Promise<boolean> {
 	}
 
 	try {
-		const res = await fetch(url, {
-			method: 'POST',
-			headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-			body: 'data=[out:json];node(1);out;',
+		// Use /api/status instead of a test query — node(1) triggers a dispatcher
+		// error on some Overpass instances and causes false negatives.
+		const statusUrl = url.replace(/\/api\/interpreter\/?$/, '/api/status');
+		const res = await fetch(statusUrl, {
 			signal: AbortSignal.timeout(5000)
 		});
 		lastCheck = now;
@@ -183,10 +183,7 @@ function classifyElement(tags: Record<string, string>, requestedLayers: Layer[])
  * Convert Overpass JSON response to GeoDataResponse format.
  * Builds node index, resolves ways/relations to GeoJSON geometries.
  */
-function parseOverpassResponse(
-	data: OverpassResponse,
-	requestedLayers: Layer[]
-): GeoDataResponse {
+function parseOverpassResponse(data: OverpassResponse, requestedLayers: Layer[]): GeoDataResponse {
 	const result: Record<string, GeoDataFeature[]> = {};
 
 	// Build node index
