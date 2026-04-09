@@ -9,7 +9,7 @@ import type {
 } from '../types';
 import { classifyTags, isUnderground } from '../layers';
 import { latLngToXY } from '../geometry/coordinates';
-import { resolveBuildingOutlines } from '../geometry/outlines';
+
 import * as m from '$lib/paraglide/messages';
 import type { Layer } from '$lib/schwarzplan/types';
 import { convertAndMergeRoads } from '../roads';
@@ -93,11 +93,6 @@ export function osmDataToGeometry(
 	// 5. Buffer and Union Roads
 	// This converts linear highways into buffered polygons and merges adjacent ones
 	const mergedObjects = convertAndMergeRoads(geometryObjects, (msg) => notify(onProgress, 95, msg));
-
-	notify(onProgress, 98, 'Resolving 3D building parts...');
-
-	// 6. Resolve Building Outlines vs Parts via Spatial Containment
-	resolveBuildingOutlines(mergedObjects);
 
 	notify(onProgress, 100, `Done: ${mergedObjects.length} objects`);
 	return mergedObjects;
