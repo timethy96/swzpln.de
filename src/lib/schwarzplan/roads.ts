@@ -129,6 +129,32 @@ export function shouldConvertToPolygon(path: Coordinate[]): boolean {
 	return totalLength > 0.001;
 }
 
+type Polygon = [number, number][][];
+
+/**
+ * Divide-and-conquer union: splits polygons into chunks, unions each chunk,
+ * then recursively unions the results. Avoids O(n²) blowup from unioning all at once.
+ */
+function chunkedUnion(polys: Polygon[], chunkSize = 50): Polygon[] {
+	if (polys.length <= 1) return polys;
+
+	const intermediates: Polygon[] = [];
+	for (let i = 0; i < polys.length; i += chunkSize) {
+		const chunk = polys.slice(i, i + chunkSize);
+		if (chunk.length === 1) {
+			intermediates.push(chunk[0]);
+		} else {
+			const merged = polygonClipping.union(chunk[0], ...chunk.slice(1));
+			intermediates.push(...merged);
+		}
+	}
+
+	// If no reduction happened (no overlapping polygons), stop recursion
+	if (intermediates.length >= polys.length) return intermediates;
+
+	return chunkedUnion(intermediates, chunkSize);
+}
+
 export function convertAndMergeRoads(objects: GeometryObject[]): GeometryObject[] {
 	const result: GeometryObject[] = [];
 	const roadPolygons: Array<{ polygon: Coordinate[]; obj: GeometryObject }> = [];
@@ -149,22 +175,12 @@ export function convertAndMergeRoads(objects: GeometryObject[]): GeometryObject[
 		return result;
 	}
 
-	// polygon-clipping.union() has quadratic complexity — skip merging for large datasets
-	// to avoid "queue size too big" / infinite loop errors
-	const MERGE_LIMIT = 500;
-	if (roadPolygons.length > MERGE_LIMIT) {
-		for (const { polygon, obj } of roadPolygons) {
-			result.push({ ...obj, path: polygon });
-		}
-		return result;
-	}
-
 	const polygonCoords = roadPolygons.map(({ polygon }) => [
 		polygon.map((p) => [p.x, p.y] as [number, number])
 	]);
 
 	try {
-		const merged = polygonClipping.union(polygonCoords[0], ...polygonCoords.slice(1));
+		const merged = chunkedUnion(polygonCoords);
 		const templateObj = roadPolygons[0].obj; // Use first road generic props
 
 		for (const multiPolygon of merged) {

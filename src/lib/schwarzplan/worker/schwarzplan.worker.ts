@@ -35,14 +35,6 @@ self.onmessage = async (event: MessageEvent<WorkerRequest>) => {
 			? geojsonToGeometry(geodata, bounds, progressCallback)
 			: osmDataToGeometry(osmData!, bounds, progressCallback);
 
-		// Guard against datasets too large to export
-		const MAX_OBJECTS = 80000;
-		if (geometryObjects.length > MAX_OBJECTS) {
-			throw new Error(
-				`Area too large: ${geometryObjects.length.toLocaleString()} objects (max ${MAX_OBJECTS.toLocaleString()}). Please zoom in or select fewer layers.`
-			);
-		}
-
 		// Step 2: Generate contours if elevation data is available (for 2D formats)
 		let contours = null;
 
