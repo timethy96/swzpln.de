@@ -103,7 +103,9 @@ export function geojsonToGeometry(
 	onProgress?.({ step: 'osm-parse', percent: 50, message: 'Merging roads...' });
 
 	// Buffer and merge roads (same as OSM converter)
-	const merged = convertAndMergeRoads(objects);
+	const merged = convertAndMergeRoads(objects, (msg) =>
+		onProgress?.({ step: 'osm-parse', percent: 50, message: msg })
+	);
 
 	onProgress?.({ step: 'osm-parse', percent: 80, message: 'Resolving building parts...' });
 

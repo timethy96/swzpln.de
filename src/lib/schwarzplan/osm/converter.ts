@@ -92,7 +92,7 @@ export function osmDataToGeometry(
 
 	// 5. Buffer and Union Roads
 	// This converts linear highways into buffered polygons and merges adjacent ones
-	const mergedObjects = convertAndMergeRoads(geometryObjects);
+	const mergedObjects = convertAndMergeRoads(geometryObjects, (msg) => notify(onProgress, 95, msg));
 
 	notify(onProgress, 98, 'Resolving 3D building parts...');
 

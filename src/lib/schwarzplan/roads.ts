@@ -129,33 +129,10 @@ export function shouldConvertToPolygon(path: Coordinate[]): boolean {
 	return totalLength > 0.001;
 }
 
-type Polygon = [number, number][][];
-
-/**
- * Divide-and-conquer union: splits polygons into chunks, unions each chunk,
- * then recursively unions the results. Avoids O(n²) blowup from unioning all at once.
- */
-function chunkedUnion(polys: Polygon[], chunkSize = 50): Polygon[] {
-	if (polys.length <= 1) return polys;
-
-	const intermediates: Polygon[] = [];
-	for (let i = 0; i < polys.length; i += chunkSize) {
-		const chunk = polys.slice(i, i + chunkSize);
-		if (chunk.length === 1) {
-			intermediates.push(chunk[0]);
-		} else {
-			const merged = polygonClipping.union(chunk[0], ...chunk.slice(1));
-			intermediates.push(...merged);
-		}
-	}
-
-	// If no reduction happened (no overlapping polygons), stop recursion
-	if (intermediates.length >= polys.length) return intermediates;
-
-	return chunkedUnion(intermediates, chunkSize);
-}
-
-export function convertAndMergeRoads(objects: GeometryObject[]): GeometryObject[] {
+export function convertAndMergeRoads(
+	objects: GeometryObject[],
+	onInfo?: (msg: string) => void
+): GeometryObject[] {
 	const result: GeometryObject[] = [];
 	const roadPolygons: Array<{ polygon: Coordinate[]; obj: GeometryObject }> = [];
 
@@ -180,8 +157,8 @@ export function convertAndMergeRoads(objects: GeometryObject[]): GeometryObject[
 	]);
 
 	try {
-		const merged = chunkedUnion(polygonCoords);
-		const templateObj = roadPolygons[0].obj; // Use first road generic props
+		const merged = polygonClipping.union(polygonCoords[0], ...polygonCoords.slice(1));
+		const templateObj = roadPolygons[0].obj;
 
 		for (const multiPolygon of merged) {
 			for (const ring of multiPolygon) {
@@ -195,6 +172,7 @@ export function convertAndMergeRoads(objects: GeometryObject[]): GeometryObject[
 		}
 	} catch (error) {
 		console.warn('Road merging failed:', error);
+		onInfo?.('Area too large to merge roads — roads shown as individual polygons.');
 		for (const { polygon, obj } of roadPolygons) {
 			result.push({ ...obj, path: polygon });
 		}
