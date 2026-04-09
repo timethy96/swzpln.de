@@ -1,6 +1,7 @@
 // Base exporter that delegates to specific format exporters
 
 import type { Bounds, ContourData, ExportFormat, GeometryObject, ProgressCallback } from '../types';
+import { resolveBuildingOutlines } from '../geometry/outlines';
 import { exportToDXF } from './dxf';
 import { exportToSVG } from './svg';
 import { exportToPDF } from './pdf';
@@ -41,12 +42,15 @@ export async function exportGeometry(
 			return exportToPDF(objects, contours, bounds, zoom, scale, onProgress, buildingStyle);
 
 		case 'dxf3d':
+			resolveBuildingOutlines(objects);
 			return exportToDXF3D(objects, elevationMatrix, bounds, zoom, onProgress, contours);
 
 		case 'ifc':
+			resolveBuildingOutlines(objects);
 			return await exportToIFC(objects, elevationMatrix, bounds, onProgress);
 
 		case 'obj':
+			resolveBuildingOutlines(objects);
 			return await exportToOBJ(objects, elevationMatrix, bounds, onProgress);
 
 		default:

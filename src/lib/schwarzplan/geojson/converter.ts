@@ -10,7 +10,7 @@ import type {
 	ProgressCallback
 } from '../types';
 import { latLngToXY } from '../geometry/coordinates';
-import { resolveBuildingOutlines, buildMetadataFromColumns } from '../geometry/outlines';
+import { buildMetadataFromColumns } from '../geometry/outlines';
 import { convertAndMergeRoads } from '../roads';
 
 /**
@@ -104,11 +104,6 @@ export function geojsonToGeometry(
 
 	// Buffer and merge roads (same as OSM converter)
 	const merged = convertAndMergeRoads(objects);
-
-	onProgress?.({ step: 'osm-parse', percent: 80, message: 'Resolving building parts...' });
-
-	// Resolve building outlines vs parts
-	resolveBuildingOutlines(merged);
 
 	onProgress?.({ step: 'osm-parse', percent: 100, message: `Done: ${merged.length} objects` });
 	return merged;
