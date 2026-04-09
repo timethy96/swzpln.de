@@ -31,9 +31,10 @@ export function exportToSVG(
 	const sortedObjects = sortObjectsByLayer(mergedObjects);
 	const total = sortedObjects.length;
 
-	// Start SVG
-	let svg = `<svg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' `;
-	svg += `width='${width}mm' height='${height}mm' viewBox='0 0 ${width} ${height}'>`;
+	// Start SVG — use array + join to avoid repeated string allocation
+	const parts: string[] = [];
+	parts.push(`<svg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' `);
+	parts.push(`width='${width}mm' height='${height}mm' viewBox='0 0 ${width} ${height}'>`);
 
 	notify(onProgress, 20, m.progress_svg_adding_objects());
 
@@ -41,7 +42,7 @@ export function exportToSVG(
 	for (const obj of sortedObjects) {
 		const pathStr = objToSVGPath(obj, maxXY, scale, buildingStyle);
 		if (pathStr) {
-			svg += pathStr;
+			parts.push(pathStr);
 		}
 
 		count++;
@@ -58,11 +59,11 @@ export function exportToSVG(
 	notify(onProgress, 95, m.progress_svg_adding_attribution());
 	const textX = maxXY.x * 1000 * scale;
 	const textY = (maxXY.y + txtSize) * 1000 * scale;
-	svg += `<text x='${textX}' y='${textY}' text-anchor='end' style='font: ${txtSize * 1000 * scale}px sans-serif;' fill='red'>(c) OpenStreetMap.org contributors</text>`;
+	parts.push(`<text x='${textX}' y='${textY}' text-anchor='end' style='font: ${txtSize * 1000 * scale}px sans-serif;' fill='red'>(c) OpenStreetMap.org contributors</text>`);
 
-	svg += '</svg>';
+	parts.push('</svg>');
 	notify(onProgress, 100, m.progress_svg_complete());
-	return svg;
+	return parts.join('');
 }
 
 // Helpers

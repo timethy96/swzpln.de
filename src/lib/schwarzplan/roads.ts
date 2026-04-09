@@ -149,6 +149,16 @@ export function convertAndMergeRoads(objects: GeometryObject[]): GeometryObject[
 		return result;
 	}
 
+	// polygon-clipping.union() has quadratic complexity — skip merging for large datasets
+	// to avoid "queue size too big" / infinite loop errors
+	const MERGE_LIMIT = 500;
+	if (roadPolygons.length > MERGE_LIMIT) {
+		for (const { polygon, obj } of roadPolygons) {
+			result.push({ ...obj, path: polygon });
+		}
+		return result;
+	}
+
 	const polygonCoords = roadPolygons.map(({ polygon }) => [
 		polygon.map((p) => [p.x, p.y] as [number, number])
 	]);
