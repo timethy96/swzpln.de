@@ -63,7 +63,7 @@ function bicubicInterpolate(matrix: number[][], x: number, y: number): number {
 export const GET: RequestHandler = async ({ url, getClientAddress }) => {
 	// Rate limiting: 20 requests per IP per minute
 	const clientIP = getClientAddress();
-	if (!checkRateLimit(clientIP, 20, 60 * 1000)) {
+	if (!checkRateLimit(`elevation:${clientIP}`, 20, 60 * 1000)) {
 		throw error(429, 'Too many requests');
 	}
 

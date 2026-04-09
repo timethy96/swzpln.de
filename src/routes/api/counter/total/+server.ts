@@ -7,7 +7,7 @@ import type { RequestHandler } from './$types';
 export const GET: RequestHandler = async ({ getClientAddress }) => {
 	// Rate limiting: 30 requests per IP per minute
 	const clientIP = getClientAddress();
-	if (!checkRateLimit(clientIP, 30, 60 * 1000)) {
+	if (!checkRateLimit(`counter:${clientIP}`, 30, 60 * 1000)) {
 		throw error(429, 'Too many requests');
 	}
 

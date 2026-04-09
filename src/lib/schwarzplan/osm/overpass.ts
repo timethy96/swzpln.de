@@ -24,14 +24,16 @@ function constructOverpassQuery(apiBase: string, bounds: Bounds, layers: Layer[]
 		if (layer === 'contours') continue; // Skip contours, handled separately
 		const config = LAYER_CONFIG[layer];
 		if (config && config.overpassQuery) {
-			queryParts.push(config.overpassQuery);
+			// Inject bbox directly into each statement: nwr["tag"] → nwr(bbox)["tag"]
+			const withBbox = config.overpassQuery.replace(/\bnwr\b/g, `nwr(${bbox})`);
+			queryParts.push(withBbox);
 		} else if (!config) {
 			console.warn(`Layer config missing for: ${layer}`);
 		}
 	}
 
 	// Construct full query
-	const query = `[out:json][bbox:${bbox}];(${queryParts.join('')});out body;>;out skel qt;`;
+	const query = `[out:json];(${queryParts.join('')});out body;>;out skel qt;`;
 
 	return `${apiBase}interpreter?data=${encodeURIComponent(query)}`;
 }

@@ -104,11 +104,13 @@ function buildOverpassQuery(bounds: Bounds, layers: Layer[]): string {
 		if (layer === 'contours') continue;
 		const config = LAYER_CONFIG[layer];
 		if (config?.overpassQuery) {
-			queryParts.push(config.overpassQuery);
+			// Inject bbox directly into each statement: nwr["tag"] → nwr(bbox)["tag"]
+			const withBbox = config.overpassQuery.replace(/\bnwr\b/g, `nwr(${bbox})`);
+			queryParts.push(withBbox);
 		}
 	}
 
-	return `[out:json][bbox:${bbox}];(${queryParts.join('')});out body;>;out skel qt;`;
+	return `[out:json];(${queryParts.join('')});out body;>;out skel qt;`;
 }
 
 // ============================================================================
@@ -388,6 +390,14 @@ export async function queryGeodata(bounds: Bounds, layers: Layer[]): Promise<Geo
 
 	if (!res.ok) {
 		throw new Error(`Overpass API error: ${res.status}`);
+	}
+
+	const contentType = res.headers.get('content-type') ?? '';
+	if (!contentType.includes('json')) {
+		console.warn(
+			`Overpass API returned non-JSON response (${contentType}), falling back to client-side`
+		);
+		return { source: 'unavailable' as const, layers: {} };
 	}
 
 	const data = (await res.json()) as OverpassResponse;

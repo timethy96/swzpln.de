@@ -40,8 +40,9 @@
 	async function fetchDownloadCount() {
 		try {
 			const response = await fetch('/api/counter/total');
+			if (!response.ok) return;
 			const data = await response.json();
-			downloadCount = data.total;
+			downloadCount = data.total ?? 0;
 		} catch (error) {
 			console.warn('Failed to fetch download count:', error);
 		}

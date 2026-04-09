@@ -7,7 +7,7 @@ import type { RequestHandler } from './$types';
 export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 	// Rate limiting: 5 downloads per IP per minute
 	const clientIP = getClientAddress();
-	if (!checkRateLimit(clientIP, 5, 60 * 1000)) {
+	if (!checkRateLimit(`counter-record:${clientIP}`, 5, 60 * 1000)) {
 		throw error(429, 'Too many requests');
 	}
 
