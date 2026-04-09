@@ -33,7 +33,9 @@ export function exportToSVG(
 
 	// Start SVG — use array + join to avoid repeated string allocation
 	const parts: string[] = [];
-	parts.push(`<svg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' `);
+	parts.push(
+		`<svg xmlns='http://www.w3.org/2000/svg' version='1.1' xmlns:xlink='http://www.w3.org/1999/xlink' `
+	);
 	parts.push(`width='${width}mm' height='${height}mm' viewBox='0 0 ${width} ${height}'>`);
 
 	notify(onProgress, 20, m.progress_svg_adding_objects());
@@ -59,7 +61,9 @@ export function exportToSVG(
 	notify(onProgress, 95, m.progress_svg_adding_attribution());
 	const textX = maxXY.x * 1000 * scale;
 	const textY = (maxXY.y + txtSize) * 1000 * scale;
-	parts.push(`<text x='${textX}' y='${textY}' text-anchor='end' style='font: ${txtSize * 1000 * scale}px sans-serif;' fill='red'>(c) OpenStreetMap.org contributors</text>`);
+	parts.push(
+		`<text x='${textX}' y='${textY}' text-anchor='end' style='font: ${txtSize * 1000 * scale}px sans-serif;' fill='red'>(c) OpenStreetMap.org contributors</text>`
+	);
 
 	parts.push('</svg>');
 	notify(onProgress, 100, m.progress_svg_complete());

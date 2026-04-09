@@ -196,7 +196,11 @@ export function exportToDXF3D(
 	dxf.setLayer('OTHER');
 	const txtXY = latLngToXY(bounds, bounds.south, bounds.east);
 	const txtSize = (19 - zoom) * 10;
-	dxf.addText({ x: txtXY.x, y: txtXY.y - txtSize, z: 0 }, txtSize, '(c) OpenStreetMap.org contributors');
+	dxf.addText(
+		{ x: txtXY.x, y: txtXY.y - txtSize, z: 0 },
+		txtSize,
+		'(c) OpenStreetMap.org contributors'
+	);
 
 	dxf.endEntities();
 
