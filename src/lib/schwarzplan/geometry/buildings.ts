@@ -24,14 +24,31 @@ export function extrudeBuildings(
 	const groups = new Map<number, typeof buildings>();
 	const singles: typeof buildings = [];
 
-	// 1. Group by relationId
+	// 1. Group by relationId — collect outlines separately so we can add them back as
+	//    a ground-floor base when all parts in a group are elevated (min_height > 0).
+	const outlines = new Map<number, (typeof buildings)[0]>();
 	for (const b of buildings) {
-		if (b.isOutline) continue; // Skip outlines – they exist only for 2D plans
+		if (b.isOutline) {
+			if (b.relationId) outlines.set(b.relationId, b);
+			continue;
+		}
 		if (b.relationId) {
 			if (!groups.has(b.relationId)) groups.set(b.relationId, []);
 			groups.get(b.relationId)!.push(b);
 		} else {
 			singles.push(b);
+		}
+	}
+
+	// If every part in a group starts above ground level, the outline is needed to fill
+	// in the missing base (e.g. Humboldt Forum: parts are elevated wings, outline = base).
+	for (const [relationId, group] of groups) {
+		const allPartsElevated = group.every(
+			(p) => (p.metadata.minHeight ?? (p.metadata.minLevel ?? 0) * 3) > 0
+		);
+		if (allPartsElevated) {
+			const outline = outlines.get(relationId);
+			if (outline) group.push(outline);
 		}
 	}
 

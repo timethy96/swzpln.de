@@ -42,14 +42,17 @@ export async function exportGeometry(
 			return exportToPDF(objects, contours, bounds, zoom, scale, onProgress, buildingStyle);
 
 		case 'dxf3d':
+			onProgress?.({ step: 'osm-parse', percent: 90, message: 'Resolving building parts...' });
 			resolveBuildingOutlines(objects);
 			return exportToDXF3D(objects, elevationMatrix, bounds, zoom, onProgress, contours);
 
 		case 'ifc':
+			onProgress?.({ step: 'osm-parse', percent: 90, message: 'Resolving building parts...' });
 			resolveBuildingOutlines(objects);
 			return await exportToIFC(objects, elevationMatrix, bounds, onProgress);
 
 		case 'obj':
+			onProgress?.({ step: 'osm-parse', percent: 90, message: 'Resolving building parts...' });
 			resolveBuildingOutlines(objects);
 			return await exportToOBJ(objects, elevationMatrix, bounds, onProgress);
 
