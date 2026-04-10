@@ -40,13 +40,14 @@ export function extrudeBuildings(
 		}
 	}
 
-	// If every part in a group starts above ground level, the outline is needed to fill
-	// in the missing base (e.g. Humboldt Forum: parts are elevated wings, outline = base).
+	// If any part in a group starts above ground level, the outline is needed as the
+	// base/fill for areas not covered by ground-level parts (e.g. Humboldt Forum portal
+	// passages: bridge sections float at min_height=28m above an open carriageway).
 	for (const [relationId, group] of groups) {
-		const allPartsElevated = group.every(
+		const hasElevatedParts = group.some(
 			(p) => (p.metadata.minHeight ?? (p.metadata.minLevel ?? 0) * 3) > 0
 		);
-		if (allPartsElevated) {
+		if (hasElevatedParts) {
 			const outline = outlines.get(relationId);
 			if (outline) group.push(outline);
 		}
