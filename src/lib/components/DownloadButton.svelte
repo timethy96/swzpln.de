@@ -520,8 +520,8 @@
 				<Download class="size-4" />
 				{m.shop_complete_download()}
 			</Button>
-			{#if showShop}
-				<div class="flex flex-col gap-2">
+			<div class="flex flex-col gap-2">
+				{#if showShop}
 					<p class="text-center text-xs text-muted-foreground">{m.shop_complete_subtitle()}</p>
 					<a
 						href="https://shop.swzpln.de"
@@ -535,18 +535,18 @@
 						{m.shop_complete_buy()}
 						<ExternalLink class="size-3" />
 					</a>
-					<a
-						href="https://ko-fi.com/swzpln"
-						target="_blank"
-						rel="noopener noreferrer"
-						class="group inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
-					>
-						<Heart class="size-4 transition-colors group-hover:fill-red-500" />
-						{m.shop_complete_donate()}
-						<ExternalLink class="size-3" />
-					</a>
-				</div>
-			{/if}
+				{/if}
+				<a
+					href="https://ko-fi.com/swzpln"
+					target="_blank"
+					rel="noopener noreferrer"
+					class="group inline-flex h-10 w-full items-center justify-center gap-2 rounded-md border border-input bg-background px-4 text-sm font-medium shadow-xs transition-colors hover:bg-accent hover:text-accent-foreground"
+				>
+					<Heart class="size-4 transition-colors group-hover:fill-red-500" />
+					{m.shop_complete_donate()}
+					<ExternalLink class="size-3" />
+				</a>
+			</div>
 			<Button variant="ghost" class="w-full" onclick={handleCompletionClose}>
 				{m.shop_complete_close()}
 			</Button>
