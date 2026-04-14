@@ -22,6 +22,7 @@
 		href?: string;
 		onClick?: () => void;
 		active?: boolean;
+		sameTab?: boolean;
 	}
 
 	// Props for controlling the drawer
@@ -68,6 +69,8 @@
 			if (item.href.startsWith('/')) {
 				// eslint-disable-next-line svelte/no-navigation-without-resolve
 				goto(item.href, { invalidateAll: false });
+			} else if (item.sameTab) {
+				window.location.href = item.href;
 			} else {
 				window.open(item.href, '_blank');
 			}

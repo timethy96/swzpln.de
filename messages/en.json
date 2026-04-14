@@ -2,7 +2,7 @@
 	"$schema": "https://inlang.com/schema/inlang-message-format",
 	"nav_home": "Map",
 	"nav_help": "Help",
-	"nav_english": "German",
+	"nav_switch_language": "Deutsch",
 	"nav_donate": "Donate (ko-fi.com)",
 	"nav_dark_mode": "Dark Mode",
 	"nav_source": "Source Code (github.com)",

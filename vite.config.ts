@@ -10,7 +10,31 @@ export default defineConfig({
 		sveltekit(),
 		paraglideVitePlugin({
 			project: './project.inlang',
-			outdir: './src/lib/paraglide'
+			outdir: './src/lib/paraglide',
+			strategy: ['url', 'baseLocale'],
+			urlPatterns: [
+				{
+					pattern: 'https://swzpln.de/:path(.*)?',
+					localized: [
+						['de', 'https://swzpln.de/:path(.*)?'],
+						['en', 'https://opencityplans.com/:path(.*)?']
+					]
+				},
+				{
+					pattern: 'https://opencityplans.com/:path(.*)?',
+					localized: [
+						['de', 'https://swzpln.de/:path(.*)?'],
+						['en', 'https://opencityplans.com/:path(.*)?']
+					]
+				},
+				{
+					pattern: ':protocol://:domain(.*)::port?/:path(.*)?',
+					localized: [
+						['en', ':protocol://:domain(.*)::port?/en/:path(.*)?'],
+						['de', ':protocol://:domain(.*)::port?/:path(.*)?']
+					]
+				}
+			]
 		})
 	],
 	optimizeDeps: {

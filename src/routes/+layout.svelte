@@ -16,8 +16,7 @@
 	import { appState } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
-	import { setLocale } from '$lib/paraglide/runtime';
-	import { browser } from '$app/environment';
+	import { getLocale, localizeHref } from '$lib/paraglide/runtime';
 	import { env } from '$env/dynamic/public';
 
 	const showShop = env.PUBLIC_SHOW_SHOP !== 'false';
@@ -70,27 +69,25 @@
 		setCookie('dark_mode', isDark.toString(), 30);
 	}
 
-	// Initialize dark mode and language on mount
+	// Initialize dark mode on mount
 	onMount(() => {
 		if (loadDarkMode()) {
 			document.documentElement.classList.add('dark');
 		}
-
-		// Set language based on domain
-		if (browser) {
-			const hostname = window.location.hostname;
-			if (hostname === 'opencityplans.com' || hostname === 'www.opencityplans.com') {
-				setLocale('en', { reload: false });
-			} else {
-				setLocale('de', { reload: false });
-			}
-		}
 	});
 
-	const navigationItems = [
+	const otherLocale = $derived(getLocale() === 'de' ? 'en' : 'de');
+	const languageSwitchHref = $derived(localizeHref('/', { locale: otherLocale }));
+
+	const navigationItems = $derived([
 		{ icon: Map, label: m.nav_home(), href: '/' },
 		{ icon: CircleHelp, label: m.nav_help(), onClick: () => appState.toggleHelpOverlay() },
-		{ icon: Globe, label: m.nav_english(), href: 'https://opencityplans.com' },
+		{
+			icon: Globe,
+			label: m.nav_switch_language(),
+			href: languageSwitchHref,
+			sameTab: true
+		},
 		{ icon: Heart, label: m.nav_donate(), href: 'https://ko-fi.com/swzpln' },
 		...(showShop
 			? [{ icon: ShoppingCart, label: m.nav_shop(), href: 'https://shop.swzpln.de' }]
@@ -98,7 +95,7 @@
 		{ icon: Moon, label: m.nav_dark_mode(), onClick: toggleDarkMode },
 		{ icon: CodeXml, label: m.nav_source(), href: 'https://github.com/timethy96/swzpln.de' },
 		{ icon: FileText, label: m.nav_legal(), href: '/impressum' }
-	];
+	]);
 </script>
 
 <!-- SEO and Structured Data -->
