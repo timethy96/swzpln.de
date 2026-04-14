@@ -13,36 +13,75 @@ export function resolveBuildingOutlines(objects: GeometryObject[]): void {
 	const parts = buildings.filter((b) => b.buildingMetadata!.isPart);
 	const potentialOutlines = buildings.filter((b) => !b.buildingMetadata!.isPart && !b.isOutline);
 
+	// Process smallest outlines first so the tightest-fitting polygon claims its parts before
+	// a larger enclosing building can steal them.
+	potentialOutlines.sort((a, b) => polygonArea(a.path) - polygonArea(b.path));
+
 	for (const outline of potentialOutlines) {
 		const outlineBBox = getBBox(outline.path);
 
+		// Pass 1: collect all contained parts, split into body parts and roof-only parts.
+		const bodyParts: GeometryObject[] = [];
+		const roofOnlyParts: GeometryObject[] = [];
+
 		for (const part of parts) {
 			const partBBox = getBBox(part.path);
-			if (bboxIntersect(outlineBBox, partBBox)) {
-				const centroid = calculateCentroid(part.path);
-				if (isPointInPolygon(centroid, outline.path)) {
-					// Don't let parts from other building relations suppress this outline
-					if (part.relationId && outline.relationId && part.relationId !== outline.relationId)
-						continue;
+			if (!bboxIntersect(outlineBBox, partBBox)) continue;
 
-					// Only suppress outline if the part has a meaningful 3D body.
-					// Dome-only parts (height == roofHeight, no levels) are roof decorations,
-					// not full building replacements — they shouldn't suppress the outline.
-					const partMeta = part.buildingMetadata;
-					if (!partMeta) continue;
-					const hasBody =
-						(partMeta.height && partMeta.height > (partMeta.roofHeight || 0)) || !!partMeta.levels;
-					if (!hasBody) continue;
+			const centroid = calculateCentroid(part.path);
+			if (!isPointInPolygon(centroid, outline.path)) continue;
 
-					outline.isOutline = true;
+			// Once a part is linked to any relation, don't let a different outline steal it.
+			if (part.relationId && part.relationId !== outline.relationId) continue;
 
-					// Group them so they share base elevation
-					if (!part.relationId) {
-						const pseudoId = outline.relationId || Math.floor(Math.random() * -1000000);
-						outline.relationId = pseudoId;
-						part.relationId = pseudoId;
-					} else if (!outline.relationId) {
-						outline.relationId = part.relationId;
+			const partMeta = part.buildingMetadata;
+			if (!partMeta) continue;
+			const hasBody =
+				(partMeta.height && partMeta.height > (partMeta.roofHeight || 0)) || !!partMeta.levels;
+
+			if (hasBody) {
+				bodyParts.push(part);
+			} else {
+				roofOnlyParts.push(part);
+			}
+		}
+
+		const allContained = [...bodyParts, ...roofOnlyParts];
+		if (allContained.length === 0) continue;
+
+		// Pass 2: only suppress the outline when body parts collectively cover a
+		// significant portion of its footprint.  A single small decorative part
+		// (dome base, tower) should not hide an entire building.
+		const outlineArea = polygonArea(outline.path);
+		const bodyArea = bodyParts.reduce((sum, p) => sum + polygonArea(p.path), 0);
+		const shouldSuppress = outlineArea > 0 && bodyArea / outlineArea >= 0.3;
+
+		if (shouldSuppress) {
+			outline.isOutline = true;
+		}
+
+		// Group all contained parts with the outline so they share base elevation.
+		const groupId = outline.relationId || Math.floor(Math.random() * -1000000);
+		outline.relationId = groupId;
+		for (const part of allContained) {
+			if (!part.relationId) {
+				part.relationId = groupId;
+			}
+		}
+
+		// For roof-only parts inside an unsuppressed outline, place them on top of the
+		// outline rather than at ground level (their OSM data typically lacks min_height).
+		if (!shouldSuppress) {
+			const outlineHeight = outline.buildingMetadata?.height;
+			if (outlineHeight) {
+				for (const part of roofOnlyParts) {
+					const meta = part.buildingMetadata!;
+					if (meta.minHeight == null) {
+						meta.minHeight = outlineHeight;
+						// Recalculate total height to include the new base
+						if (meta.roofHeight && meta.height != null) {
+							meta.height = outlineHeight + meta.roofHeight;
+						}
 					}
 				}
 			}
@@ -110,6 +149,17 @@ interface BBox {
 	minY: number;
 	maxX: number;
 	maxY: number;
+}
+
+function polygonArea(polygon: Coordinate[]): number {
+	let area = 0;
+	const n = polygon.length;
+	for (let i = 0; i < n; i++) {
+		const j = (i + 1) % n;
+		area += polygon[i].x * polygon[j].y;
+		area -= polygon[j].x * polygon[i].y;
+	}
+	return Math.abs(area) / 2;
 }
 
 function getBBox(polygon: Coordinate[]): BBox {
