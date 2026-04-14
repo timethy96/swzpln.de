@@ -3,7 +3,7 @@ Creator: Timo Bilhöfer
 Site: https://timo.bilhoefer.de
 Location: Berlin, Germany
 
-Supporter: TAB Studio UG i.G. (haftungsbeschränkt)
+Supporter: TAB Studio UG (haftungsbeschränkt)
 Site: https://tabstudio.de
 
 /* THANKS */
