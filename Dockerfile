@@ -24,7 +24,7 @@ RUN pnpm install --prod --frozen-lockfile
 
 # Run as non-root user
 RUN addgroup -S app && adduser -S app -G app
-RUN chown -R app:app /app
+RUN mkdir -p /app/data && chown -R app:app /app
 USER app
 
 ENV NODE_ENV=production
