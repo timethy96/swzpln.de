@@ -182,37 +182,39 @@
 			let geodata: GeoDataResponse | null = null;
 			let osmData = null;
 
-			try {
+			progressWrapper({
+				step: 'osm-download',
+				percent: 0,
+				message: m.progress_geodata_download()
+			});
+			const params = new URLSearchParams({
+				north: String(cleanBounds.north),
+				south: String(cleanBounds.south),
+				east: String(cleanBounds.east),
+				west: String(cleanBounds.west),
+				layers: cleanLayers.join(',')
+			});
+			const response = await fetch(`/api/geodata?${params}`);
+			if (!response.ok) {
+				let detail = `${response.status} ${response.statusText}`;
+				try {
+					const body = await response.json();
+					if (body?.message) detail = body.message;
+				} catch {
+					// non-JSON body, keep status text
+				}
+				throw new Error(`Geodata API error: ${detail}`);
+			}
+			const data = (await response.json()) as GeoDataResponse;
+			if (data.source === 'overpass') {
+				geodata = data;
 				progressWrapper({
 					step: 'osm-download',
-					percent: 0,
-					message: m.progress_geodata_download()
+					percent: 100,
+					message: m.progress_geodata_downloaded()
 				});
-				const params = new URLSearchParams({
-					north: String(cleanBounds.north),
-					south: String(cleanBounds.south),
-					east: String(cleanBounds.east),
-					west: String(cleanBounds.west),
-					layers: cleanLayers.join(',')
-				});
-				const response = await fetch(`/api/geodata?${params}`);
-				if (response.ok) {
-					const data = await response.json();
-					if (data.source === 'overpass') {
-						geodata = data;
-						progressWrapper({
-							step: 'osm-download',
-							percent: 100,
-							message: m.progress_geodata_downloaded()
-						});
-					}
-				}
-			} catch (e) {
-				console.warn('Server geodata fetch failed, falling back to client-side Overpass:', e);
-			}
-
-			// Fallback to client-side Overpass if server unavailable
-			if (!geodata) {
+			} else {
+				// Server explicitly signaled unavailability — fall back to client-side Overpass
 				osmData = await downloadOSMData(cleanBounds, cleanLayers, progressWrapper);
 			}
 			if (isCancelled) return;
