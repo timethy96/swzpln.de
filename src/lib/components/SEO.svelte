@@ -17,7 +17,7 @@
 		title,
 		description,
 		keywords = [],
-		image = '/og-image.png',
+		image = '/og-image.jpg',
 		noindex = false,
 		canonical,
 		type = 'website'
