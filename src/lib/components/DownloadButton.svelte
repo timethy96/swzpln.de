@@ -140,7 +140,7 @@
 
 		// For SVG/PDF, show scale selector first
 		if (format === 'svg' || format === 'pdf') {
-			availableScales = getSuitableScales(appState.bounds);
+			availableScales = getSuitableScales(appState.bounds, appState.location.zoom);
 			scaleDialogOpen = true;
 		} else {
 			await startGeneration(format, undefined);

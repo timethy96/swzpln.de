@@ -50,24 +50,29 @@ const ALL_SCALES: ScaleOption[] = [
 	{ name: '1:50.000', scale: 0.00002 }
 ];
 
+// PDF spec (≤1.6) caps pages at 14400 × 14400 user-space units.
+// At the default user unit of 1/72 inch that is 200 inch = 5.08 m per side.
+const MAX_PDF_PAGE_SIZE_METERS = 5.08;
+
 /**
  * Get suitable scale options for the given bounds
- * Returns up to 3 scales that fit within standard paper sizes
+ * Returns up to 3 scales that produce a page within the PDF spec size limit
  */
-export function getSuitableScales(bounds: Bounds): ScaleOption[] {
+export function getSuitableScales(bounds: Bounds, zoom: number): ScaleOption[] {
 	const maxXY = latLngToXY(bounds, bounds.north, bounds.east);
 	const scaleSuggestions: ScaleOption[] = [];
 
-	// Maximum size in meters for A0 paper (roughly 5.08m at scale)
-	const MAX_PAPER_SIZE_METERS = 5.08;
+	// Mirror the exporters' paper-height formula (pdf.ts / svg.ts) so the
+	// check reflects the actual emitted page size including the attribution.
+	const txtSize = (19 - zoom) * 10;
+	const effectiveHeight = maxXY.y + txtSize + 5;
 
 	for (let i = 0; i < ALL_SCALES.length && scaleSuggestions.length < 3; i++) {
 		const scale = ALL_SCALES[i];
-		const scaledX = Math.abs(maxXY.x * scale.scale);
-		const scaledY = Math.abs(maxXY.y * scale.scale);
+		const scaledX = maxXY.x * scale.scale;
+		const scaledY = effectiveHeight * scale.scale;
 
-		// Check if both dimensions fit within paper size
-		if (scaledX < MAX_PAPER_SIZE_METERS && scaledY < MAX_PAPER_SIZE_METERS) {
+		if (scaledX < MAX_PDF_PAGE_SIZE_METERS && scaledY < MAX_PDF_PAGE_SIZE_METERS) {
 			scaleSuggestions.push(scale);
 		}
 	}

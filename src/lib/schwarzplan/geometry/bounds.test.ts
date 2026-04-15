@@ -73,15 +73,17 @@ describe('bounds', () => {
 	});
 
 	describe('getSuitableScales', () => {
+		const zoom = 15;
+
 		it('should return array of scale options', () => {
-			const scales = getSuitableScales(validBounds);
+			const scales = getSuitableScales(validBounds, zoom);
 			expect(Array.isArray(scales)).toBe(true);
 			expect(scales.length).toBeGreaterThan(0);
 			expect(scales.length).toBeLessThanOrEqual(3);
 		});
 
 		it('should return scales with name and scale properties', () => {
-			const scales = getSuitableScales(validBounds);
+			const scales = getSuitableScales(validBounds, zoom);
 			scales.forEach((scale) => {
 				expect(scale).toHaveProperty('name');
 				expect(scale).toHaveProperty('scale');
@@ -104,13 +106,21 @@ describe('bounds', () => {
 				west: 9.0
 			};
 
-			const smallScales = getSuitableScales(smallBounds);
-			const largeScales = getSuitableScales(largeBounds);
+			const smallScales = getSuitableScales(smallBounds, zoom);
+			const largeScales = getSuitableScales(largeBounds, zoom);
 
 			// Larger bounds should have smaller scale values
 			if (largeScales.length > 0 && smallScales.length > 0) {
 				expect(largeScales[0].scale).toBeLessThan(smallScales[0].scale);
 			}
+		});
+
+		it('should not suggest more scales at lower zoom (larger attribution text)', () => {
+			// Same bounds, different zoom levels. Lower zoom inflates txtSize,
+			// which can only shrink the set of fitting scales, never grow it.
+			const highZoomScales = getSuitableScales(validBounds, 18);
+			const lowZoomScales = getSuitableScales(validBounds, 11);
+			expect(lowZoomScales.length).toBeLessThanOrEqual(highZoomScales.length);
 		});
 	});
 
