@@ -4,16 +4,27 @@
 	import ChevronDown from '@lucide/svelte/icons/chevron-down';
 	import type { Component } from 'svelte';
 
-	type DropdownItem = {
+	interface DropdownItem {
 		icon?: Component;
 		label: string;
 		id: string;
 		color?: string;
 		value?: string | number;
 		onSelect?: (item: DropdownItem) => void;
-	};
+	}
 
-	// Props interface
+	interface Props {
+		icon?: Component;
+		color?: string;
+		id?: string;
+		children?: import('svelte').Snippet;
+		initialSelected?: boolean;
+		onToggle?: (selected: boolean) => void;
+		dropdownItems?: DropdownItem[];
+		onDropdownItemClick?: (item: DropdownItem) => void;
+		selectedValue?: string | number;
+	}
+
 	let {
 		icon,
 		color,
@@ -24,17 +35,7 @@
 		dropdownItems = [],
 		onDropdownItemClick = undefined,
 		selectedValue = undefined
-	}: {
-		icon?: Component;
-		color?: string;
-		id?: string;
-		children?: import('svelte').Snippet;
-		initialSelected?: boolean;
-		onToggle?: (selected: boolean) => void;
-		dropdownItems?: DropdownItem[];
-		onDropdownItemClick?: (item: DropdownItem) => void;
-		selectedValue?: string | number;
-	} = $props();
+	}: Props = $props();
 
 	let selected = $state(initialSelected);
 	let open = $state(false);

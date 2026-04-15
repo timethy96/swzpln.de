@@ -2,13 +2,13 @@
 	import { MapLibre } from 'svelte-maplibre';
 	import { NavigationControl } from 'svelte-maplibre';
 	import { AttributionControl } from 'svelte-maplibre';
-	import type { Map as MaplibreMap } from 'maplibre-gl';
+	import type { Map as MaplibreMap } from 'svelte-maplibre/types.js';
 	import DownloadButton from './DownloadButton.svelte';
 	import { Skeleton } from '$lib/components/ui/skeleton';
 	import { appState } from '$lib/state.svelte';
 	import { onMount } from 'svelte';
 
-	let mapInstance = $state<MaplibreMap | null>(null);
+	let mapInstance = $state<MaplibreMap | undefined>(undefined);
 	let isLoading = $state(true);
 
 	onMount(() => {
@@ -42,36 +42,35 @@
 
 	// Sync map movements to state
 	$effect(() => {
-		if (mapInstance) {
-			const updateState = () => {
-				const bounds = mapInstance.getBounds();
-				const center = mapInstance.getCenter();
-				const zoom = mapInstance.getZoom();
+		const map = mapInstance;
+		if (!map) return;
 
-				// Update state without triggering loops (basic equality check logic is in state setter if needed, but direct assignment is fine)
-				appState.setBounds({
-					north: bounds.getNorth(),
-					south: bounds.getSouth(),
-					east: bounds.getEast(),
-					west: bounds.getWest()
-				});
+		const updateState = () => {
+			const bounds = map.getBounds();
+			const center = map.getCenter();
+			const zoom = map.getZoom();
 
-				// Update location (persisted to cookie by state effect)
-				appState.setLocation([center.lng, center.lat], zoom);
-			};
+			appState.setBounds({
+				north: bounds.getNorth(),
+				south: bounds.getSouth(),
+				east: bounds.getEast(),
+				west: bounds.getWest()
+			});
 
-			mapInstance.on('moveend', updateState);
-			updateState(); // Initial sync
+			appState.setLocation([center.lng, center.lat], zoom);
+		};
 
-			// Force disable interactions that might persist or default to enabled
-			mapInstance.dragRotate.disable();
-			mapInstance.touchPitch.disable();
-			mapInstance.touchZoomRotate.disableRotation();
+		map.on('moveend', updateState);
+		updateState();
 
-			return () => {
-				mapInstance.off('moveend', updateState);
-			};
-		}
+		// Force disable interactions that might persist or default to enabled
+		map.dragRotate.disable();
+		map.touchPitch.disable();
+		map.touchZoomRotate.disableRotation();
+
+		return () => {
+			map.off('moveend', updateState);
+		};
 	});
 
 	const style = 'https://basemaps.cartocdn.com/gl/positron-gl-style/style.json';
