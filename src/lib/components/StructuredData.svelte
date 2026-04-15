@@ -163,7 +163,7 @@
 							name: 'Ist SWZPLN wirklich kostenlos?',
 							acceptedAnswer: {
 								'@type': 'Answer',
-								text: 'Ja, SWZPLN ist vollständig kostenlos und Open Source. Das Projekt ist unter der AGPL-3-Lizenz veröffentlicht und basiert auf OpenStreetMap-Daten. Sie können das Projekt durch Spenden auf Ko-fi unterstützen.'
+								text: 'Ja, SWZPLN ist vollständig kostenlos und Open Source. Das Projekt ist unter der AGPL-3-Lizenz veröffentlicht und basiert auf OpenStreetMap-Daten. Du kannst das Projekt durch Spenden auf Ko-fi unterstützen.'
 							}
 						},
 						{

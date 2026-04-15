@@ -22,10 +22,36 @@
 		<h1 id="imprint">Impressum</h1>
 		<p>Angaben gemäß § 5 TMG</p>
 		<p>
-			Timo Bilhöfer<br />
-			Wühlischstr. 20<br />
-			10245 Berlin<br /><br />
+			TAB Studio UG (haftungsbeschränkt)<br />
+			Kolonnenstraße 8<br />
+			10827 Berlin<br />
+			Deutschland
+		</p>
+
+		<h3>Registereintrag</h3>
+		<p>
+			Eingetragen im Handelsregister<br />
+			Registergericht: Amtsgericht Charlottenburg<br />
+			Registernummer: HRB 286098
+		</p>
+
+		<h3>Kontakt</h3>
+		<p>
 			E-Mail: <a href="mailto:{emailAddr}">{emailAddr}</a>
+		</p>
+
+		<h3>Vertretungsberechtigter Geschäftsführer</h3>
+		<p>
+			Timo Bilhöfer<br />
+			Kolonnenstraße 8<br />
+			10827 Berlin
+		</p>
+
+		<h3>Verantwortlich für den Inhalt nach § 18 Abs. 2 MStV</h3>
+		<p>
+			Timo Bilhöfer<br />
+			Kolonnenstraße 8<br />
+			10827 Berlin
 		</p>
 
 		<h3>Haftung für Inhalte</h3>
@@ -183,9 +209,9 @@
 			datenschutzrechtlichem Charakter ist die:
 		</p>
 
-		<p>swzpln.de</p>
-		<p>Wühlischstr. 20</p>
-		<p>10245 Berlin</p>
+		<p>TAB Studio UG (haftungsbeschränkt)</p>
+		<p>Kolonnenstraße 8</p>
+		<p>10827 Berlin</p>
 		<p>Deutschland</p>
 		<p>E-Mail: <a href="mailto:{emailAddr}">{emailAddr}</a></p>
 		<p>Website: swzpln.de</p>
