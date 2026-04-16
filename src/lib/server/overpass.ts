@@ -14,7 +14,7 @@ function getOverpassUrl(): string {
 }
 
 const CACHE_TTL_MS = parseInt(env.OVERPASS_CACHE_TTL_HOURS ?? '24', 10) * 3600 * 1000;
-const MAX_CACHE_ENTRIES = 500;
+const MAX_CACHE_ENTRIES = 100;
 
 // ============================================================================
 // Availability Check

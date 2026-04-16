@@ -34,11 +34,11 @@ export function recordDownload(): void {
 }
 
 /**
- * Get all download records
+ * Get download records with a safety limit to prevent unbounded memory usage
  */
-export function getAllDownloads(): Array<{ id: number; timestamp: number }> {
-	const stmt = db.prepare('SELECT id, timestamp FROM download_log ORDER BY timestamp');
-	return stmt.all() as Array<{ id: number; timestamp: number }>;
+export function getAllDownloads(limit = 100_000): Array<{ id: number; timestamp: number }> {
+	const stmt = db.prepare('SELECT id, timestamp FROM download_log ORDER BY timestamp LIMIT ?');
+	return stmt.all(limit) as Array<{ id: number; timestamp: number }>;
 }
 
 /**
