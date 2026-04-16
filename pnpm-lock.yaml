@@ -29,9 +29,6 @@ importers:
       polygon-clipping:
         specifier: ^0.15.7
         version: 0.15.7
-      sql.js:
-        specifier: ^1.14.1
-        version: 1.14.1
       svelte-maplibre:
         specifier: ^1.3.0
         version: 1.3.0(svelte@5.55.2)
@@ -1772,9 +1769,6 @@ packages:
   splaytree@3.2.3:
     resolution: {integrity: sha512-7OXrNWzy6CK+r7Ch9OLPBDTKfB6XlWHjX4P0RU5B3IgFuWPeYN0XtRtlexGRjgbQxpfaUve6jTAwBGWuGntz/w==}
     engines: {node: '>=18.20 || >=20'}
-
-  sql.js@1.14.1:
-    resolution: {integrity: sha512-gcj8zBWU5cFsi9WUP+4bFNXAyF1iRpA3LLyS/DP5xlrNzGmPIizUeBggKa8DbDwdqaKwUcTEnChtd2grWo/x/A==}
 
   sqlite-wasm-kysely@0.3.0:
     resolution: {integrity: sha512-TzjBNv7KwRw6E3pdKdlRyZiTmUIE0UttT/Sl56MVwVARl/u5gp978KepazCJZewFUnlWHz9i3NQd4kOtP/Afdg==}
@@ -3561,8 +3555,6 @@ snapshots:
   source-map-js@1.2.1: {}
 
   splaytree@3.2.3: {}
-
-  sql.js@1.14.1: {}
 
   sqlite-wasm-kysely@0.3.0(kysely@0.28.15):
     dependencies:
