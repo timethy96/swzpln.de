@@ -66,9 +66,25 @@ interface CacheEntry {
 const cache = new Map<string, CacheEntry>();
 let totalCacheBytes = 0;
 
-/** Rough byte size estimate for a GeoDataResponse via JSON serialization length */
+/** Fast byte size estimate based on feature/coordinate counts (no serialization) */
 function estimateBytes(data: GeoDataResponse): number {
-	return JSON.stringify(data).length * 2; // ×2 for JS internal UTF-16 + object overhead
+	let bytes = 200; // base overhead
+	for (const features of Object.values(data.layers)) {
+		for (const f of features) {
+			bytes += 200; // per-feature object overhead + properties
+			const coords = 'coordinates' in f.geojson ? f.geojson.coordinates : [];
+			bytes += countCoordinateNumbers(coords) * 16; // 8 bytes per float64 × 2 for object overhead
+		}
+	}
+	return bytes;
+}
+
+function countCoordinateNumbers(coords: unknown): number {
+	if (typeof coords === 'number') return 1;
+	if (!Array.isArray(coords)) return 0;
+	let count = 0;
+	for (const c of coords) count += countCoordinateNumbers(c);
+	return count;
 }
 
 function cacheKey(bounds: Bounds, layers: Layer[]): string {
