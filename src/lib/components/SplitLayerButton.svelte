@@ -37,7 +37,7 @@
 		selectedValue = undefined
 	}: Props = $props();
 
-	let selected = $state(initialSelected);
+	let selected = $derived.by(() => initialSelected);
 	let open = $state(false);
 
 	// Main button click handler
@@ -70,7 +70,7 @@
 			? 'rounded-l-md rounded-r-none border-r-0'
 			: 'rounded-l-3xl rounded-r-none border-r-0'} active:scale-95 {selected
 			? 'text-white shadow-lg'
-			: 'text-[var(--foreground)] hover:bg-[var(--background)]/80'}"
+			: 'text-foreground hover:bg-(--background)/80'}"
 		style={selected
 			? `background-color: ${color}; border-color: ${color}; box-shadow: 0 4px 12px ${color}40;`
 			: 'background-color: var(--background);'}
@@ -95,7 +95,7 @@
 				? 'rounded-l-none rounded-r-md'
 				: 'rounded-l-none rounded-r-3xl'} {selected
 				? 'text-white shadow-lg'
-				: 'text-[var(--foreground)] hover:bg-[var(--background)]/80'} inline-flex items-center justify-center font-medium whitespace-nowrap ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
+				: 'text-foreground hover:bg-(--background)/80'} inline-flex items-center justify-center font-medium whitespace-nowrap ring-offset-background focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 focus-visible:outline-none disabled:pointer-events-none disabled:opacity-50"
 			style={selected
 				? `background-color: ${color}; border-color: ${color}; border-left-color: #AAA; box-shadow: 0 4px 12px ${color}40;`
 				: 'background-color: var(--background);'}

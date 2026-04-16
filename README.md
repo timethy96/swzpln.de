@@ -37,7 +37,7 @@ docker build -t swzpln .
 docker run -p 3000:3000 --env-file .env swzpln
 ```
 
-Set `OVERPASS_URL` to point to a self-hosted Overpass instance for server-side geodata queries. Without it, the app falls back to client-side Overpass requests.
+Set `OVERPASS_URL` to point to a self-hosted Overpass instance. The server acts as a streaming proxy (rate-limiting and parameter validation only, no parsing or caching). Without it, the app falls back to client-side Overpass requests via public instances.
 
 Health check at `GET /health`.
 
@@ -81,7 +81,7 @@ static/                   # Public assets, robots.txt, llms.txt
 - Custom IFC-SPF writer (IFC4X3_ADD2)
 - Custom OBJ writer (Wavefront)
 
-**Backend:** SvelteKit adapter-node, SQLite (node:sqlite) download counter, server-side Overpass proxy with caching, Paraglide.js i18n, CSP security headers
+**Backend:** SvelteKit adapter-node, SQLite (node:sqlite) download counter, Overpass streaming proxy (no parsing/caching), Paraglide.js i18n, CSP security headers
 
 ## API Endpoints
 
@@ -107,8 +107,9 @@ pnpm check        # Svelte type checking
 
 ## Architecture
 
-- **Client-side (fallback):** Queries public Overpass instances directly (Private.coffee primary, overpass-api.de fallback)
-- **Server-side (production):** When `OVERPASS_URL` is set, geodata queries are proxied server-side with in-memory caching for better performance and privacy
+- **Server-side proxy:** When `OVERPASS_URL` is set, the server streams Overpass responses to the client without parsing or caching — zero heap pressure on the server
+- **Client-side fallback:** Without `OVERPASS_URL`, queries public Overpass instances directly (Private.coffee primary, overpass-api.de fallback)
+- **All plan generation** (parsing, geometry, export) runs client-side in Web Workers
 
 ## Credits
 

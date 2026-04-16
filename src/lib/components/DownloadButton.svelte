@@ -14,13 +14,7 @@
 	import { SchwarzplanWorker } from '$lib/schwarzplan/worker/client';
 	import { getSuitableScales } from '$lib/schwarzplan/geometry/bounds';
 	import { downloadFile, getMimeType, getFilename } from '$lib/schwarzplan/exporters/base';
-	import type {
-		ExportFormat,
-		GeoDataResponse,
-		Layer,
-		ProgressInfo,
-		ScaleOption
-	} from '$lib/schwarzplan/types';
+	import type { ExportFormat, Layer, ProgressInfo, ScaleOption } from '$lib/schwarzplan/types';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
 	import { env } from '$env/dynamic/public';
@@ -178,8 +172,7 @@
 			const cleanBounds = JSON.parse(JSON.stringify(bounds));
 			const cleanLayers = JSON.parse(JSON.stringify(layers));
 
-			// Try server-side Overpass first, fall back to client-side Overpass
-			let geodata: GeoDataResponse | null = null;
+			// Try server-side Overpass proxy first, fall back to client-side Overpass
 			let osmData = null;
 
 			progressWrapper({
@@ -194,27 +187,26 @@
 				west: String(cleanBounds.west),
 				layers: cleanLayers.join(',')
 			});
-			const response = await fetch(`/api/geodata?${params}`);
-			if (!response.ok) {
-				let detail = `${response.status} ${response.statusText}`;
-				try {
-					const body = await response.json();
-					if (body?.message) detail = body.message;
-				} catch {
-					// non-JSON body, keep status text
+			try {
+				const response = await fetch(`/api/geodata?${params}`);
+				if (!response.ok) {
+					throw new Error(`${response.status}`);
 				}
-				throw new Error(`Geodata API error: ${detail}`);
-			}
-			const data = (await response.json()) as GeoDataResponse;
-			if (data.source === 'overpass') {
-				geodata = data;
-				progressWrapper({
-					step: 'osm-download',
-					percent: 100,
-					message: m.progress_geodata_downloaded()
-				});
-			} else {
-				// Server explicitly signaled unavailability — fall back to client-side Overpass
+				const data = await response.json();
+				if (data.source === 'unavailable') {
+					// Server signaled Overpass unavailable — fall back to client-side
+					osmData = await downloadOSMData(cleanBounds, cleanLayers, progressWrapper);
+				} else {
+					// Raw Overpass JSON streamed through proxy
+					osmData = data;
+					progressWrapper({
+						step: 'osm-download',
+						percent: 100,
+						message: m.progress_geodata_downloaded()
+					});
+				}
+			} catch {
+				// Server proxy failed — fall back to client-side Overpass
 				osmData = await downloadOSMData(cleanBounds, cleanLayers, progressWrapper);
 			}
 			if (isCancelled) return;
@@ -233,7 +225,7 @@
 			const result = await worker.generate(
 				format,
 				osmData,
-				geodata,
+				null,
 				elevationMatrix,
 				cleanBounds,
 				cleanLayers,
