@@ -113,7 +113,7 @@
 	"privacy_intro": "Um SWZPLN nutzen zu können, musst du unsere Datenschutzbestimmungen akzeptieren. Wir sammeln keine persönlichen Daten und setzen nur essenzielle Cookies.",
 	"privacy_external_data_title": "Bei der Nutzung von SWZPLN werden Daten von externen Servern übertragen:",
 	"privacy_external_data_description_1": "Die Vorschaukarte wird von CARTO bereitgestellt. Die Kartendaten stammen von OpenStreetMap Mitwirkenden. Die Suchfunktion nutzt die Photon API von Komoot.",
-	"privacy_external_data_description_2": "Die verarbeiteten Kartendaten werden von der Overpass-API via Private.coffee geladen.",
+	"privacy_external_data_description_2": "Die verarbeiteten Kartendaten werden primär von unserer eigenen Overpass-API geladen. Als Ausweichlösung wird die Overpass-API von Private.coffee oder overpass-api.de genutzt.",
 	"privacy_external_data_description_3": "Die Höhendaten werden von der Open Topo Data API mit Mapzen Daten geladen.",
 	"privacy_accept": "Akzeptieren und Karte laden",
 	"privacy_carto_link": "CARTO Datenschutzbestimmungen",

@@ -9,7 +9,7 @@ Site: https://tabstudio.de
 /* THANKS */
 OpenStreetMap Contributors
 Photon API by Komoot
-Private.coffee (Overpass API)
+Private.coffee (Overpass API Fallback)
 Open Topo Data
 CARTO
 

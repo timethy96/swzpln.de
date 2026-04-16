@@ -116,12 +116,16 @@
 			Datenschutzerklärung.
 		</p>
 		<p>
-			Zur Bereitstellung der Kartendaten, werden Koordinaten des gewählten Ausschnitts an die
-			Overpass API von
+			Zur Bereitstellung der Kartendaten werden Koordinaten des gewählten Ausschnitts an unsere
+			eigene Overpass-API-Instanz übermittelt. Bei Nichtverfügbarkeit wird als Ausweichlösung die
 			<a target="_blank" href="https://overpass.private.coffee/" rel="noopener noreferrer"
-				>Private.coffee</a
+				>Overpass API von Private.coffee</a
 			>
-			übermittelt. Bei Nutzung der Suchfunktion wird der Suchbegriff an die
+			oder
+			<a target="_blank" href="https://overpass-api.de/" rel="noopener noreferrer"
+				>overpass-api.de</a
+			>
+			genutzt. Bei Nutzung der Suchfunktion wird der Suchbegriff an die
 			<a href="https://photon.komoot.io/" target="_blank" rel="noopener noreferrer"
 				>Photon API von Komoot</a
 			>
@@ -155,9 +159,13 @@
 			contributors
 		</p>
 		<p>
-			Overpass-API bereitgestellt von
+			Overpass-API: eigene Instanz, Fallback bereitgestellt von
 			<a target="_blank" href="https://overpass.private.coffee/" rel="noopener noreferrer"
 				>Private.coffee</a
+			>
+			und
+			<a target="_blank" href="https://overpass-api.de/" rel="noopener noreferrer"
+				>overpass-api.de</a
 			>
 		</p>
 
@@ -347,11 +355,24 @@
 			>
 		</p>
 		<p>
-			Die verarbeiteten Kartendaten werden von der <strong>Overpass-API von Private.coffee</strong>
-			geladen.
-			<a href="https://overpass.private.coffee/" target="_blank" rel="noopener noreferrer"
-				>Datenschutzbestimmungen. (extern)</a
+			Die verarbeiteten Kartendaten werden primär von unserer <strong
+				>eigenen Overpass-API-Instanz</strong
 			>
+			geladen. Als Ausweichlösung wird die
+			<strong
+				>Overpass-API von <a
+					href="https://overpass.private.coffee/"
+					target="_blank"
+					rel="noopener noreferrer">Private.coffee</a
+				></strong
+			>
+			oder
+			<strong
+				><a href="https://overpass-api.de/" target="_blank" rel="noopener noreferrer"
+					>overpass-api.de</a
+				></strong
+			>
+			genutzt.
 		</p>
 		<p>
 			Topographie-API bereitgestellt von

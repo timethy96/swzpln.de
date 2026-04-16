@@ -62,7 +62,16 @@
 							rel="noopener noreferrer"
 							class="text-blue-600 hover:underline"
 						>
-							{m.privacy_overpass_link()}
+							Private.coffee {m.privacy_overpass_link()}
+						</a>
+						|
+						<a
+							href="https://overpass-api.de/"
+							target="_blank"
+							rel="noopener noreferrer"
+							class="text-blue-600 hover:underline"
+						>
+							overpass-api.de
 						</a>
 					</li>
 

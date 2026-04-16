@@ -17,7 +17,7 @@
 {#if appState.helpOverlayOpen}
 	<!-- Full screen overlay -->
 	<div
-		class="fixed inset-0 z-[100] flex items-center justify-center p-4"
+		class="fixed inset-0 z-100 flex items-center justify-center p-4"
 		onclick={handleBackdropClick}
 		role="button"
 		tabindex="0"
@@ -52,7 +52,7 @@
 				<!-- Step 1 -->
 				<div class="flex gap-4">
 					<div
-						class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground"
+						class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground"
 					>
 						1
 					</div>
@@ -67,7 +67,7 @@
 				<!-- Step 2 -->
 				<div class="flex gap-4">
 					<div
-						class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground"
+						class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground"
 					>
 						2
 					</div>
@@ -82,7 +82,7 @@
 				<!-- Step 3 -->
 				<div class="flex gap-4">
 					<div
-						class="flex h-10 w-10 flex-shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground"
+						class="flex h-10 w-10 shrink-0 items-center justify-center rounded-full bg-primary text-lg font-bold text-primary-foreground"
 					>
 						3
 					</div>
