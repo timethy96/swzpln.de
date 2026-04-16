@@ -37,6 +37,8 @@ docker build -t swzpln .
 docker run -p 3000:3000 --env-file .env swzpln
 ```
 
+Set `OVERPASS_URL` to point to a self-hosted Overpass instance for server-side geodata queries. Without it, the app falls back to client-side Overpass requests.
+
 Health check at `GET /health`.
 
 ## Project Structure
@@ -79,7 +81,7 @@ static/                   # Public assets, robots.txt, llms.txt
 - Custom IFC-SPF writer (IFC4X3_ADD2)
 - Custom OBJ writer (Wavefront)
 
-**Backend:** SvelteKit adapter-node, SQLite (sql.js) download counter, Paraglide.js i18n, CSP security headers
+**Backend:** SvelteKit adapter-node, SQLite (node:sqlite) download counter, server-side Overpass proxy with caching, Paraglide.js i18n, CSP security headers
 
 ## API Endpoints
 
@@ -103,9 +105,10 @@ pnpm format       # Auto-format code
 pnpm check        # Svelte type checking
 ```
 
-## Roadmap
+## Architecture
 
-- **PostGIS backend:** Replace Overpass API with a self-hosted PostGIS instance for improved privacy, faster data downloads, and more reliable query performance independent of third-party infrastructure
+- **Client-side (fallback):** Queries public Overpass instances directly (Private.coffee primary, overpass-api.de fallback)
+- **Server-side (production):** When `OVERPASS_URL` is set, geodata queries are proxied server-side with in-memory caching for better performance and privacy
 
 ## Credits
 
@@ -118,7 +121,7 @@ Published under **[GNU AFFERO GENERAL PUBLIC LICENSE v3](LICENSE)**
 ### Map Data
 
 - Map Tiles: [CARTO](https://carto.com/)
-- Overpass API: [overpass.private.coffee](https://overpass.private.coffee/) (Private.coffee)
+- Overpass API: Self-hosted ([wiktorn/overpass-api](https://hub.docker.com/r/wiktorn/overpass-api)), [overpass.private.coffee](https://overpass.private.coffee/) (client-side fallback)
 - Map Data: [(c) OpenStreetMap contributors](https://www.openstreetmap.org/copyright)
 - Elevation: [Open Topo Data](https://www.opentopodata.org/) (Mapzen dataset)
 - Search: [Photon](https://photon.komoot.io/) (Komoot)
