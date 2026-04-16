@@ -14,7 +14,7 @@ function getOverpassUrl(): string {
 }
 
 const CACHE_TTL_MS = parseInt(env.OVERPASS_CACHE_TTL_HOURS ?? '24', 10) * 3600 * 1000;
-const MAX_CACHE_ENTRIES = 100;
+const MAX_CACHE_BYTES = 512 * 1024 * 1024; // 512 MB
 
 // ============================================================================
 // Availability Check
@@ -59,10 +59,17 @@ export async function isOverpassAvailable(): Promise<boolean> {
 
 interface CacheEntry {
 	data: GeoDataResponse;
+	sizeBytes: number;
 	timestamp: number;
 }
 
 const cache = new Map<string, CacheEntry>();
+let totalCacheBytes = 0;
+
+/** Rough byte size estimate for a GeoDataResponse via JSON serialization length */
+function estimateBytes(data: GeoDataResponse): number {
+	return JSON.stringify(data).length * 2; // ×2 for JS internal UTF-16 + object overhead
+}
 
 function cacheKey(bounds: Bounds, layers: Layer[]): string {
 	const b = `${bounds.south.toFixed(6)},${bounds.west.toFixed(6)},${bounds.north.toFixed(6)},${bounds.east.toFixed(6)}`;
@@ -74,6 +81,7 @@ function getCached(key: string): GeoDataResponse | null {
 	const entry = cache.get(key);
 	if (!entry) return null;
 	if (Date.now() - entry.timestamp > CACHE_TTL_MS) {
+		totalCacheBytes -= entry.sizeBytes;
 		cache.delete(key);
 		return null;
 	}
@@ -84,12 +92,21 @@ function getCached(key: string): GeoDataResponse | null {
 }
 
 function setCache(key: string, data: GeoDataResponse): void {
-	// Evict oldest if at capacity
-	if (cache.size >= MAX_CACHE_ENTRIES) {
-		const oldest = cache.keys().next().value;
-		if (oldest !== undefined) cache.delete(oldest);
+	const sizeBytes = estimateBytes(data);
+
+	// Don't cache responses larger than 25% of the total budget
+	if (sizeBytes > MAX_CACHE_BYTES / 4) return;
+
+	// Evict oldest entries until we have room
+	while (totalCacheBytes + sizeBytes > MAX_CACHE_BYTES && cache.size > 0) {
+		const oldest = cache.entries().next().value;
+		if (!oldest) break;
+		totalCacheBytes -= oldest[1].sizeBytes;
+		cache.delete(oldest[0]);
 	}
-	cache.set(key, { data, timestamp: Date.now() });
+
+	cache.set(key, { data, sizeBytes, timestamp: Date.now() });
+	totalCacheBytes += sizeBytes;
 }
 
 // ============================================================================
