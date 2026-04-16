@@ -1,5 +1,9 @@
 // CSV export endpoint for download statistics
-import { getAllDownloads, getDownloadsByInterval } from '$lib/server/counter';
+import {
+	getAllDownloads,
+	getCumulativeByInterval,
+	getDownloadsByInterval
+} from '$lib/server/counter';
 import { checkRateLimit } from '$lib/server/ratelimit';
 import { error } from '@sveltejs/kit';
 import type { RequestHandler } from './$types';
@@ -12,6 +16,7 @@ export const GET: RequestHandler = async ({ url, getClientAddress }) => {
 	}
 
 	const intervalParam = url.searchParams.get('intval');
+	const cumulative = url.searchParams.get('cumulative') === 'true';
 
 	const lines = ['TS;VALUE;'];
 
@@ -21,7 +26,9 @@ export const GET: RequestHandler = async ({ url, getClientAddress }) => {
 			if (isNaN(intervalMs) || intervalMs <= 0) {
 				throw error(400, 'Invalid interval parameter');
 			}
-			const data = getDownloadsByInterval(intervalMs);
+			const data = cumulative
+				? getCumulativeByInterval(intervalMs)
+				: getDownloadsByInterval(intervalMs);
 			for (const row of data) {
 				lines.push(`${row.timestamp};${row.count};`);
 			}

@@ -62,6 +62,31 @@ export function getDownloadsByInterval(
 }
 
 /**
+ * Get cumulative download count grouped by interval (running total)
+ */
+export function getCumulativeByInterval(
+	intervalMs: number
+): Array<{ timestamp: number; count: number }> {
+	const stmt = db.prepare(`
+		SELECT
+			timestamp,
+			SUM(count) OVER (ORDER BY timestamp) as count
+		FROM (
+			SELECT
+				CAST(CAST(timestamp / ? AS INTEGER) * ? AS INTEGER) as timestamp,
+				COUNT(id) as count
+			FROM download_log
+			GROUP BY CAST(CAST(timestamp / ? AS INTEGER) * ? AS INTEGER)
+		)
+		ORDER BY timestamp
+	`);
+	return stmt.all(intervalMs, intervalMs, intervalMs, intervalMs) as Array<{
+		timestamp: number;
+		count: number;
+	}>;
+}
+
+/**
  * Get total download count
  */
 export function getTotalDownloads(): number {
