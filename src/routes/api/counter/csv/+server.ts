@@ -13,7 +13,7 @@ export const GET: RequestHandler = async ({ url, getClientAddress }) => {
 
 	const intervalParam = url.searchParams.get('intval');
 
-	let csv = 'TS;VALUE;\n';
+	const lines = ['TS;VALUE;'];
 
 	try {
 		if (intervalParam) {
@@ -23,19 +23,20 @@ export const GET: RequestHandler = async ({ url, getClientAddress }) => {
 			}
 			const data = getDownloadsByInterval(intervalMs);
 			for (const row of data) {
-				csv += `${row.timestamp};${row.count};\n`;
+				lines.push(`${row.timestamp};${row.count};`);
 			}
 		} else {
 			const data = getAllDownloads();
 			for (const row of data) {
-				csv += `${row.timestamp};${row.id};\n`;
+				lines.push(`${row.timestamp};${row.id};`);
 			}
 		}
 
-		return new Response(csv, {
+		return new Response(lines.join('\n') + '\n', {
 			headers: {
 				'Content-Type': 'text/csv',
-				'Content-Disposition': 'inline; filename=swzpln.csv'
+				'Content-Disposition': 'inline; filename=swzpln.csv',
+				'Cache-Control': 'public, max-age=60'
 			}
 		});
 	} catch (err) {
