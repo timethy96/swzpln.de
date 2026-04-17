@@ -28,7 +28,7 @@ RUN mkdir -p /app/data && chown -R app:app /app
 USER app
 
 ENV NODE_ENV=production
-ENV NODE_OPTIONS="--max-old-space-size=1536"
+ENV NODE_OPTIONS="--max-old-space-size=384"
 ENV PORT=3000
 
 EXPOSE 3000
