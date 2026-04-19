@@ -17,6 +17,9 @@ export const GET: RequestHandler = async ({ url, getClientAddress }) => {
 
 	const intervalParam = url.searchParams.get('intval');
 	const cumulative = url.searchParams.get('cumulative') === 'true';
+	const is3dParam = url.searchParams.get('is3d');
+	const is3dFilter =
+		is3dParam === 'true' ? true : is3dParam === 'false' ? false : undefined;
 
 	const lines = ['TS;VALUE;'];
 
@@ -27,13 +30,13 @@ export const GET: RequestHandler = async ({ url, getClientAddress }) => {
 				throw error(400, 'Invalid interval parameter');
 			}
 			const data = cumulative
-				? getCumulativeByInterval(intervalMs)
-				: getDownloadsByInterval(intervalMs);
+				? getCumulativeByInterval(intervalMs, is3dFilter)
+				: getDownloadsByInterval(intervalMs, is3dFilter);
 			for (const row of data) {
 				lines.push(`${row.timestamp};${row.count};`);
 			}
 		} else {
-			const data = getAllDownloads();
+			const data = getAllDownloads(100_000, is3dFilter);
 			for (const row of data) {
 				lines.push(`${row.timestamp};${row.id};`);
 			}
