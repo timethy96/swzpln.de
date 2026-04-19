@@ -26,8 +26,16 @@ export const POST: RequestHandler = async ({ request, getClientAddress }) => {
 		throw error(403, 'Forbidden');
 	}
 
+	let is3d = false;
 	try {
-		recordDownload();
+		const body = await request.json();
+		is3d = body?.is3d === true;
+	} catch {
+		// No body or invalid JSON — treat as 2D
+	}
+
+	try {
+		recordDownload(is3d);
 		return json({ success: true });
 	} catch (err) {
 		console.error('Failed to record download:', err);
