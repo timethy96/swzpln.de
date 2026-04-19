@@ -18,8 +18,7 @@ export const GET: RequestHandler = async ({ url, getClientAddress }) => {
 	const intervalParam = url.searchParams.get('intval');
 	const cumulative = url.searchParams.get('cumulative') === 'true';
 	const is3dParam = url.searchParams.get('is3d');
-	const is3dFilter =
-		is3dParam === 'true' ? true : is3dParam === 'false' ? false : undefined;
+	const is3dFilter = is3dParam === 'true' ? true : is3dParam === 'false' ? false : undefined;
 
 	const lines = ['TS;VALUE;'];
 
