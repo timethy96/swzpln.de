@@ -247,9 +247,11 @@
 			lastGeneratedMimeType = mimeType;
 			lastGeneratedFilename = filename;
 
-			fetch('/api/counter/record', { method: 'POST' }).catch((err) =>
-				console.warn('Failed to record download:', err)
-			);
+			fetch('/api/counter/record', {
+				method: 'POST',
+				headers: { 'Content-Type': 'application/json' },
+				body: JSON.stringify({ is3d: appState.is3DMode })
+			}).catch((err) => console.warn('Failed to record download:', err));
 
 			// Clear progress and show completion dialog
 			appState.progress = null;
