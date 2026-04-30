@@ -304,7 +304,11 @@
 			gespeichert.
 		</p>
 
-		<p>Wir verpflichten uns diese Daten nach maximal 24 Stunden vollständig zu löschen.</p>
+		<p>
+			Diese Server-Logfiles werden auf Grundlage unseres berechtigten Interesses an einem sicheren
+			und stabilen Betrieb der Website (Art. 6 Abs. 1 lit. f DSGVO) für
+			<strong>maximal 7 Tage</strong> gespeichert und anschließend automatisch durch Rotation gelöscht.
+		</p>
 
 		<h4>5. Kontaktmöglichkeit über die Internetseite</h4>
 		<p>
