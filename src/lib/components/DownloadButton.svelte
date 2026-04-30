@@ -17,9 +17,10 @@
 	import type { ExportFormat, Layer, ProgressInfo, ScaleOption } from '$lib/schwarzplan/types';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
+	import { getLocale } from '$lib/paraglide/runtime';
 	import { env } from '$env/dynamic/public';
 
-	const showShop = env.PUBLIC_SHOW_SHOP !== 'false';
+	const showShop = $derived(env.PUBLIC_SHOW_SHOP !== 'false' && getLocale() === 'de');
 
 	let dlOpen = $state(false);
 	let worker: SchwarzplanWorker | null = null;

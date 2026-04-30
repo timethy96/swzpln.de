@@ -19,7 +19,7 @@
 	import { getLocale, localizeHref } from '$lib/paraglide/runtime';
 	import { env } from '$env/dynamic/public';
 
-	const showShop = env.PUBLIC_SHOW_SHOP !== 'false';
+	const showShop = $derived(env.PUBLIC_SHOW_SHOP !== 'false' && getLocale() === 'de');
 
 	let { children } = $props();
 
