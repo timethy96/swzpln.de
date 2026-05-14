@@ -35,6 +35,12 @@
 			Registernummer: HRB 286098
 		</p>
 
+		<h3>Umsatzsteuer-ID</h3>
+		<p>
+			Umsatzsteuer-Identifikationsnummer gemäß § 27 a Umsatzsteuergesetz:<br />
+			DE462126078
+		</p>
+
 		<h3>Kontakt</h3>
 		<p>
 			E-Mail: <a href="mailto:{emailAddr}">{emailAddr}</a>
