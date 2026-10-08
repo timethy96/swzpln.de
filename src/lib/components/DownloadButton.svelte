@@ -40,6 +40,8 @@
 	// Shop mit diesem Ausschnitt
 	let lifestyleImages = $state<string[]>([]);
 	let lifestyleRequest: Promise<string[]> | null = null;
+	// Anfrage läuft noch: Platzhalter statt plötzlich auftauchender Bilder
+	let lifestyleLoading = $state(false);
 	let shopHref = $state(SHOP_URL);
 
 	// Rotating shop CTA text with fade-in/fade-out
@@ -160,11 +162,13 @@
 
 		lifestyleRequest = null;
 		lifestyleImages = [];
+		lifestyleLoading = false;
 		shopHref = SHOP_URL;
 		if (showShop && !appState.is3DMode) {
 			const [lng, lat] = appState.location.center;
 			const ort = `${lat.toFixed(5)},${lng.toFixed(5)},${zoom.toFixed(2)}`;
 			shopHref = `${SHOP_URL}/?ort=${ort}#produkte`;
+			lifestyleLoading = true;
 			lifestyleRequest = fetch(`${SHOP_URL}/api/lifestyle?ort=${ort}`)
 				.then((r) => (r.ok ? r.json() : { images: [] }))
 				.then((d: { images?: { url: string }[] }) => (d.images ?? []).map((i) => i.url))
@@ -269,6 +273,7 @@
 			lastGeneratedFilename = filename;
 
 			lifestyleRequest?.then((urls) => {
+				lifestyleLoading = false;
 				if (completionDialogOpen) lifestyleImages = urls;
 			});
 
@@ -555,9 +560,24 @@
 									<img
 										src={url}
 										alt={m.shop_complete_buy()}
-										class="aspect-square w-full rounded-md"
+										class="aspect-square w-full rounded-md bg-muted"
 									/>
 								</a>
+							{/each}
+						</div>
+					{:else if lifestyleLoading}
+						<div class="flex gap-2 overflow-hidden rounded-md" aria-busy="true">
+							{#each [0, 1] as i (i)}
+								<div
+									class="flex aspect-square w-4/5 shrink-0 animate-pulse flex-col items-center justify-center gap-2 rounded-md bg-accent"
+								>
+									{#if i === 0}
+										<LoaderCircle class="size-5 animate-spin text-muted-foreground" />
+										<span class="px-4 text-center text-xs text-muted-foreground"
+											>{m.shop_lifestyle_loading()}</span
+										>
+									{/if}
+								</div>
 							{/each}
 						</div>
 					{/if}
