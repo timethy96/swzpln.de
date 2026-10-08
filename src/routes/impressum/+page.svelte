@@ -396,10 +396,12 @@
 			Mittelpunkt und Zoomstufe des gewählten Kartenausschnitts übermittelt; technisch bedingt erhält
 			der Server des Shops dabei auch deine IP-Adresse. Die Angaben werden ausschließlich genutzt, um
 			die Beispielbilder zu erzeugen, und nicht mit anderen Daten zusammengeführt. Die erzeugten Bilder
-			werden ohne Bezug zu deiner Person höchstens sieben Tage zwischengespeichert. Für die dabei entstehenden
-			Server-Logfiles gilt Abschnitt 4 entsprechend. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; unser
-			berechtigtes Interesse liegt darin, dir passende Produkte aus unserem Shop zu zeigen. Erst wenn
-			du auf ein Beispielbild oder den Link zum Shop klickst, wird der Shop mit diesem Ausschnitt geöffnet.
+			werden ohne Bezug zu deiner Person höchstens sieben Tage zwischengespeichert. Für den Ortsnamen
+			auf den Bildern fragt der Shop den Mittelpunkt des Ausschnitts bei der Photon API von Komoot ab,
+			ohne deine IP-Adresse weiterzugeben. Für die dabei entstehenden Server-Logfiles gilt Abschnitt 4
+			entsprechend. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; unser berechtigtes Interesse liegt
+			darin, dir passende Produkte aus unserem Shop zu zeigen. Erst wenn du auf ein Beispielbild oder
+			den Link zum Shop klickst, wird der Shop mit diesem Ausschnitt geöffnet.
 		</p>
 		<p>
 			Topographie-API bereitgestellt von
