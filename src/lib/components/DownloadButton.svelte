@@ -21,6 +21,7 @@
 	import { env } from '$env/dynamic/public';
 
 	const showShop = $derived(env.PUBLIC_SHOW_SHOP !== 'false' && getLocale() === 'de');
+	const SHOP_URL = env.PUBLIC_SHOP_URL || 'https://shop.swzpln.de';
 
 	let dlOpen = $state(false);
 	let worker: SchwarzplanWorker | null = null;
@@ -34,6 +35,12 @@
 	let lastGeneratedResult = $state<string | Uint8Array | Blob | null>(null);
 	let lastGeneratedMimeType = $state('');
 	let lastGeneratedFilename = $state('');
+	// Lifestyle-Bilder des gerade erzeugten Ausschnitts vom Shop (beim Start
+	// des Downloads angefragt, siehe Datenschutzerklärung) und der Link in den
+	// Shop mit diesem Ausschnitt
+	let lifestyleImages = $state<string[]>([]);
+	let lifestyleRequest: Promise<string[]> | null = null;
+	let shopHref = $state(SHOP_URL);
 
 	// Rotating shop CTA text with fade-in/fade-out
 	let shopCtaIndex = $state(0);
@@ -151,6 +158,19 @@
 		const zoom = appState.location.zoom;
 		let layers: Layer[];
 
+		lifestyleRequest = null;
+		lifestyleImages = [];
+		shopHref = SHOP_URL;
+		if (showShop && !appState.is3DMode) {
+			const [lng, lat] = appState.location.center;
+			const ort = `${lat.toFixed(5)},${lng.toFixed(5)},${zoom.toFixed(2)}`;
+			shopHref = `${SHOP_URL}/?ort=${ort}#produkte`;
+			lifestyleRequest = fetch(`${SHOP_URL}/api/lifestyle?ort=${ort}`)
+				.then((r) => (r.ok ? r.json() : { images: [] }))
+				.then((d: { images?: { url: string }[] }) => (d.images ?? []).map((i) => i.url))
+				.catch(() => []);
+		}
+
 		if (appState.is3DMode) {
 			layers = [];
 			if (appState.selected3DLayers.building) {
@@ -248,6 +268,10 @@
 			lastGeneratedMimeType = mimeType;
 			lastGeneratedFilename = filename;
 
+			lifestyleRequest?.then((urls) => {
+				if (completionDialogOpen) lifestyleImages = urls;
+			});
+
 			fetch('/api/counter/record', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -285,6 +309,7 @@
 	function handleCompletionClose() {
 		completionDialogOpen = false;
 		lastGeneratedResult = null;
+		lifestyleImages = [];
 	}
 
 	function handleCancel() {
@@ -517,9 +542,28 @@
 			</Button>
 			<div class="flex flex-col gap-2">
 				{#if showShop}
+					{#if lifestyleImages.length > 0}
+						<div class="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-md">
+							{#each lifestyleImages as url (url)}
+								<!-- eslint-disable svelte/no-navigation-without-resolve -- externe Shop-Links -->
+								<a
+									href={shopHref}
+									target="_blank"
+									rel="noopener noreferrer"
+									class="w-4/5 shrink-0 snap-center"
+								>
+									<img
+										src={url}
+										alt={m.shop_complete_buy()}
+										class="aspect-square w-full rounded-md"
+									/>
+								</a>
+							{/each}
+						</div>
+					{/if}
 					<p class="text-center text-xs text-muted-foreground">{m.shop_complete_subtitle()}</p>
 					<a
-						href="https://shop.swzpln.de"
+						href={shopHref}
 						target="_blank"
 						rel="noopener noreferrer"
 						class="animate-shimmer inline-flex h-10 w-full items-center justify-center gap-2 rounded-md bg-linear-to-r from-[oklch(0.55_0.25_300)] via-[oklch(0.60_0.20_320)] to-[oklch(0.50_0.22_280)]

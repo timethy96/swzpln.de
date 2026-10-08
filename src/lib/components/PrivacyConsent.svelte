@@ -9,6 +9,11 @@
 	import { Button } from '$lib/components/ui/button';
 	import { appState } from '$lib/state.svelte';
 	import * as m from '$lib/paraglide/messages';
+	import { getLocale } from '$lib/paraglide/runtime';
+	import { env } from '$env/dynamic/public';
+
+	// wie im DownloadButton: Lifestyle-Bilder vom Shop nur, wo der Shop sichtbar ist
+	const showShop = $derived(env.PUBLIC_SHOW_SHOP !== 'false' && getLocale() === 'de');
 
 	// Reactive open state
 	let open = $derived(!appState.privacyAccepted);
@@ -86,6 +91,10 @@
 							{m.privacy_topodata_link()}
 						</a>
 					</li>
+
+					{#if showShop}
+						<li>{m.privacy_external_data_description_shop()}</li>
+					{/if}
 				</ul>
 			</div>
 		</div>

@@ -1,6 +1,7 @@
 import type { Handle } from '@sveltejs/kit';
 import { sequence } from '@sveltejs/kit/hooks';
 import { paraglideMiddleware } from '$lib/paraglide/server';
+import { env } from '$env/dynamic/public';
 
 const handleParaglide: Handle = ({ event, resolve }) =>
 	paraglideMiddleware(
@@ -17,6 +18,8 @@ const handleParaglide: Handle = ({ event, resolve }) =>
 
 const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 	const response = await resolve(event);
+	// Shop: Lifestyle-Bilder im Fertig-Dialog (DownloadButton)
+	const shopUrl = env.PUBLIC_SHOP_URL || 'https://shop.swzpln.de';
 
 	// Transport security (HSTS) should be set by the reverse proxy (nginx/Caddy/Traefik)
 	response.headers.set('X-Frame-Options', 'SAMEORIGIN');
@@ -32,11 +35,11 @@ const handleSecurityHeaders: Handle = async ({ event, resolve }) => {
 			// Styles: self + inline needed for Svelte component styles & MapLibre GL
 			"style-src 'self' 'unsafe-inline'",
 			// Images: self + tile servers + data URIs (MapLibre markers/icons)
-			"img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://tile.openstreetmap.org",
+			`img-src 'self' data: blob: https://*.basemaps.cartocdn.com https://tile.openstreetmap.org ${shopUrl}`,
 			// Fonts: self
 			"font-src 'self'",
 			// Connect: APIs used by the app
-			"connect-src 'self' https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com https://tile.openstreetmap.org https://overpass.private.coffee https://overpass-api.de https://api.opentopodata.org https://photon.komoot.io blob:",
+			`connect-src 'self' https://basemaps.cartocdn.com https://*.basemaps.cartocdn.com https://tile.openstreetmap.org https://overpass.private.coffee https://overpass-api.de https://api.opentopodata.org https://photon.komoot.io ${shopUrl} blob:`,
 			// Workers: self + blob (Web Workers for export processing)
 			"worker-src 'self' blob:",
 			// Child/frame: none (no iframes needed)

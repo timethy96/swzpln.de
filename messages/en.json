@@ -115,6 +115,7 @@
 	"privacy_external_data_description_1": "The preview map is provided by CARTO. Map data comes from OpenStreetMap contributors. Search uses the Photon API by Komoot.",
 	"privacy_external_data_description_2": "Processed map data is primarily loaded from our own Overpass API instance. As a fallback, the Overpass API from Private.coffee or overpass-api.de is used.",
 	"privacy_external_data_description_3": "Elevation data is loaded from the Open Topo Data API with Mapzen data.",
+	"privacy_external_data_description_shop": "When you download, the selected map area (center and zoom level) is sent to the SWZPLN shop (shop.swzpln.de, also operated by us) to show product examples with your figure-ground plan.",
 	"privacy_accept": "Accept and load map",
 	"privacy_carto_link": "CARTO Privacy Policy",
 	"privacy_osm_copyright": "OpenStreetMap Copyright",

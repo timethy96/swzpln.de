@@ -142,6 +142,12 @@
 			heruntergeladen.
 		</p>
 		<p>
+			Beim Herunterladen eines Schwarzplans werden Mittelpunkt und Zoomstufe des gewählten
+			Ausschnitts an den von uns betriebenen
+			<a href="https://shop.swzpln.de" target="_blank" rel="noopener noreferrer">SWZPLN Shop</a>
+			übermittelt, um Produktbeispiele mit diesem Schwarzplan anzuzeigen (siehe Abschnitt 7 der Datenschutzbestimmungen).
+		</p>
+		<p>
 			Der Nutzung von im Rahmen der Impressumspflicht veröffentlichten Kontaktdaten durch Dritte zur
 			Übersendung von nicht ausdrücklich angeforderter Werbung und Informationsmaterialien wird
 			hiermit ausdrücklich widersprochen. Die Betreiber der Seiten behalten sich ausdrücklich
@@ -383,6 +389,17 @@
 				></strong
 			>
 			genutzt.
+		</p>
+		<p>
+			Beim Herunterladen eines Schwarzplans fragt SWZPLN im Hintergrund Produktbeispiele beim
+			<strong>SWZPLN Shop</strong> (shop.swzpln.de) ab, der ebenfalls von uns betrieben wird. Dafür werden
+			Mittelpunkt und Zoomstufe des gewählten Kartenausschnitts übermittelt; technisch bedingt erhält
+			der Server des Shops dabei auch deine IP-Adresse. Die Angaben werden ausschließlich genutzt, um
+			die Beispielbilder zu erzeugen, und nicht mit anderen Daten zusammengeführt. Die erzeugten Bilder
+			werden ohne Bezug zu deiner Person höchstens sieben Tage zwischengespeichert. Für die dabei entstehenden
+			Server-Logfiles gilt Abschnitt 4 entsprechend. Rechtsgrundlage ist Art. 6 Abs. 1 lit. f DSGVO; unser
+			berechtigtes Interesse liegt darin, dir passende Produkte aus unserem Shop zu zeigen. Erst wenn
+			du auf ein Beispielbild oder den Link zum Shop klickst, wird der Shop mit diesem Ausschnitt geöffnet.
 		</p>
 		<p>
 			Topographie-API bereitgestellt von
