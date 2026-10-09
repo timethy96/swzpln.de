@@ -8,7 +8,8 @@ import type {
 	OSMRelation
 } from '../types';
 import { classifyTags, isUnderground } from '../layers';
-import { latLngToXY } from '../geometry/coordinates';
+import { getMaxXY, latLngToXY } from '../geometry/coordinates';
+import { mergeCoastlines, oceanRings } from '../geometry/coastline';
 
 import * as m from '$lib/paraglide/messages';
 import type { Layer } from '$lib/schwarzplan/types';
@@ -34,7 +35,7 @@ export function osmDataToGeometry(
 	// 1. Index Elements
 	const { nodes, ways, relations } = indexElements(osmData, bounds);
 
-	const geometryObjects: GeometryObject[] = [];
+	const geometryObjects: GeometryObject[] = oceanObjects(ways, nodes, bounds);
 
 	// 2. Process Relations (Building parts grouping & Multipolygon stitching)
 	for (const rel of relations) {
@@ -96,6 +97,45 @@ export function osmDataToGeometry(
 
 	notify(onProgress, 100, `Done: ${mergedObjects.length} objects`);
 	return mergedObjects;
+}
+
+// --- Meer (natural=coastline, kommt mit der Wasser-Ebene) ---
+
+function oceanObjects(
+	ways: Map<number, ParsedWay>,
+	nodes: Map<number, Coordinate>,
+	bounds: Bounds
+): GeometryObject[] {
+	const coasts = Array.from(ways.values())
+		.filter((w) => w.tags?.natural === 'coastline')
+		.map((w) => getWayCoords(w, nodes).map((c) => [c.x, c.y]))
+		.filter((c) => c.length > 1);
+	if (coasts.length === 0) return [];
+	// coastline.ts rechnet in Bildkoordinaten (y nach unten), der Plan in Metern (y nach Norden)
+	const { x: w, y: h } = getMaxXY(bounds);
+	const flip = ([x, y]: number[]): [number, number] => [x, h - y];
+	const rings = oceanRings(
+		mergeCoastlines(coasts).map((c) => c.map(flip)),
+		w,
+		h
+	).map((r) => r.map(([x, y]) => ({ x, y: h - y })));
+	// Ringe in Ringen (Inseln) werden Löcher des umgebenden Rings
+	const outers = rings.filter((r) => !rings.some((o) => o !== r && pointInRing(r[0], o)));
+	return outers.map((path) => {
+		const holes = rings.filter((r) => r !== path && pointInRing(r[0], path));
+		return { type: 'water', path, holes: holes.length > 0 ? holes : undefined };
+	});
+}
+
+function pointInRing(p: Coordinate, ring: Coordinate[]): boolean {
+	let inside = false;
+	for (let i = 0, j = ring.length - 1; i < ring.length; j = i++) {
+		const a = ring[i];
+		const b = ring[j];
+		if (a.y > p.y !== b.y > p.y && p.x < ((b.x - a.x) * (p.y - a.y)) / (b.y - a.y) + a.x)
+			inside = !inside;
+	}
+	return inside;
 }
 
 // --- Indexing ---

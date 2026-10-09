@@ -54,7 +54,8 @@ export const LAYER_CONFIG: Record<Layer, LayerConfig> = {
 	water: {
 		color: '#AAD4FF',
 		fillable: true,
-		overpassQuery: 'nwr["natural"="water"];',
+		// Meere gibt es in OSM nur als Küstenlinie (siehe geometry/coastline.ts)
+		overpassQuery: 'nwr["natural"="water"];nwr["natural"="coastline"];',
 		lineType: 'CONTINUOUS',
 		dxfColor: 151,
 		matchTags: { natural: 'water' }
