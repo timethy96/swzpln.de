@@ -32,7 +32,7 @@ export function exportToPDF(
 	// Prepare Data
 	// Roads are already merged
 	const merged = [...objects];
-	if (contours) merged.push(...fromContours(contours, maxXY));
+	if (contours) for (const o of fromContours(contours, maxXY)) merged.push(o);
 
 	const sorted = sortObjectsByLayer(merged);
 	const total = sorted.length;

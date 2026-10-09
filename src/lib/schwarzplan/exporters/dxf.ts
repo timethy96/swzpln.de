@@ -40,7 +40,7 @@ export function exportToDXF(
 	const maxXY = getMaxXY(bounds);
 	// Roads are already merged in converter step
 	const merged = [...objects];
-	if (contours) merged.push(...fromContours(contours, maxXY));
+	if (contours) for (const o of fromContours(contours, maxXY)) merged.push(o);
 
 	const sorted = sortObjectsByLayer(merged);
 	const total = sorted.length;

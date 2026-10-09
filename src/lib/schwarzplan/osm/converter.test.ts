@@ -13,6 +13,19 @@ describe('OSM converter', () => {
 	};
 
 	describe('osmDataToGeometry', () => {
+		it('handles very many ways without stack overflow', () => {
+			const elements: OSMData['elements'] = [
+				{ type: 'node', id: 1, lat: 48.75, lon: 9.15 },
+				{ type: 'node', id: 2, lat: 48.76, lon: 9.15 },
+				{ type: 'node', id: 3, lat: 48.76, lon: 9.16 }
+			];
+			for (let i = 0; i < 200_000; i++) {
+				elements.push({ type: 'way', id: 100 + i, nodes: [1, 2, 3, 1], tags: { building: 'yes' } });
+			}
+			const result = osmDataToGeometry({ version: 0.6, generator: 'test', elements }, testBounds);
+			expect(result.length).toBe(200_000);
+		});
+
 		it('should convert simple OSM data to geometry', () => {
 			const osmData: OSMData = {
 				version: 0.6,

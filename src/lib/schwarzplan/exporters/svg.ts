@@ -26,7 +26,7 @@ export function exportToSVG(
 	const mergedObjects = [...objects];
 
 	// Inject contours as GeometryObjects to treat them uniformly in the rendering stack
-	if (contours) mergedObjects.push(...fromContours(contours, maxXY, scale));
+	if (contours) for (const o of fromContours(contours, maxXY, scale)) mergedObjects.push(o);
 
 	const sortedObjects = sortObjectsByLayer(mergedObjects);
 	const total = sortedObjects.length;

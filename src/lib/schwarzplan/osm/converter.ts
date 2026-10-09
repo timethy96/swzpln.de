@@ -39,7 +39,7 @@ export function osmDataToGeometry(
 	// 2. Process Relations (Building parts grouping & Multipolygon stitching)
 	for (const rel of relations) {
 		const result = processRelation(rel, ways, nodes);
-		if (result) geometryObjects.push(...result);
+		if (result) for (const o of result) geometryObjects.push(o);
 	}
 
 	// 3. Process Ways (Standard geometry)
@@ -71,7 +71,7 @@ export function osmDataToGeometry(
 		})
 		.filter((o): o is GeometryObject => o !== null);
 
-	geometryObjects.push(...wayObjects);
+	for (const o of wayObjects) geometryObjects.push(o);
 
 	// 4. Process Stitched Linear Segments
 	for (const [key, segments] of linearSegments) {
@@ -272,7 +272,7 @@ function stitchWays(segments: Coordinate[][], closedOnly: boolean = false): Coor
 	const pool = [...segments];
 
 	while (pool.length > 0) {
-		const ring = [...pool.shift()!];
+		let ring = [...pool.shift()!];
 		let changed = true;
 
 		// Grow path until closed or no matches found
@@ -289,13 +289,13 @@ function stitchWays(segments: Coordinate[][], closedOnly: boolean = false): Coor
 				const sEnd = seg[seg.length - 1];
 
 				if (pointsEqual(end, sStart)) {
-					ring.push(...seg.slice(1));
+					for (const p of seg.slice(1)) ring.push(p);
 				} else if (pointsEqual(end, sEnd)) {
-					ring.push(...seg.slice(0, -1).reverse());
+					for (const p of seg.slice(0, -1).reverse()) ring.push(p);
 				} else if (pointsEqual(start, sEnd)) {
-					ring.unshift(...seg.slice(0, -1));
+					ring = seg.slice(0, -1).concat(ring);
 				} else if (pointsEqual(start, sStart)) {
-					ring.unshift(...seg.slice(1).reverse());
+					ring = seg.slice(1).reverse().concat(ring);
 				} else {
 					continue;
 				}
