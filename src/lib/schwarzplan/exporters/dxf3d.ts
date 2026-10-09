@@ -2,7 +2,7 @@
 
 import { DxfWriter, Units, point3d } from '@tarikjabiri/dxf';
 import type { Bounds, GeometryObject, ProgressCallback, ContourData } from '../types';
-import { extrudeBuildings } from '../geometry/buildings';
+import { extrudeBuildings, generateTrees } from '../geometry/buildings';
 import { generateTerrainMesh } from '../elevation/terrain';
 import { latLngToXY, getMaxXY } from '../geometry/coordinates';
 import * as m from '$lib/paraglide/messages';
@@ -27,6 +27,7 @@ export function exportToDXF3D(
 	notify(onProgress, 10, 'Creating layers...');
 	dxf.addLayer('BUILDINGS-3D', 7, 'CONTINUOUS');
 	dxf.addLayer('TERRAIN-3D', 3, 'CONTINUOUS');
+	dxf.addLayer('TREES-3D', 94, 'CONTINUOUS');
 	dxf.addLayer('OTHER', 1, 'CONTINUOUS');
 
 	// 3. Terrain
@@ -92,6 +93,23 @@ export function exportToDXF3D(
 					current: processed.toString(),
 					total: buildings.length.toString()
 				})
+			);
+		}
+	}
+
+	// Bäume
+	const trees = generateTrees(objects, terrainMesh || undefined, gridSize || undefined, maxXY);
+	if (trees.faces.length > 0) {
+		dxf.setCurrentLayerName('TREES-3D');
+		for (const [a, b, c] of trees.faces) {
+			const v1 = trees.vertices[a];
+			const v2 = trees.vertices[b];
+			const v3 = trees.vertices[c];
+			dxf.add3dFace(
+				point3d(v1.x, v1.y, v1.z),
+				point3d(v2.x, v2.y, v2.z),
+				point3d(v3.x, v3.y, v3.z),
+				point3d(v3.x, v3.y, v3.z)
 			);
 		}
 	}

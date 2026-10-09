@@ -106,6 +106,12 @@ function fromContours(contours: ContourData, maxXY: { x: number; y: number }): G
 function renderDXFObj(dxf: DxfWriter, obj: GeometryObject, _maxXY: { x: number; y: number }) {
 	if (obj.path.length === 0) return;
 
+	// Bäume als CIRCLE auf eigenem Layer
+	if (obj.radius) {
+		dxf.addCircle(point3d(obj.path[0].x, obj.path[0].y, 0), obj.radius);
+		return;
+	}
+
 	const isFillable = isLayerFillable(obj.type);
 	// Highways are polygons but should not get SOLID hatches in DXF
 	// (they would obscure buildings and other layers underneath)

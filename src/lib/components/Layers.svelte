@@ -5,6 +5,7 @@
 	import Building from '@lucide/svelte/icons/building';
 	import Sprout from '@lucide/svelte/icons/sprout';
 	import TreePine from '@lucide/svelte/icons/tree-pine';
+	import TreeDeciduous from '@lucide/svelte/icons/tree-deciduous';
 	import Waves from '@lucide/svelte/icons/waves';
 	import Wheat from '@lucide/svelte/icons/wheat';
 	import Car from '@lucide/svelte/icons/car';
@@ -76,7 +77,7 @@
 <div class="absolute top-18 z-10 m-4 flex max-w-[calc(90%-96px)] flex-row flex-wrap gap-2">
 	{#if isLoading}
 		<!-- Skeleton loading state -->
-		{#each Array.from({ length: 9 }, (_, i) => i) as i (i)}
+		{#each Array.from({ length: 10 }, (_, i) => i) as i (i)}
 			<Skeleton class="h-10 w-32 rounded-3xl" />
 		{/each}
 	{:else if !appState.is3DMode}
@@ -106,6 +107,15 @@
 			onToggle={() => appState.toggleLayer('forest')}
 		>
 			{m.layer_forest()}
+		</LayerButton>
+		<LayerButton
+			icon={TreeDeciduous}
+			id="tree"
+			color="#3A5A2F"
+			initialSelected={appState.layers.includes('tree')}
+			onToggle={() => appState.toggleLayer('tree')}
+		>
+			{m.layer_tree()}
 		</LayerButton>
 		<LayerButton
 			icon={Waves}
@@ -189,6 +199,15 @@
 			onToggle={(v: boolean) => appState.toggle3DLayer('height', v)}
 		>
 			{m.layer_terrain()}
+		</LayerButton>
+		<LayerButton
+			icon={TreeDeciduous}
+			id="3d-tree"
+			color="#3A5A2F"
+			initialSelected={appState.selected3DLayers.tree}
+			onToggle={(v: boolean) => appState.toggle3DLayer('tree', v)}
+		>
+			{m.layer_tree()}
 		</LayerButton>
 	{/if}
 </div>

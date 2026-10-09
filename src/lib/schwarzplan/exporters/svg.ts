@@ -108,6 +108,12 @@ function objToSVGPath(
 		(p.y - maxXY.y) * -1 * 1000 * scale
 	];
 
+	// Bäume als Kreis (Kronendurchmesser)
+	if (obj.radius) {
+		const [cx, cy] = transformFn(obj.path[0]);
+		return `<circle cx='${cx}' cy='${cy}' r='${obj.radius * 1000 * scale}' style='fill:${color};stroke:none' />`;
+	}
+
 	const points = obj.path.map(transformFn);
 	let d = 'M' + points.map((p) => p.join(',')).join(' ') + 'z';
 

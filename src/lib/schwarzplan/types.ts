@@ -14,6 +14,7 @@ export type Layer =
 	| 'green'
 	| 'forest'
 	| 'farmland'
+	| 'tree'
 	| 'contours';
 
 export interface LayerConfig {
@@ -104,6 +105,8 @@ export interface GeometryObject {
 	isOutline?: boolean;
 	// For multipolygons: inner rings (holes)
 	holes?: Coordinate[][];
+	// Bäume: Kronenradius in m, path enthält nur den Stammpunkt
+	radius?: number;
 	// Raw OSM tags (for IFC export)
 	tags?: Record<string, string>;
 }
@@ -118,6 +121,8 @@ export interface BuildingMetadata {
 	roofShape?: string; // Roof shape (from roof:shape)
 	roofHeight?: number; // Additional roof height (from roof:height)
 	roofLevels?: number; // Roof levels (from roof:levels)
+	roofDirection?: number; // Firstlage: Gefälle in Grad, 0 = Nord (from roof:direction)
+	roofOrientation?: string; // along | across (from roof:orientation)
 	isPart?: boolean; // True if it comes from building:part
 }
 

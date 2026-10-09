@@ -10,7 +10,7 @@ import type {
 	BuildingMesh,
 	TerrainMesh
 } from '../types';
-import { extrudeBuildings } from '../geometry/buildings';
+import { extrudeBuildings, generateTrees } from '../geometry/buildings';
 import { generateTerrainMesh } from '../elevation/terrain';
 import { getMaxXY } from '../geometry/coordinates';
 import * as m from '$lib/paraglide/messages';
@@ -483,6 +483,27 @@ function writeTerrain(w: IfcWriter, terrainMesh: TerrainMesh, shared: SharedIds)
 }
 
 // ============================================================================
+// Bäume (ein IfcGeographicElement VEGETATION für alle Bäume)
+// ============================================================================
+
+function writeTrees(w: IfcWriter, mesh: BuildingMesh, shared: SharedIds): number {
+	const shapeRep = w.write(
+		'IFCSHAPEREPRESENTATION',
+		`#${shared.subContext},'Body','Tessellation',(#${writeMeshFaceSet(w, mesh)})`
+	);
+	const prodShape = w.write('IFCPRODUCTDEFINITIONSHAPE', `$,$,(#${shapeRep})`);
+	const placement = w.write(
+		'IFCAXIS2PLACEMENT3D',
+		`#${shared.origin},#${shared.zAxis},#${shared.xAxis}`
+	);
+	const localPlacement = w.write('IFCLOCALPLACEMENT', `#${shared.sitePlacement},#${placement}`);
+	return w.write(
+		'IFCGEOGRAPHICELEMENT',
+		`'${generateIfcGuid()}',#${shared.ownerHistory},'Trees',$,$,#${localPlacement},#${prodShape},$,.VEGETATION.`
+	);
+}
+
+// ============================================================================
 // String Escaping
 // ============================================================================
 
@@ -641,6 +662,11 @@ export async function exportToIFC(
 		writeTerrainPset(w, terrainElementId, shared);
 	}
 
+	// Bäume
+	const siteElements: number[] = terrainElementId !== null ? [terrainElementId] : [];
+	const treeMesh = generateTrees(objects, terrainMesh || undefined, gridSize || undefined, maxXY);
+	if (treeMesh.faces.length > 0) siteElements.push(writeTrees(w, treeMesh, shared));
+
 	// Spatial relationships
 	notify(onProgress, 90, 'Writing relationships...');
 
@@ -653,11 +679,11 @@ export async function exportToIFC(
 		);
 	}
 
-	// Site → Terrain (IfcRelContainedInSpatialStructure)
-	if (terrainElementId !== null) {
+	// Site → Terrain, Bäume (IfcRelContainedInSpatialStructure)
+	if (siteElements.length > 0) {
 		w.write(
 			'IFCRELCONTAINEDINSPATIALSTRUCTURE',
-			`'${generateIfcGuid()}',#${shared.ownerHistory},$,$,(#${terrainElementId}),#${shared.site}`
+			`'${generateIfcGuid()}',#${shared.ownerHistory},$,$,(${siteElements.map((id) => `#${id}`).join(',')}),#${shared.site}`
 		);
 	}
 

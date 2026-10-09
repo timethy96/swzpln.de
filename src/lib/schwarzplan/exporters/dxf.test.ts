@@ -116,6 +116,13 @@ describe('DXF exporter', () => {
 		expect(result).not.toContain('HATCH');
 	});
 
+	it('schreibt Bäume als CIRCLE auf den Layer tree', () => {
+		const tree: GeometryObject = { type: 'tree', path: [{ x: 5, y: 5 }], radius: 3 };
+		const result = exportToDXF([tree], null, testBounds, 14);
+		expect(result).toMatch(/\nCIRCLE\n/);
+		expect(result).not.toMatch(/\nHATCH\n/);
+	});
+
 	it('should handle multiple object types', () => {
 		const result = exportToDXF([makeBuilding(), makeHighway()], null, testBounds, 14);
 		expect(result).toContain('LWPOLYLINE');

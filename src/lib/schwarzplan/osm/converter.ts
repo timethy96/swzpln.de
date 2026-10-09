@@ -33,9 +33,10 @@ export function osmDataToGeometry(
 	notify(onProgress, 0, m.progress_osm_parse());
 
 	// 1. Index Elements
-	const { nodes, ways, relations } = indexElements(osmData, bounds);
+	const { nodes, ways, relations, treeNodes } = indexElements(osmData, bounds);
 
 	const geometryObjects: GeometryObject[] = oceanObjects(ways, nodes, bounds);
+	for (const o of treeObjects(treeNodes, ways, nodes)) geometryObjects.push(o);
 
 	// 2. Process Relations (Building parts grouping & Multipolygon stitching)
 	for (const rel of relations) {
@@ -48,7 +49,7 @@ export function osmDataToGeometry(
 	const linearSegments: Map<string, Coordinate[][]> = new Map();
 
 	const wayObjects = Array.from(ways.values())
-		.filter((w) => w.layer !== null) // Skip suppressed ways
+		.filter((w) => w.layer !== null && w.layer !== 'tree') // Skip suppressed ways, trees above
 		.map((w) => {
 			// If it's a linear layer, we buffer it for stitching
 			if (linearLayers.includes(w.layer!) && !w.tags?.area) {
@@ -144,10 +145,13 @@ function indexElements(osmData: OSMData, bounds: Bounds) {
 	const nodes = new Map<number, Coordinate>();
 	const ways = new Map<number, ParsedWay>();
 	const relations: OSMRelation[] = [];
+	// Bäume sind eigenständige Punkte mit Tags (alle anderen Knoten sind nur Wegegeometrie)
+	const treeNodes = new Map<number, Record<string, string>>();
 
 	for (const el of osmData.elements) {
 		if (el.type === 'node') {
 			nodes.set(el.id, latLngToXY(bounds, el.lat, el.lon));
+			if (el.tags && classifyTags(el.tags) === 'tree') treeNodes.set(el.id, el.tags);
 		} else if (el.type === 'way') {
 			// Overpass ">;out skel qt;" re-emits ways referenced by relations
 			// WITHOUT tags. Don't let skeleton data overwrite body data.
@@ -163,7 +167,58 @@ function indexElements(osmData: OSMData, bounds: Bounds) {
 			relations.push(el);
 		}
 	}
-	return { nodes, ways, relations };
+	return { nodes, ways, relations, treeNodes };
+}
+
+// --- Bäume (natural=tree als Punkt, natural=tree_row als Linie) ---
+
+const TREE_ROW_SPACING = 8; // m
+const DEFAULT_CROWN_DIAMETER = 6; // m
+
+function treeObjects(
+	treeNodes: Map<number, Record<string, string>>,
+	ways: Map<number, ParsedWay>,
+	nodes: Map<number, Coordinate>
+): GeometryObject[] {
+	const trees: GeometryObject[] = [];
+	for (const [id, tags] of treeNodes) {
+		const c = nodes.get(id);
+		if (c) trees.push(treeObject(c, tags));
+	}
+	for (const way of ways.values()) {
+		if (way.layer !== 'tree') continue;
+		// Sind die Bäume der Reihe einzeln erfasst, kommen sie schon als Punkte
+		if (way.nodes.some((id) => treeNodes.has(id))) continue;
+		const path = getWayCoords(way, nodes);
+		for (const c of pointsAlong(path, TREE_ROW_SPACING)) trees.push(treeObject(c, way.tags));
+	}
+	return trees;
+}
+
+function treeObject(c: Coordinate, tags?: Record<string, string>): GeometryObject {
+	const d = parseFloat(tags?.diameter_crown ?? '');
+	const diameter = d > 0 ? Math.min(d, 40) : DEFAULT_CROWN_DIAMETER;
+	return { type: 'tree', path: [c], radius: diameter / 2, tags };
+}
+
+// Punkte in gleichmäßigem Abstand (höchstens spacing) entlang der Linie, inkl. Anfang und Ende
+function pointsAlong(path: Coordinate[], spacing: number): Coordinate[] {
+	if (path.length < 2) return path;
+	const lengths = path.slice(1).map((p, i) => Math.hypot(p.x - path[i].x, p.y - path[i].y));
+	const total = lengths.reduce((a, b) => a + b, 0);
+	const n = Math.max(1, Math.ceil(total / spacing));
+	const out: Coordinate[] = [];
+	let seg = 0;
+	let segStart = 0;
+	for (let k = 0; k <= n; k++) {
+		const dist = (k * total) / n;
+		while (seg < lengths.length - 1 && dist > segStart + lengths[seg]) segStart += lengths[seg++];
+		const s = lengths[seg] > 0 ? Math.min(1, (dist - segStart) / lengths[seg]) : 0;
+		const a = path[seg];
+		const b = path[seg + 1];
+		out.push({ x: a.x + s * (b.x - a.x), y: a.y + s * (b.y - a.y) });
+	}
+	return out;
 }
 
 // --- Relation Processing ---
@@ -381,6 +436,16 @@ function notify(cb: ProgressCallback | undefined, percent: number, message: stri
 	cb?.({ step: 'osm-parse', percent, message });
 }
 
+// roof:direction als Grad oder Himmelsrichtung (N, NNE, ... NNW)
+const CARDINALS = 'N NNE NE ENE E ESE SE SSE S SSW SW WSW W WNW NW NNW'.split(' ');
+function parseDirection(value?: string): number | undefined {
+	if (!value) return undefined;
+	const i = CARDINALS.indexOf(value.trim().toUpperCase());
+	if (i >= 0) return i * 22.5;
+	const deg = parseFloat(value);
+	return isNaN(deg) ? undefined : deg;
+}
+
 function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadata | undefined {
 	if (!tags) return undefined;
 	if (!tags.building && (!tags['building:part'] || tags['building:part'] === 'no'))
@@ -396,6 +461,8 @@ function extractBuildingMetadata(tags?: Record<string, string>): BuildingMetadat
 		roofHeight: getVal('roof:height') || undefined,
 		roofLevels: getVal('roof:levels') || undefined,
 		roofShape: tags['roof:shape'],
+		roofDirection: parseDirection(tags['roof:direction']),
+		roofOrientation: tags['roof:orientation'],
 		shape: ['sphere', 'cone', 'pyramid', 'cylinder'].includes(tags['building:shape'] || '')
 			? tags['building:shape']
 			: undefined,

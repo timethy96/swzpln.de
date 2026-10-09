@@ -28,7 +28,8 @@ class AppState {
 
 	selected3DLayers = $state({
 		building: true,
-		height: false
+		height: false,
+		tree: false
 	});
 
 	contourInterval = $state(10);
@@ -111,7 +112,7 @@ class AppState {
 		}
 	}
 
-	toggle3DLayer(layer: 'building' | 'height', value: boolean) {
+	toggle3DLayer(layer: 'building' | 'height' | 'tree', value: boolean) {
 		this.selected3DLayers[layer] = value;
 	}
 
@@ -124,7 +125,11 @@ class AppState {
 	private loadFromCookies() {
 		this.layers = this.loadCookie('layers', ['building', 'highway', 'water', 'green']);
 		this.is3DMode = this.loadCookie('is3DMode', false);
-		this.selected3DLayers = this.loadCookie('3d_layers', { building: true, height: false });
+		this.selected3DLayers = this.loadCookie('3d_layers', {
+			building: true,
+			height: false,
+			tree: false
+		});
 		this.privacyAccepted = this.loadCookie('privacy_accepted', false);
 		this.buildingStyle = this.loadCookie('building_style', 'filled');
 

@@ -415,5 +415,51 @@ describe('OSM converter', () => {
 			const result = osmDataToGeometry(osmData, testBounds);
 			expect(result).toHaveLength(0);
 		});
+
+		it('übernimmt Einzelbäume und verteilt Baumreihen im Abstand von höchstens 8 m', () => {
+			const result = osmDataToGeometry(
+				{
+					version: 0.6,
+					generator: 'test',
+					elements: [
+						// out body: Baum mit Tags
+						{
+							type: 'node',
+							id: 1,
+							lat: 48.75,
+							lon: 9.15,
+							tags: { natural: 'tree', diameter_crown: '12 m' }
+						},
+						{ type: 'node', id: 2, lat: 48.751, lon: 9.15, tags: { natural: 'tree' } },
+						{ type: 'way', id: 10, nodes: [3, 4], tags: { natural: 'tree_row' } },
+						// out skel: Wegknoten ohne Tags
+						{ type: 'node', id: 3, lat: 48.76, lon: 9.16 },
+						{ type: 'node', id: 4, lat: 48.7604, lon: 9.16 } // ca. 44,5 m nördlich
+					]
+				},
+				testBounds
+			);
+			const trees = result.filter((r) => r.type === 'tree');
+			expect(trees).toHaveLength(2 + 7); // 2 Einzelbäume + 6 Abstände à ~7,4 m
+			expect(trees[0].radius).toBe(6);
+			expect(trees[1].radius).toBe(3);
+			expect(trees.every((t) => t.path.length === 1)).toBe(true);
+		});
+
+		it('erzeugt keine Zusatzbäume, wenn die Reihe aus einzeln erfassten Bäumen besteht', () => {
+			const result = osmDataToGeometry(
+				{
+					version: 0.6,
+					generator: 'test',
+					elements: [
+						{ type: 'node', id: 1, lat: 48.75, lon: 9.15, tags: { natural: 'tree' } },
+						{ type: 'node', id: 2, lat: 48.751, lon: 9.15, tags: { natural: 'tree' } },
+						{ type: 'way', id: 10, nodes: [1, 2], tags: { natural: 'tree_row' } }
+					]
+				},
+				testBounds
+			);
+			expect(result.filter((r) => r.type === 'tree')).toHaveLength(2);
+		});
 	});
 });

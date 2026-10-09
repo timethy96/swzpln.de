@@ -18,6 +18,7 @@ const VALID_LAYERS: Set<string> = new Set([
 	'green',
 	'forest',
 	'farmland',
+	'tree',
 	'contours'
 ]);
 

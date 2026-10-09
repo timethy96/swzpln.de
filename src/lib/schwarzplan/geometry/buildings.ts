@@ -1,4 +1,10 @@
-import type { Coordinate, Coordinate3D, BuildingMetadata, BuildingMesh } from '../types';
+import type {
+	Coordinate,
+	Coordinate3D,
+	BuildingMetadata,
+	BuildingMesh,
+	GeometryObject
+} from '../types';
 import earcut from 'earcut';
 import { interpolateTerrainElevation } from '../elevation/terrain';
 
@@ -73,6 +79,52 @@ export function extrudeBuildings(
 	return meshes;
 }
 
+// --- Bäume (Low-Poly: vierkantiger Stamm + sechseckige Doppelpyramide als Krone) ---
+
+const TREE_SIDES = 6;
+const DEFAULT_TREE_HEIGHT = 10; // m
+
+/**
+ * Alle Bäume (type 'tree') als ein gemeinsames Mesh, 20 Dreiecke je Baum.
+ * Höhe aus dem height-Tag, sonst 10 m.
+ */
+export function generateTrees(
+	objects: GeometryObject[],
+	terrainMesh?: { vertices: Coordinate3D[] },
+	gridSize?: { rows: number; cols: number },
+	maxXY?: { x: number; y: number }
+): BuildingMesh {
+	const mesh: BuildingMesh = { vertices: [], faces: [] };
+	for (const tree of objects) {
+		if (tree.type !== 'tree' || !tree.radius) continue;
+		const c = tree.path[0];
+		const r = tree.radius;
+		const h = parseFloat(tree.tags?.height ?? '') || DEFAULT_TREE_HEIGHT;
+		const z0 = getGroundElevation([c], terrainMesh, gridSize, maxXY);
+
+		// Stamm bis in die Krone hinein
+		const t = Math.max(0.15, r * 0.08);
+		const trunk = [-1, 1, 1, -1].map((sx, i) => ({ x: c.x + sx * t, y: c.y + (i < 2 ? -t : t) }));
+		generateWalls(mesh, trunk, z0, z0 + h * 0.4);
+
+		// Krone: Ring auf 60 % der Höhe, Spitzen oben und auf 30 %
+		const s = mesh.vertices.length;
+		for (let i = 0; i < TREE_SIDES; i++) {
+			const a = (i * 2 * Math.PI) / TREE_SIDES;
+			mesh.vertices.push({ x: c.x + r * Math.cos(a), y: c.y + r * Math.sin(a), z: z0 + h * 0.6 });
+		}
+		const top = mesh.vertices.length;
+		mesh.vertices.push({ x: c.x, y: c.y, z: z0 + h }, { x: c.x, y: c.y, z: z0 + h * 0.3 });
+		for (let i = 0; i < TREE_SIDES; i++) {
+			const curr = s + i;
+			const next = s + ((i + 1) % TREE_SIDES);
+			mesh.faces.push([curr, next, top]);
+			mesh.faces.push([next, curr, top + 1]);
+		}
+	}
+	return mesh;
+}
+
 /**
  * Core extrusion logic for a single building part
  */
@@ -101,6 +153,11 @@ export function extrudeSingleBuilding(
 	let wallTopZ = topHeight;
 	let roofHeight = 0;
 
+	// Sattel- und Tonnendach: Firstlage aus Grundriss bzw. roof:direction/roof:orientation
+	const profile = ROOF_PROFILES[roofShape];
+	const frame = profile ? getRoofFrame(cleanFootprint, metadata) : undefined;
+	const halfSpan = frame ? (frame.vMax - frame.vMin) / 2 : 0;
+
 	if (metadata.roofHeight) {
 		roofHeight = metadata.roofHeight;
 	} else if (metadata.roofLevels) {
@@ -112,9 +169,8 @@ export function extrudeSingleBuilding(
 		roofHeight = Math.min(radius, buildingHeight * 0.5);
 	} else if (roofShape === 'round') {
 		// Barrel vault: proportional to span but never more than 40% of building height
-		const span = calculateInscribedRadius(cleanFootprint, calculateAreaCentroid(cleanFootprint));
 		const buildingHeight = topHeight - baseHeight;
-		roofHeight = Math.min(Math.max(1, span * 0.4), buildingHeight * 0.4);
+		roofHeight = Math.min(Math.max(1, halfSpan * 0.4), buildingHeight * 0.4);
 	} else if (roofShape === 'cone' || roofShape === 'pyramid') {
 		const radius = calculateAverageRadius(cleanFootprint, calculateCentroid(cleanFootprint));
 		roofHeight = radius;
@@ -123,6 +179,10 @@ export function extrudeSingleBuilding(
 		const radius = calculateAverageRadius(cleanFootprint, calculateCentroid(cleanFootprint));
 		roofHeight = Math.min(3, topHeight - baseHeight, radius);
 	}
+
+	// Dach nie höher als das Gebäude, ein Tonnendach nie höher als ein Halbkreis über der Spannweite
+	roofHeight = Math.min(roofHeight, topHeight - baseHeight);
+	if (roofShape === 'round') roofHeight = Math.min(roofHeight, halfSpan);
 
 	// Adjust wall top if roof is purely additive or subtractive?
 	// Standard OSM model: 'height' is top of roof. So walls stop at height - roof_height.
@@ -150,7 +210,12 @@ export function extrudeSingleBuilding(
 	} else {
 		// Close building body at wall top (like Rhino's "Cap" command)
 		generateCap(mesh, cleanFootprint, wallTopZ, false, cleanHoles);
-		generateRoofGeometry(mesh, cleanFootprint, roofShape, wallTopZ, wallTopZ + roofHeight);
+		if (profile && frame) {
+			// ponytail: Innenhöfe (holes) werden vom Dach überdeckt, wie bisher
+			generateProfileRoof(mesh, cleanFootprint, frame, profile, wallTopZ, roofHeight);
+		} else {
+			generateRoofGeometry(mesh, cleanFootprint, roofShape, wallTopZ, wallTopZ + roofHeight);
+		}
 	}
 
 	return mesh;
@@ -296,12 +361,6 @@ function generateRoofGeometry(
 		return;
 	}
 
-	// Barrel Vault / Half-Cylinder (round)
-	if (type === 'round') {
-		generateBarrelVault(mesh, footprint, center, zBase, zApex);
-		return;
-	}
-
 	// Pyramidal/Pitched (Apex Point)
 	// Default behavior for unknown roof shapes ensuring closure
 	const startIdx = mesh.vertices.length;
@@ -380,95 +439,196 @@ function generateDome(
 	}
 }
 
-function generateBarrelVault(
+// --- Satteldach / Tonnendach (Profil quer zum First) ---
+
+// Dachprofile quer zum First: t läuft von -1 (Traufe) über 0 (First) bis 1 (Traufe),
+// h ist der Anteil der Dachhöhe. Zwischen den Stützstellen ist das Dach eben.
+interface RoofProfile {
+	t: number[];
+	h: number[];
+}
+
+const ROUND_SEGMENTS = 12;
+const ROOF_PROFILES: Record<string, RoofProfile> = {
+	round: {
+		t: Array.from(
+			{ length: ROUND_SEGMENTS + 1 },
+			(_, i) => -Math.cos((i * Math.PI) / ROUND_SEGMENTS)
+		),
+		h: Array.from({ length: ROUND_SEGMENTS + 1 }, (_, i) =>
+			Math.sin((i * Math.PI) / ROUND_SEGMENTS)
+		)
+	},
+	gabled: { t: [-1, 0, 1], h: [0, 1, 0] }
+};
+
+// Lage des Firsts: ridge = Firstrichtung, span = quer dazu, vMin/vMax = Ausdehnung quer zum First
+export interface RoofFrame {
+	origin: Coordinate;
+	ridge: Coordinate;
+	span: Coordinate;
+	vMin: number;
+	vMax: number;
+}
+
+export function getRoofFrame(footprint: Coordinate[], metadata: BuildingMetadata): RoofFrame {
+	let ridge = longAxis(footprint);
+	if (metadata.roofDirection !== undefined) {
+		// roof:direction zeigt hangabwärts (0° = Nord, im Uhrzeigersinn), der First liegt quer dazu
+		const a = (metadata.roofDirection * Math.PI) / 180;
+		ridge = { x: Math.cos(a), y: -Math.sin(a) };
+	} else if (metadata.roofOrientation === 'across') {
+		ridge = { x: -ridge.y, y: ridge.x };
+	}
+	const span = { x: -ridge.y, y: ridge.x };
+	const origin = footprint[0];
+	let vMin = Infinity;
+	let vMax = -Infinity;
+	for (const p of footprint) {
+		const v = (p.x - origin.x) * span.x + (p.y - origin.y) * span.y;
+		vMin = Math.min(vMin, v);
+		vMax = Math.max(vMax, v);
+	}
+	return { origin, ridge, span, vMin, vMax };
+}
+
+type RoofPoint = { x: number; y: number; t: number };
+
+function generateProfileRoof(
 	mesh: BuildingMesh,
 	footprint: Coordinate[],
-	center: Coordinate,
+	frame: RoofFrame,
+	profile: RoofProfile,
 	zBase: number,
-	zTop: number
+	roofHeight: number
 ) {
-	const roofHeight = zTop - zBase;
-	if (roofHeight < 0.1) return;
+	if (roofHeight < 0.1 || frame.vMax - frame.vMin < EPSILON) return;
+	const { origin, span, vMin, vMax } = frame;
+	const ring: RoofPoint[] = footprint.map((p) => ({
+		x: p.x,
+		y: p.y,
+		t: (2 * ((p.x - origin.x) * span.x + (p.y - origin.y) * span.y - vMin)) / (vMax - vMin) - 1
+	}));
+	const zOf = (t: number) => zBase + roofHeight * profileAt(profile, t);
 
-	// Find the building's principal axis (longest edge = ridge direction)
-	let maxEdgeLen = 0;
-	let ridgeDir = { x: 1, y: 0 };
-	for (let i = 0; i < footprint.length; i++) {
-		const next = (i + 1) % footprint.length;
-		const dx = footprint[next].x - footprint[i].x;
-		const dy = footprint[next].y - footprint[i].y;
-		const len = Math.sqrt(dx * dx + dy * dy);
-		if (len > maxEdgeLen) {
-			maxEdgeLen = len;
-			ridgeDir = { x: dx / len, y: dy / len };
+	// 1. Dachfläche: Grundriss in Streifen zwischen den Profilknicken schneiden.
+	//    Je Streifen ist das Dach eben, so folgt es jedem Grundriss (auch L-Formen, Kurven).
+	for (let k = 0; k < profile.t.length - 1; k++) {
+		const strip = clipAt(clipAt(ring, profile.t[k], true), profile.t[k + 1], false);
+		if (strip.length < 3) continue;
+		const startIdx = mesh.vertices.length;
+		const flat: number[] = [];
+		for (const p of strip) {
+			mesh.vertices.push({ x: p.x, y: p.y, z: zOf(p.t) });
+			flat.push(p.x, p.y);
 		}
-	}
-	// Span direction (perpendicular to ridge)
-	const spanDir = { x: -ridgeDir.y, y: ridgeDir.x };
-
-	// Project all footprint vertices onto oriented axes
-	let minRidge = Infinity,
-		maxRidge = -Infinity;
-	let minSpan = Infinity,
-		maxSpan = -Infinity;
-	for (const p of footprint) {
-		const rProj = (p.x - center.x) * ridgeDir.x + (p.y - center.y) * ridgeDir.y;
-		const sProj = (p.x - center.x) * spanDir.x + (p.y - center.y) * spanDir.y;
-		if (rProj < minRidge) minRidge = rProj;
-		if (rProj > maxRidge) maxRidge = rProj;
-		if (sProj < minSpan) minSpan = sProj;
-		if (sProj > maxSpan) maxSpan = sProj;
-	}
-
-	const halfSpan = (maxSpan - minSpan) / 2;
-	const spanCenter = (minSpan + maxSpan) / 2;
-
-	// Half-cylinder: two semicircular arch profiles connected with quads
-	const archSegments = 12;
-	const startIdx = mesh.vertices.length;
-	const vps = archSegments + 1;
-
-	for (const ridgePos of [minRidge, maxRidge]) {
-		for (let i = 0; i <= archSegments; i++) {
-			const angle = (i / archSegments) * Math.PI;
-			const spanOffset = spanCenter + halfSpan * Math.cos(angle);
-			const z = zBase + roofHeight * Math.sin(angle);
-
-			const x = center.x + ridgeDir.x * ridgePos + spanDir.x * spanOffset;
-			const y = center.y + ridgeDir.y * ridgePos + spanDir.y * spanOffset;
-			mesh.vertices.push({ x, y, z });
+		const tri = earcut(flat);
+		for (let i = 0; i < tri.length; i += 3) {
+			mesh.faces.push([startIdx + tri[i], startIdx + tri[i + 1], startIdx + tri[i + 2]]);
 		}
 	}
 
-	// Curved barrel surface
-	for (let i = 0; i < archSegments; i++) {
-		const a0 = startIdx + i;
-		const a1 = startIdx + i + 1;
-		const b0 = startIdx + vps + i;
-		const b1 = startIdx + vps + i + 1;
-		mesh.faces.push([a0, b0, a1]);
-		mesh.faces.push([a1, b0, b1]);
+	// 2. Wände zwischen Traufhöhe und Dach (Giebel); Kanten an den Profilknicken teilen
+	const dense: RoofPoint[] = [];
+	for (let i = 0; i < ring.length; i++) {
+		const a = ring[i];
+		const b = ring[(i + 1) % ring.length];
+		dense.push(a);
+		const cuts = profile.t.filter((t) => t > Math.min(a.t, b.t) && t < Math.max(a.t, b.t));
+		if (a.t > b.t) cuts.reverse();
+		for (const t of cuts) dense.push(pointAt(a, b, t));
 	}
+	for (let i = 0; i < dense.length; i++) {
+		const a = dense[i];
+		const b = dense[(i + 1) % dense.length];
+		const za = zOf(a.t);
+		const zb = zOf(b.t);
+		if (Math.max(za, zb) - zBase < 0.01) continue;
+		const s = mesh.vertices.length;
+		mesh.vertices.push(
+			{ x: a.x, y: a.y, z: zBase },
+			{ x: a.x, y: a.y, z: za },
+			{ x: b.x, y: b.y, z: zBase },
+			{ x: b.x, y: b.y, z: zb }
+		);
+		mesh.faces.push([s, s + 2, s + 1]);
+		mesh.faces.push([s + 2, s + 3, s + 1]);
+	}
+}
 
-	// Gable walls (semicircular end caps)
-	for (let section = 0; section < 2; section++) {
-		const sectionStart = startIdx + section * vps;
-		const baseCenterIdx = mesh.vertices.length;
-		const ridgePos = section === 0 ? minRidge : maxRidge;
-		mesh.vertices.push({
-			x: center.x + ridgeDir.x * ridgePos + spanDir.x * spanCenter,
-			y: center.y + ridgeDir.y * ridgePos + spanDir.y * spanCenter,
-			z: zBase
-		});
+function profileAt(profile: RoofProfile, t: number): number {
+	const { t: ts, h } = profile;
+	let i = 1;
+	while (i < ts.length - 1 && t > ts[i]) i++;
+	const s = Math.min(1, Math.max(0, (t - ts[i - 1]) / (ts[i] - ts[i - 1])));
+	return h[i - 1] + s * (h[i] - h[i - 1]);
+}
 
-		for (let i = 0; i < archSegments; i++) {
-			if (section === 0) {
-				mesh.faces.push([baseCenterIdx, sectionStart + i + 1, sectionStart + i]);
-			} else {
-				mesh.faces.push([baseCenterIdx, sectionStart + i, sectionStart + i + 1]);
-			}
+// Sutherland-Hodgman an der Geraden t = bound (above: Teil mit t >= bound behalten)
+function clipAt(poly: RoofPoint[], bound: number, above: boolean): RoofPoint[] {
+	const inside = (p: RoofPoint) => (above ? p.t >= bound : p.t <= bound);
+	const out: RoofPoint[] = [];
+	for (let i = 0; i < poly.length; i++) {
+		const a = poly[i];
+		const b = poly[(i + 1) % poly.length];
+		if (inside(a)) out.push(a);
+		if (inside(a) !== inside(b)) out.push(pointAt(a, b, bound));
+	}
+	return out;
+}
+
+function pointAt(a: RoofPoint, b: RoofPoint, t: number): RoofPoint {
+	const s = (t - a.t) / (b.t - a.t);
+	return { x: a.x + s * (b.x - a.x), y: a.y + s * (b.y - a.y), t };
+}
+
+// Längsachse des flächenkleinsten umschließenden Rechtecks. Anders als die längste Kante
+// ist sie unabhängig davon, in wie viele Stücke die Längsseiten zerlegt sind.
+function longAxis(polygon: Coordinate[]): Coordinate {
+	const hull = convexHull(polygon);
+	let bestArea = Infinity;
+	let axis = { x: 1, y: 0 };
+	for (let i = 0; i < hull.length; i++) {
+		const a = hull[i];
+		const b = hull[(i + 1) % hull.length];
+		const len = Math.hypot(b.x - a.x, b.y - a.y);
+		if (len < 1e-9) continue;
+		const u = { x: (b.x - a.x) / len, y: (b.y - a.y) / len };
+		let uMin = Infinity,
+			uMax = -Infinity,
+			nMin = Infinity,
+			nMax = -Infinity;
+		for (const p of hull) {
+			const pu = p.x * u.x + p.y * u.y;
+			const pn = -p.x * u.y + p.y * u.x;
+			uMin = Math.min(uMin, pu);
+			uMax = Math.max(uMax, pu);
+			nMin = Math.min(nMin, pn);
+			nMax = Math.max(nMax, pn);
+		}
+		const area = (uMax - uMin) * (nMax - nMin);
+		if (area < bestArea - 1e-9) {
+			bestArea = area;
+			axis = uMax - uMin >= nMax - nMin ? u : { x: -u.y, y: u.x };
 		}
 	}
+	return axis;
+}
+
+function convexHull(points: Coordinate[]): Coordinate[] {
+	const pts = [...points].sort((a, b) => a.x - b.x || a.y - b.y);
+	const cross = (o: Coordinate, a: Coordinate, b: Coordinate) =>
+		(a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x);
+	const half = (list: Coordinate[]) => {
+		const h: Coordinate[] = [];
+		for (const p of list) {
+			while (h.length >= 2 && cross(h[h.length - 2], h[h.length - 1], p) <= 0) h.pop();
+			h.push(p);
+		}
+		h.pop();
+		return h;
+	};
+	return half(pts).concat(half(pts.reverse()));
 }
 
 function generateVolumetricMesh(
@@ -608,22 +768,6 @@ function calculateAverageRadius(polygon: Coordinate[], center: Coordinate): numb
 	let sum = 0;
 	for (const p of polygon) sum += Math.sqrt(distSq(p, center));
 	return sum / polygon.length;
-}
-
-function calculateInscribedRadius(polygon: Coordinate[], center: Coordinate): number {
-	// Perpendicular distance from center to the nearest edge (= inscribed circle radius)
-	let minDist = Infinity;
-	for (let i = 0; i < polygon.length; i++) {
-		const j = (i + 1) % polygon.length;
-		const dx = polygon[j].x - polygon[i].x;
-		const dy = polygon[j].y - polygon[i].y;
-		const edgeLen = Math.sqrt(dx * dx + dy * dy);
-		if (edgeLen < 1e-10) continue;
-		const dist =
-			Math.abs((center.x - polygon[i].x) * dy - (center.y - polygon[i].y) * dx) / edgeLen;
-		if (dist < minDist) minDist = dist;
-	}
-	return minDist === Infinity ? 0 : minDist;
 }
 
 function calculateAreaCentroid(polygon: Coordinate[]): Coordinate {

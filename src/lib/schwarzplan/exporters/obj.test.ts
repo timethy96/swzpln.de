@@ -46,6 +46,13 @@ describe('OBJ exporter', () => {
 		expect(obj).toContain('OpenStreetMap');
 	});
 
+	it('exportiert Bäume als eigenes Low-Poly-Objekt', async () => {
+		const tree: GeometryObject = { type: 'tree', path: [{ x: 5, y: 5 }], radius: 3 };
+		const obj = decodeOBJ(await exportToOBJ([tree], null, testBounds));
+		expect(obj).toContain('o Trees');
+		expect((obj.match(/^f /gm) || []).length).toBe(20);
+	});
+
 	it('should contain vertex data for buildings', async () => {
 		const result = await exportToOBJ([makeBuilding()], null, testBounds);
 		const obj = decodeOBJ(result);

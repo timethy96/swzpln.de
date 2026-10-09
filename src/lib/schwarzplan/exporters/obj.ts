@@ -2,7 +2,7 @@
 // Universal 3D format that works in Rhino, Blender, and most 3D software
 
 import type { Bounds, GeometryObject, ProgressCallback } from '../types';
-import { extrudeBuildings } from '../geometry/buildings';
+import { extrudeBuildings, generateTrees } from '../geometry/buildings';
 import { generateTerrainMesh } from '../elevation/terrain';
 import { getMaxXY } from '../geometry/coordinates';
 import * as m from '$lib/paraglide/messages';
@@ -90,6 +90,19 @@ export async function exportToOBJ(
 				`Exporting buildings: ${processedCount}/${meshes.length}`
 			);
 		}
+	}
+
+	// Bäume als ein Objekt
+	const trees = generateTrees(objects, terrainMesh || undefined, gridSize || undefined, maxXY);
+	if (trees.faces.length > 0) {
+		obj += '\n# Trees\no Trees\ng trees\n';
+		for (const v of trees.vertices) {
+			obj += `v ${v.x.toFixed(3)} ${v.y.toFixed(3)} ${v.z.toFixed(3)}\n`;
+		}
+		for (const f of trees.faces) {
+			obj += `f ${f.map((i) => vertexOffset + i).join(' ')}\n`;
+		}
+		vertexOffset += trees.vertices.length;
 	}
 
 	// Export terrain if available

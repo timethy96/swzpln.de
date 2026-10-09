@@ -94,7 +94,14 @@ function renderObj(
 	const config = LAYER_CONFIG[layer];
 	const color = config?.color || '#FF0000';
 
-	// Construct Path ops
+	// Bäume als Kreis (Kronendurchmesser)
+	if (obj.radius) {
+		const p = obj.path[0];
+		doc.setFillColor(color);
+		doc.circle(p.x * 1000 * scale, (maxXY.y - p.y) * 1000 * scale, obj.radius * 1000 * scale, 'F');
+		return;
+	}
+
 	// Construct Path ops
 	const ops: { op: string; c?: number[] }[] = [];
 

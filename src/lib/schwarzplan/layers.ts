@@ -106,6 +106,15 @@ export const LAYER_CONFIG: Record<Layer, LayerConfig> = {
 		dxfColor: 41,
 		matchTags: { landuse: 'farmland' }
 	},
+	tree: {
+		color: '#5B8A45',
+		fillable: true,
+		// Einzelbäume (Punkte) und Baumreihen (Linien), siehe osm/converter.ts
+		overpassQuery: 'nwr["natural"~"^(tree|tree_row)$"];',
+		lineType: 'CONTINUOUS',
+		dxfColor: 94,
+		matchTags: { natural: ['tree', 'tree_row'] }
+	},
 	contours: {
 		color: '#CCCCCC',
 		fillable: false,
@@ -179,6 +188,7 @@ export const LAYER_RENDER_ORDER: Layer[] = [
 	'forest',
 	'railway',
 	'highway',
+	'tree',
 	'building_parts',
 	'building',
 	'contours'

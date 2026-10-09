@@ -180,6 +180,7 @@
 			if (appState.selected3DLayers.building) {
 				layers.push('building', 'building_parts');
 			}
+			if (appState.selected3DLayers.tree) layers.push('tree');
 		} else {
 			layers = [...appState.layers];
 			// Always fetch building:part data when buildings are enabled
