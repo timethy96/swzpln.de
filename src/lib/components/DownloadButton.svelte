@@ -555,7 +555,7 @@
 									href={shopHref}
 									target="_blank"
 									rel="noopener noreferrer"
-									class="w-4/5 shrink-0 snap-center"
+									class="w-[45%] shrink-0 snap-start"
 								>
 									<img
 										src={url}
@@ -567,9 +567,9 @@
 						</div>
 					{:else if lifestyleLoading}
 						<div class="flex gap-2 overflow-hidden rounded-md" aria-busy="true">
-							{#each [0, 1] as i (i)}
+							{#each [0, 1, 2] as i (i)}
 								<div
-									class="flex aspect-square w-4/5 shrink-0 animate-pulse flex-col items-center justify-center gap-2 rounded-md bg-accent"
+									class="flex aspect-square w-[45%] shrink-0 animate-pulse flex-col items-center justify-center gap-2 rounded-md bg-accent"
 								>
 									{#if i === 0}
 										<LoaderCircle class="size-5 animate-spin text-muted-foreground" />
