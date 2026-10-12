@@ -39,7 +39,10 @@
 	// des Downloads angefragt, siehe Datenschutzerklärung) und der Link in den
 	// Shop mit diesem Ausschnitt
 	let lifestyleImages = $state<string[]>([]);
-	let lifestyleRequest: Promise<string[]> | null = null;
+	// Bilder kommen einzeln als Strom; hier sammeln, bis der Dialog offen ist
+	let lifestyleArrived: string[] = [];
+	// Zählt die Läufe: ein veralteter Strom (neuer Download, Dialog zu) wird ignoriert
+	let lifestyleRun = 0;
 	// Anfrage läuft noch: Platzhalter statt plötzlich auftauchender Bilder
 	let lifestyleLoading = $state(false);
 	let shopHref = $state(SHOP_URL);
@@ -151,6 +154,33 @@
 		}
 	}
 
+	/** Lifestyle-Bilder als NDJSON-Strom lesen: jedes Bild erscheint, sobald es fertig ist. */
+	async function streamLifestyle(ort: string, run: number) {
+		try {
+			const res = await fetch(`${SHOP_URL}/api/lifestyle?ort=${ort}&stream=1`);
+			if (!res.ok || !res.body) return;
+			const reader = res.body.pipeThrough(new TextDecoderStream()).getReader();
+			let buffer = '';
+			for (;;) {
+				const { value, done } = await reader.read();
+				if (done) break;
+				buffer += value;
+				const lines = buffer.split('\n');
+				buffer = lines.pop() ?? '';
+				for (const line of lines) {
+					const url = line.trim() ? (JSON.parse(line) as { url?: string }).url : undefined;
+					if (!url || run !== lifestyleRun) continue;
+					lifestyleArrived.push(url);
+					if (completionDialogOpen) lifestyleImages = [...lifestyleArrived];
+				}
+			}
+		} catch {
+			// ohne Bilder geht der Download normal weiter
+		} finally {
+			if (run === lifestyleRun) lifestyleLoading = false;
+		}
+	}
+
 	async function startGeneration(format: ExportFormat, scale?: number) {
 		isCancelled = false;
 
@@ -160,7 +190,8 @@
 		const zoom = appState.location.zoom;
 		let layers: Layer[];
 
-		lifestyleRequest = null;
+		lifestyleRun++;
+		lifestyleArrived = [];
 		lifestyleImages = [];
 		lifestyleLoading = false;
 		shopHref = SHOP_URL;
@@ -169,10 +200,7 @@
 			const ort = `${lat.toFixed(5)},${lng.toFixed(5)},${zoom.toFixed(2)}`;
 			shopHref = `${SHOP_URL}/?ort=${ort}#produkte`;
 			lifestyleLoading = true;
-			lifestyleRequest = fetch(`${SHOP_URL}/api/lifestyle?ort=${ort}`)
-				.then((r) => (r.ok ? r.json() : { images: [] }))
-				.then((d: { images?: { url: string }[] }) => (d.images ?? []).map((i) => i.url))
-				.catch(() => []);
+			void streamLifestyle(ort, lifestyleRun);
 		}
 
 		if (appState.is3DMode) {
@@ -272,11 +300,6 @@
 			lastGeneratedMimeType = mimeType;
 			lastGeneratedFilename = filename;
 
-			lifestyleRequest?.then((urls) => {
-				lifestyleLoading = false;
-				if (completionDialogOpen) lifestyleImages = urls;
-			});
-
 			fetch('/api/counter/record', {
 				method: 'POST',
 				headers: { 'Content-Type': 'application/json' },
@@ -287,6 +310,7 @@
 			appState.progress = null;
 			cumulativeProgress = 0;
 			completionDialogOpen = true;
+			lifestyleImages = [...lifestyleArrived];
 		} catch (error) {
 			if (!isCancelled) {
 				console.error('Generation error:', error);
@@ -314,6 +338,7 @@
 	function handleCompletionClose() {
 		completionDialogOpen = false;
 		lastGeneratedResult = null;
+		lifestyleRun++;
 		lifestyleImages = [];
 	}
 
