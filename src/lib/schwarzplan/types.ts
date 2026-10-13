@@ -61,7 +61,9 @@ export interface OSMNode {
 export interface OSMWay {
 	type: 'way';
 	id: number;
-	nodes: number[];
+	nodes?: number[];
+	/** Inline-Koordinaten (`out geom`, PostGIS) statt Node-Referenzen */
+	geometry?: { lat: number; lon: number }[];
 	tags?: Record<string, string>;
 }
 
@@ -69,6 +71,7 @@ export interface OSMRelationMember {
 	type: 'node' | 'way' | 'relation';
 	ref: number;
 	role: string;
+	geometry?: { lat: number; lon: number }[];
 }
 
 export interface OSMRelation {

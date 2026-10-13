@@ -18,6 +18,8 @@ import { convertAndMergeRoads } from '../roads';
 type ParsedWay = {
 	layer: Layer | null;
 	nodes: number[];
+	/** Inline-Koordinaten (`out geom`), dann ist nodes leer */
+	coords?: Coordinate[];
 	tags?: Record<string, string>;
 	relationId?: number;
 	isOutline?: boolean;
@@ -155,11 +157,22 @@ function indexElements(osmData: OSMData, bounds: Bounds) {
 			if (!existing || el.tags) {
 				ways.set(el.id, {
 					layer: resolveLayer(classifyTags(el.tags)),
-					nodes: el.nodes,
+					nodes: el.nodes ?? [],
+					coords: el.geometry?.map((p) => latLngToXY(bounds, p.lat, p.lon)),
 					tags: el.tags
 				});
 			}
 		} else if (el.type === 'relation') {
+			// `out geom`: Member bringen ihre Koordinaten mit, als ungetaggte Ways ablegen
+			for (const m of el.members) {
+				if (m.type === 'way' && m.geometry && !ways.has(m.ref)) {
+					ways.set(m.ref, {
+						layer: null,
+						nodes: [],
+						coords: m.geometry.map((p) => latLngToXY(bounds, p.lat, p.lon))
+					});
+				}
+			}
 			relations.push(el);
 		}
 	}
@@ -294,6 +307,7 @@ function createWayObject(way: ParsedWay, nodes: Map<number, Coordinate>): Geomet
 }
 
 function getWayCoords(way: ParsedWay, nodes: Map<number, Coordinate>): Coordinate[] {
+	if (way.coords) return way.coords;
 	return way.nodes.map((id) => nodes.get(id)).filter((c): c is Coordinate => c !== undefined);
 }
 

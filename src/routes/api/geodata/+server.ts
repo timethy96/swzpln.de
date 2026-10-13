@@ -1,9 +1,18 @@
-// Geodata API endpoint - streaming proxy to internal Overpass
-// Validates parameters and rate-limits, then streams the raw Overpass response
-// through without parsing or caching. The client handles parsing in a Web Worker.
+// Geodata API endpoint: PostGIS first (Overpass-JSON im Stil `out geom`),
+// internal Overpass as fallback. Validates parameters and rate-limits, then
+// streams the response through. The client handles parsing in a Web Worker.
+// Der Shop holt hier seine Kacheln mit X-Geodata-Key (ohne Rate-Limit) und
+// roads=major|medium für grobe Straßen bei großen Ausschnitten.
 
 import { error } from '@sveltejs/kit';
 import { checkRateLimit } from '$lib/server/ratelimit';
+import { env } from '$env/dynamic/private';
+import {
+	isPostgisEnabled,
+	markPostgisDown,
+	postgisStream,
+	type RoadDetail
+} from '$lib/server/postgis';
 import { isOverpassAvailable, getOverpassUrl, buildOverpassQuery } from '$lib/server/overpass';
 import type { RequestHandler } from './$types';
 import type { Layer } from '$lib/schwarzplan/types';
@@ -21,10 +30,11 @@ const VALID_LAYERS: Set<string> = new Set([
 	'contours'
 ]);
 
-export const GET: RequestHandler = async ({ url, getClientAddress }) => {
-	// Rate limiting: 60 requests per IP per minute
-	const clientIP = getClientAddress();
-	if (!checkRateLimit(`geodata:${clientIP}`, 60, 60 * 1000)) {
+export const GET: RequestHandler = async ({ url, request, getClientAddress }) => {
+	// Rate limiting: 60 requests per IP per minute, not for the shop
+	const internal =
+		!!env.GEODATA_INTERNAL_KEY && request.headers.get('x-geodata-key') === env.GEODATA_INTERNAL_KEY;
+	if (!internal && !checkRateLimit(`geodata:${getClientAddress()}`, 60, 60 * 1000)) {
 		throw error(429, 'Too many requests');
 	}
 
@@ -59,6 +69,21 @@ export const GET: RequestHandler = async ({ url, getClientAddress }) => {
 
 	if (layers.length === 0) {
 		throw error(400, 'No valid layers specified');
+	}
+
+	const roadsParam = url.searchParams.get('roads');
+	const roads: RoadDetail = roadsParam === 'major' || roadsParam === 'medium' ? roadsParam : 'all';
+
+	if (isPostgisEnabled()) {
+		try {
+			const body = await postgisStream({ north, south, east, west }, layers, roads);
+			return new Response(body, {
+				headers: { 'Content-Type': 'application/json', 'X-Geodata-Source': 'postgis' }
+			});
+		} catch (err) {
+			console.error('PostGIS failed, using Overpass:', (err as Error).message);
+			markPostgisDown();
+		}
 	}
 
 	// Check Overpass availability
