@@ -33,6 +33,16 @@ const MAJOR_ROADS = "highway ~ '^(motorway|trunk|primary|secondary|tertiary)(_li
 const MEDIUM_ROADS =
 	"highway !~ '^(footway|path|cycleway|track|service|pedestrian|steps|corridor|bridleway)$'";
 
+/** OSM-ID-Spalte je Tabelle (osm2pgsql flex) */
+const ID: Record<string, string> = {
+	buildings: 'area_id',
+	areas: 'area_id',
+	roads: 'way_id',
+	railways: 'way_id',
+	waterways: 'way_id',
+	coastline: 'way_id'
+};
+
 const BUILDING_COLS = 'height, min_height, levels, min_level, roof_shape, roof_height';
 
 type Tags = Record<string, string>;
@@ -125,15 +135,22 @@ const schema = () => (env.POSTGIS_SCHEMA || 'welt').replace(/[^a-z0-9_]/gi, '');
 
 export type RoadDetail = 'all' | 'medium' | 'major';
 
-/** GeoJSON-Geometrie als Overpass-Elemente (`out geom`). */
+/**
+ * GeoJSON-Geometrie als Overpass-Elemente (`out geom`) mit der echten OSM-ID:
+ * der Shop setzt Kacheln zusammen und entfernt doppelte Elemente über
+ * Typ/ID. id kommt aus way_id (Linien) oder area_id (Flächen: positiv = Way,
+ * negativ = Relation). Teilringe von Multipolygonen bekommen negative
+ * Ersatz-IDs (members.next), die keiner echten Way-ID in die Quere kommen.
+ */
 export function toElements(
 	geojson: { type: string; coordinates: unknown },
 	tags: Tags,
-	ids: { way: number; rel: number }
+	id: number,
+	members: { next: number }
 ): object[] {
 	const pts = (ring: number[][]) => ring.map(([lon, lat]) => ({ lat, lon }));
 	if (geojson.type === 'LineString') {
-		return [{ type: 'way', id: ++ids.way, tags, geometry: pts(geojson.coordinates as number[][]) }];
+		return [{ type: 'way', id, tags, geometry: pts(geojson.coordinates as number[][]) }];
 	}
 	const polys =
 		geojson.type === 'Polygon'
@@ -141,19 +158,21 @@ export function toElements(
 			: geojson.type === 'MultiPolygon'
 				? (geojson.coordinates as number[][][][])
 				: [];
-	if (polys.length === 1 && polys[0].length === 1) {
-		return [{ type: 'way', id: ++ids.way, tags, geometry: pts(polys[0][0]) }];
-	}
 	if (polys.length === 0) return [];
-	const members = polys.flatMap((rings) =>
+	if (id > 0 && polys.length === 1 && polys[0].length === 1) {
+		return [{ type: 'way', id, tags, geometry: pts(polys[0][0]) }];
+	}
+	const parts = polys.flatMap((rings) =>
 		rings.map((ring, i) => ({
 			type: 'way',
-			ref: ++ids.way,
+			ref: --members.next,
 			role: i === 0 ? 'outer' : 'inner',
 			geometry: pts(ring)
 		}))
 	);
-	return [{ type: 'relation', id: ++ids.rel, tags: { type: 'multipolygon', ...tags }, members }];
+	return [
+		{ type: 'relation', id: Math.abs(id), tags: { type: 'multipolygon', ...tags }, members: parts }
+	];
 }
 
 /**
@@ -177,14 +196,14 @@ export async function postgisStream(
 				l === 'highway' && roads === 'medium' ? MEDIUM_ROADS : null
 			].filter(Boolean);
 			return {
-				sql: `select ST_AsGeoJSON(geom, 7) as g${q.cols ? ', ' + q.cols : ''} from ${s}.${q.table} where ${where.join(' and ')}`,
+				sql: `select ST_AsGeoJSON(geom, 7) as g, ${ID[q.table]} as id${q.cols ? ', ' + q.cols : ''} from ${s}.${q.table} where ${where.join(' and ')}`,
 				tags: q.tags
 			};
 		})
 	);
 	const params = [bounds.west, bounds.south, bounds.east, bounds.north];
 	const enc = new TextEncoder();
-	const ids = { way: 0, rel: 0 };
+	const members = { next: 0 };
 	let first = true;
 
 	// Alle Abfragen vorab planen lassen: Fehler (DB weg, Schema fehlt)
@@ -222,7 +241,12 @@ export async function postgisStream(
 					}
 					let out = '';
 					for (const r of rows) {
-						for (const el of toElements(JSON.parse(r.g), queries[qi].tags(r), ids)) {
+						for (const el of toElements(
+							JSON.parse(r.g),
+							queries[qi].tags(r),
+							Number(r.id),
+							members
+						)) {
 							out += (first ? '' : ',') + JSON.stringify(el);
 							first = false;
 						}

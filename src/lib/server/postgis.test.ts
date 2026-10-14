@@ -11,41 +11,46 @@ const sq = (x: number, y: number, d: number) => [
 ];
 
 describe('toElements', () => {
-	it('Polygon ohne Loch wird ein Way, mit Loch eine Multipolygon-Relation', () => {
-		const ids = { way: 0, rel: 0 };
+	it('echte OSM-IDs: Way bleibt Way, area_id negativ wird Relation', () => {
+		const m = { next: 0 };
 		const [way] = toElements(
 			{ type: 'Polygon', coordinates: [sq(13.4, 52.5, 0.001)] },
 			{ building: 'yes' },
-			ids
+			4711,
+			m
 		);
-		expect(way).toMatchObject({ type: 'way', id: 1, tags: { building: 'yes' } });
+		expect(way).toMatchObject({ type: 'way', id: 4711, tags: { building: 'yes' } });
 		const [rel] = toElements(
 			{ type: 'Polygon', coordinates: [sq(13.4, 52.5, 0.01), sq(13.402, 52.502, 0.001)] },
 			{ natural: 'water' },
-			ids
+			-815,
+			m
 		);
 		expect(rel).toMatchObject({
 			type: 'relation',
+			id: 815,
 			tags: { type: 'multipolygon', natural: 'water' },
 			members: [
-				{ role: 'outer', ref: 2 },
-				{ role: 'inner', ref: 3 }
+				{ role: 'outer', ref: -1 },
+				{ role: 'inner', ref: -2 }
 			]
 		});
 	});
 
 	it('swzpln-Konverter liest das Ergebnis: Gebäude und See mit Insel', () => {
-		const ids = { way: 0, rel: 0 };
+		const m = { next: 0 };
 		const elements = [
 			...toElements(
 				{ type: 'Polygon', coordinates: [sq(13.401, 52.501, 0.001)] },
 				{ building: 'yes' },
-				ids
+				1,
+				m
 			),
 			...toElements(
 				{ type: 'MultiPolygon', coordinates: [[sq(13.4, 52.5, 0.008), sq(13.402, 52.502, 0.001)]] },
 				{ natural: 'water' },
-				ids
+				-2,
+				m
 			)
 		];
 		const objs = osmDataToGeometry(
