@@ -590,6 +590,8 @@
 								</a>
 							{/each}
 						</div>
+						<!-- Transparenzhinweis (AI Act Art. 50) und Abbildungshinweis -->
+						<p class="text-center text-xs text-muted-foreground">{m.shop_lifestyle_ai_note()}</p>
 					{:else if lifestyleLoading}
 						<div class="flex gap-2 overflow-hidden rounded-md" aria-busy="true">
 							{#each [0, 1, 2] as i (i)}
