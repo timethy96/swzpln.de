@@ -9,7 +9,8 @@
 // Konverter auswerten.
 //
 // Gestreamt wird zeilenweise über einen Cursor: ein Ausschnitt von 0,5° in
-// Berlin sind Hunderttausende Gebäude, der Container hat 512 MB.
+// Berlin sind Hunderttausende Gebäude, der Container hat 512 MB. Große Pakete
+// (20.000 Zeilen), weil jede Runde zur Datenbank 18 ms über WireGuard kostet.
 // ============================================================================
 
 import pg from 'pg';
@@ -212,7 +213,7 @@ export async function postgisStream(
 						return;
 					}
 					cursor ??= client.query(new Cursor<Row>(queries[qi].sql, params));
-					const rows = await cursor.read(2000);
+					const rows = await cursor.read(20_000);
 					if (rows.length === 0) {
 						await cursor.close();
 						cursor = null;
