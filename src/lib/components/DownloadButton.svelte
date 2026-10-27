@@ -38,14 +38,27 @@
 	// Lifestyle-Bilder des gerade erzeugten Ausschnitts vom Shop (beim Start
 	// des Downloads angefragt, siehe Datenschutzerklärung) und der Link in den
 	// Shop mit diesem Ausschnitt
-	let lifestyleImages = $state<string[]>([]);
+	// Je Bild der Link in den Shop: Produktseite in der Edition des Bildes,
+	// das Produkt des Bildes zuerst, mit diesem Ausschnitt
+	type LifestyleImage = { url: string; href: string; edition?: string };
+	let lifestyleImages = $state<LifestyleImage[]>([]);
 	// Bilder kommen einzeln als Strom; hier sammeln, bis der Dialog offen ist
-	let lifestyleArrived: string[] = [];
+	let lifestyleArrived: LifestyleImage[] = [];
 	// Zählt die Läufe: ein veralteter Strom (neuer Download, Dialog zu) wird ignoriert
 	let lifestyleRun = 0;
 	// Anfrage läuft noch: Platzhalter statt plötzlich auftauchender Bilder
 	let lifestyleLoading = $state(false);
-	let shopHref = $state(SHOP_URL);
+	let shopOrt = $state('');
+	// Shop-Knopf: Produktseite mit dem Ausschnitt, Edition des ersten Bildes
+	let shopHref = $derived(
+		shopOrt ? shopProductHref(lifestyleImages[0]?.edition ?? 'klassik', shopOrt) : SHOP_URL
+	);
+
+	function shopProductHref(edition: string, ort: string, product?: string): string {
+		const q = new URLSearchParams({ ort, utm_source: 'swzpln', utm_medium: 'download' });
+		if (product) q.set('zuerst', product);
+		return `${SHOP_URL}/design/${encodeURIComponent(edition)}/produkt?${q}`;
+	}
 
 	// Rotating shop CTA text with fade-in/fade-out
 	let shopCtaIndex = $state(0);
@@ -168,9 +181,16 @@
 				const lines = buffer.split('\n');
 				buffer = lines.pop() ?? '';
 				for (const line of lines) {
-					const url = line.trim() ? (JSON.parse(line) as { url?: string }).url : undefined;
-					if (!url || run !== lifestyleRun) continue;
-					lifestyleArrived.push(url);
+					if (!line.trim() || run !== lifestyleRun) continue;
+					const item = JSON.parse(line) as { url?: string; product?: string; edition?: string };
+					if (!item.url) continue;
+					lifestyleArrived.push({
+						url: item.url,
+						edition: item.edition,
+						href: item.edition
+							? shopProductHref(item.edition, ort, item.product)
+							: shopProductHref('klassik', ort)
+					});
 					if (completionDialogOpen) lifestyleImages = [...lifestyleArrived];
 				}
 			}
@@ -194,11 +214,11 @@
 		lifestyleArrived = [];
 		lifestyleImages = [];
 		lifestyleLoading = false;
-		shopHref = SHOP_URL;
+		shopOrt = '';
 		if (showShop && !appState.is3DMode) {
 			const [lng, lat] = appState.location.center;
 			const ort = `${lat.toFixed(5)},${lng.toFixed(5)},${zoom.toFixed(2)}`;
-			shopHref = `${SHOP_URL}/?ort=${ort}#produkte`;
+			shopOrt = ort;
 			lifestyleLoading = true;
 			void streamLifestyle(ort, lifestyleRun);
 		}
@@ -574,16 +594,16 @@
 				{#if showShop}
 					{#if lifestyleImages.length > 0}
 						<div class="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-md">
-							{#each lifestyleImages as url (url)}
+							{#each lifestyleImages as img (img.url)}
 								<!-- eslint-disable svelte/no-navigation-without-resolve -- externe Shop-Links -->
 								<a
-									href={shopHref}
+									href={img.href}
 									target="_blank"
 									rel="noopener noreferrer"
 									class="w-[45%] shrink-0 snap-start"
 								>
 									<img
-										src={url}
+										src={img.url}
 										alt={m.shop_complete_buy()}
 										class="aspect-square w-full rounded-md bg-muted"
 									/>
