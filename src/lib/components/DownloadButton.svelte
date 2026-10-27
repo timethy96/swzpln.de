@@ -55,6 +55,8 @@
 	);
 
 	function shopProductHref(edition: string, ort: string, product?: string): string {
+		// Nur zum Bauen der Adresse, nicht reaktiv
+		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const q = new URLSearchParams({ ort, utm_source: 'swzpln', utm_medium: 'download' });
 		if (product) q.set('zuerst', product);
 		return `${SHOP_URL}/design/${encodeURIComponent(edition)}/produkt?${q}`;
