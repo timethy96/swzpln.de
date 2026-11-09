@@ -120,9 +120,11 @@ function getPool(): pg.Pool {
 	if (!pool) {
 		pool = new pg.Pool({
 			connectionString: env.POSTGIS_URL,
-			max: 4,
+			// 10 von 20 erlaubten (Rolle swzpln_read): einzelne riesige Ausschnitte
+			// belegen eine Verbindung bis zum statement_timeout, die übrigen bleiben frei
+			max: 10,
 			idleTimeoutMillis: 30_000,
-			connectionTimeoutMillis: 3_000,
+			connectionTimeoutMillis: 8_000,
 			statement_timeout: 60_000
 		});
 		pool.on('error', (e) => console.error('PostGIS pool error:', e.message));
