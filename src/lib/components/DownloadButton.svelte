@@ -54,11 +54,16 @@
 		shopOrt ? shopProductHref(lifestyleImages[0]?.edition ?? 'klassik', shopOrt) : SHOP_URL
 	);
 
+	// Bild mit Produkt: direkt die Produktseite /p/<produkt> (Karte, Preis,
+	// Warenkorb), wie bei Pinterest. Ohne Produkt: Übersicht aller Produkte.
 	function shopProductHref(edition: string, ort: string, product?: string): string {
 		// Nur zum Bauen der Adresse, nicht reaktiv
 		// eslint-disable-next-line svelte/prefer-svelte-reactivity
 		const q = new URLSearchParams({ ort, utm_source: 'swzpln', utm_medium: 'download' });
-		if (product) q.set('zuerst', product);
+		if (product) {
+			q.set('edition', edition);
+			return `${SHOP_URL}/p/${encodeURIComponent(product)}?${q}`;
+		}
 		return `${SHOP_URL}/design/${encodeURIComponent(edition)}/produkt?${q}`;
 	}
 
