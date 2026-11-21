@@ -19,9 +19,9 @@
 	import * as m from '$lib/paraglide/messages';
 	import { getLocale } from '$lib/paraglide/runtime';
 	import { env } from '$env/dynamic/public';
+	import { SHOP_URL, ortParam, shopHref as shopLink } from '$lib/utils/shop';
 
 	const showShop = $derived(env.PUBLIC_SHOW_SHOP !== 'false' && getLocale() === 'de');
-	const SHOP_URL = env.PUBLIC_SHOP_URL || 'https://shop.swzpln.de';
 
 	let dlOpen = $state(false);
 	let worker: SchwarzplanWorker | null = null;
@@ -48,23 +48,18 @@
 	let lifestyleRun = 0;
 	// Anfrage läuft noch: Platzhalter statt plötzlich auftauchender Bilder
 	let lifestyleLoading = $state(false);
+	// Kartenknopf und Werbetext: Produkte mit dem gerade sichtbaren Ausschnitt
+	let liveShopHref = $derived(shopLink(ortParam(appState.location), 'karte'));
+	let progressShopHref = $derived(shopLink(ortParam(appState.location), 'warten'));
+
 	let shopOrt = $state('');
 	// Shop-Knopf: Produktseite mit dem Ausschnitt, Edition des ersten Bildes
 	let shopHref = $derived(
-		shopOrt ? shopProductHref(lifestyleImages[0]?.edition ?? 'klassik', shopOrt) : SHOP_URL
+		shopOrt ? shopProductHref(lifestyleImages[0]?.edition ?? 'klassik', shopOrt) : liveShopHref
 	);
 
-	// Bild mit Produkt: direkt die Produktseite /p/<produkt> (Karte, Preis,
-	// Warenkorb), wie bei Pinterest. Ohne Produkt: Übersicht aller Produkte.
 	function shopProductHref(edition: string, ort: string, product?: string): string {
-		// Nur zum Bauen der Adresse, nicht reaktiv
-		// eslint-disable-next-line svelte/prefer-svelte-reactivity
-		const q = new URLSearchParams({ ort, utm_source: 'swzpln', utm_medium: 'download' });
-		if (product) {
-			q.set('edition', edition);
-			return `${SHOP_URL}/p/${encodeURIComponent(product)}?${q}`;
-		}
-		return `${SHOP_URL}/design/${encodeURIComponent(edition)}/produkt?${q}`;
+		return shopLink(ort, 'download', { edition, product });
 	}
 
 	// Rotating shop CTA text with fade-in/fade-out
@@ -383,7 +378,7 @@
 {#if showShop}
 	<!-- Shop promotion button -->
 	<a
-		href="https://shop.swzpln.de"
+		href={liveShopHref}
 		target="_blank"
 		rel="noopener noreferrer"
 		class="animate-shimmer absolute right-28 bottom-4 z-10 hidden h-20 w-20 items-center justify-center rounded-2xl
@@ -561,7 +556,7 @@
 					</p>
 					{#if showShop}
 						<a
-							href="https://shop.swzpln.de"
+							href={progressShopHref}
 							target="_blank"
 							rel="noopener noreferrer"
 							class="mt-3 flex items-center justify-center gap-1 text-center text-xs text-muted-foreground/70 italic transition-all duration-1000 hover:text-muted-foreground"

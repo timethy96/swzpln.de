@@ -14,6 +14,7 @@
 	import ShoppingCart from '@lucide/svelte/icons/shopping-cart';
 	import CircleHelp from '@lucide/svelte/icons/circle-help';
 	import { appState } from '$lib/state.svelte';
+	import { ortParam, shopHref } from '$lib/utils/shop';
 	import { onMount } from 'svelte';
 	import * as m from '$lib/paraglide/messages';
 	import { getLocale, localizeHref } from '$lib/paraglide/runtime';
@@ -90,7 +91,13 @@
 		},
 		{ icon: Heart, label: m.nav_donate(), href: 'https://ko-fi.com/swzpln' },
 		...(showShop
-			? [{ icon: ShoppingCart, label: m.nav_shop(), href: 'https://shop.swzpln.de' }]
+			? [
+					{
+						icon: ShoppingCart,
+						label: m.nav_shop(),
+						href: shopHref(ortParam(appState.location), 'menue')
+					}
+				]
 			: []),
 		{ icon: Moon, label: m.nav_dark_mode(), onClick: toggleDarkMode },
 		{ icon: CodeXml, label: m.nav_source(), href: 'https://github.com/timethy96/swzpln.de' },
