@@ -377,6 +377,7 @@
 
 {#if showShop}
 	<!-- Shop promotion button -->
+	<!-- eslint-disable svelte/no-navigation-without-resolve -- externe Shop-Links -->
 	<a
 		href={liveShopHref}
 		target="_blank"
@@ -597,7 +598,6 @@
 					{#if lifestyleImages.length > 0}
 						<div class="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-md">
 							{#each lifestyleImages as img (img.url)}
-								<!-- eslint-disable svelte/no-navigation-without-resolve -- externe Shop-Links -->
 								<a
 									href={img.href}
 									target="_blank"
