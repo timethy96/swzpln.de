@@ -38,12 +38,18 @@
 	// Lifestyle-Bilder des gerade erzeugten Ausschnitts vom Shop (beim Start
 	// des Downloads angefragt, siehe Datenschutzerklärung) und der Link in den
 	// Shop mit diesem Ausschnitt
-	// Je Bild der Link in den Shop: Produktseite in der Edition des Bildes,
-	// das Produkt des Bildes zuerst, mit diesem Ausschnitt
-	type LifestyleImage = { url: string; href: string; edition?: string };
+	// Bilder kommen einzeln als Strom, in beliebiger Reihenfolge; slot ist der
+	// feste Platz in der Anzeige (0 = großes Bild), damit nichts springt
+	type LifestyleImage = {
+		url: string;
+		product: string;
+		edition: string;
+		slot: number;
+		name: string;
+		price: number;
+		focus: { x: number; y: number; zoom: number };
+	};
 	let lifestyleImages = $state<LifestyleImage[]>([]);
-	// Bilder kommen einzeln als Strom; hier sammeln, bis der Dialog offen ist
-	let lifestyleArrived: LifestyleImage[] = [];
 	// Zählt die Läufe: ein veralteter Strom (neuer Download, Dialog zu) wird ignoriert
 	let lifestyleRun = 0;
 	// Anfrage läuft noch: Platzhalter statt plötzlich auftauchender Bilder
@@ -53,13 +59,35 @@
 	let progressShopHref = $derived(shopLink(ortParam(appState.location), 'warten'));
 
 	let shopOrt = $state('');
-	// Shop-Knopf: Produktseite mit dem Ausschnitt, Edition des ersten Bildes
+	// Großes Bild; fällt es aus, rückt nach dem Strom das nächste nach
+	let heroImage = $derived(
+		lifestyleImages.find((i) => i.slot === 0) ?? (lifestyleLoading ? undefined : lifestyleImages[0])
+	);
+	let sideImages = $derived(
+		lifestyleLoading
+			? [1, 2].map((slot) => lifestyleImages.find((i) => i.slot === slot))
+			: lifestyleImages.filter((i) => i !== heroImage)
+	);
+	let showLifestyle = $derived(showShop && (lifestyleLoading || lifestyleImages.length > 0));
+	// Shop-Knopf: das groß gezeigte Produkt, sonst alle Produkte mit dem Ausschnitt
 	let shopHref = $derived(
-		shopOrt ? shopProductHref(lifestyleImages[0]?.edition ?? 'klassik', shopOrt) : liveShopHref
+		heroImage
+			? imageHref(heroImage, 'download')
+			: shopOrt
+				? shopLink(shopOrt, 'download')
+				: liveShopHref
 	);
 
-	function shopProductHref(edition: string, ort: string, product?: string): string {
-		return shopLink(ort, 'download', { edition, product });
+	function imageHref(img: LifestyleImage, medium: string): string {
+		return shopLink(shopOrt, medium, { edition: img.edition, product: img.product });
+	}
+
+	function fromPrice(cents: number): string {
+		return m.shop_price_from({
+			price: new Intl.NumberFormat(getLocale(), { style: 'currency', currency: 'EUR' }).format(
+				cents / 100
+			)
+		});
 	}
 
 	// Rotating shop CTA text with fade-in/fade-out
@@ -184,16 +212,9 @@
 				buffer = lines.pop() ?? '';
 				for (const line of lines) {
 					if (!line.trim() || run !== lifestyleRun) continue;
-					const item = JSON.parse(line) as { url?: string; product?: string; edition?: string };
-					if (!item.url) continue;
-					lifestyleArrived.push({
-						url: item.url,
-						edition: item.edition,
-						href: item.edition
-							? shopProductHref(item.edition, ort, item.product)
-							: shopProductHref('klassik', ort)
-					});
-					if (completionDialogOpen) lifestyleImages = [...lifestyleArrived];
+					const item = JSON.parse(line) as LifestyleImage;
+					if (!item.url || !item.product || !item.focus) continue;
+					lifestyleImages = [...lifestyleImages, item];
 				}
 			}
 		} catch {
@@ -213,7 +234,6 @@
 		let layers: Layer[];
 
 		lifestyleRun++;
-		lifestyleArrived = [];
 		lifestyleImages = [];
 		lifestyleLoading = false;
 		shopOrt = '';
@@ -332,7 +352,6 @@
 			appState.progress = null;
 			cumulativeProgress = 0;
 			completionDialogOpen = true;
-			lifestyleImages = [...lifestyleArrived];
 		} catch (error) {
 			if (!isCancelled) {
 				console.error('Generation error:', error);
@@ -366,6 +385,9 @@
 
 	function handleCancel() {
 		isCancelled = true;
+		lifestyleRun++;
+		lifestyleImages = [];
+		lifestyleLoading = false;
 		if (worker) {
 			worker.cancel();
 			worker = null;
@@ -375,9 +397,71 @@
 	}
 </script>
 
+<!-- eslint-disable svelte/no-navigation-without-resolve -- externe Shop-Links -->
+{#snippet shopImage(img: LifestyleImage | undefined, medium: string, hero: boolean)}
+	{#if img}
+		<a
+			href={imageHref(img, medium)}
+			target="_blank"
+			rel="noopener noreferrer"
+			class="relative block aspect-square overflow-hidden rounded-md bg-muted {hero
+				? 'col-span-2 row-span-2'
+				: ''}"
+		>
+			<!-- Auf die Druckfläche vergrößert, damit man den eigenen Ort erkennt -->
+			<img
+				src={img.url}
+				alt={m.shop_image_alt({ product: img.name })}
+				class="size-full object-cover"
+				style:transform-origin="{img.focus.x}% {img.focus.y}%"
+				style:transform="scale({img.focus.zoom})"
+			/>
+			<span
+				class="absolute inset-x-1 bottom-1 rounded-sm bg-background/90 px-1.5 py-0.5 text-center text-xs {hero
+					? 'font-medium'
+					: ''}"
+			>
+				<!-- Klein nur der Preis: zwei Zeilen würden den Druck verdecken -->
+				{#if hero}{img.name}{/if}
+				<span class="whitespace-nowrap">{fromPrice(img.price)}</span>
+			</span>
+		</a>
+	{:else}
+		<div
+			class="flex aspect-square animate-pulse flex-col items-center justify-center gap-2 rounded-md bg-accent {hero
+				? 'col-span-2 row-span-2'
+				: ''}"
+		>
+			{#if hero}
+				<LoaderCircle class="size-5 animate-spin text-muted-foreground" />
+				<span class="px-4 text-center text-xs text-muted-foreground"
+					>{m.shop_lifestyle_loading()}</span
+				>
+			{/if}
+		</div>
+	{/if}
+{/snippet}
+
+<!-- Eigener Ort auf Produkten: ein großes Bild, zwei kleine, mit Preis -->
+{#snippet shopPreview(medium: string)}
+	<div class="grid grid-cols-3 gap-2" aria-busy={lifestyleLoading}>
+		{@render shopImage(heroImage, medium, true)}
+		{#each sideImages as img, i (i)}
+			{@render shopImage(img, medium, false)}
+		{/each}
+	</div>
+	{#if medium === 'warten'}
+		<p class="text-center text-sm">{m.shop_wait_background()}</p>
+	{/if}
+	<!-- Preisangabe, Transparenzhinweis (AI Act Art. 50) und Abbildungshinweis -->
+	<p class="text-center text-xs text-muted-foreground">
+		{m.shop_price_note()}
+		{m.shop_lifestyle_ai_note()}
+	</p>
+{/snippet}
+
 {#if showShop}
 	<!-- Shop promotion button -->
-	<!-- eslint-disable svelte/no-navigation-without-resolve -- externe Shop-Links -->
 	<a
 		href={liveShopHref}
 		target="_blank"
@@ -483,7 +567,7 @@
 	onOpenChange={() => {}}
 >
 	<DialogContent
-		class="max-w-md"
+		class="max-h-[95dvh] max-w-md overflow-y-auto"
 		showCloseButton={false}
 		onInteractOutside={(e) => e.preventDefault()}
 		onEscapeKeydown={(e) => e.preventDefault()}
@@ -555,7 +639,9 @@
 					<p class="mt-2 text-sm text-muted-foreground">
 						{m.progress_waiting()}
 					</p>
-					{#if showShop}
+					{#if showLifestyle}
+						{@render shopPreview('warten')}
+					{:else if showShop}
 						<a
 							href={progressShopHref}
 							target="_blank"
@@ -584,7 +670,7 @@
 		if (!open) handleCompletionClose();
 	}}
 >
-	<DialogContent class="max-w-sm">
+	<DialogContent class="max-h-[95dvh] max-w-sm overflow-y-auto">
 		<DialogHeader>
 			<DialogTitle>{m.shop_complete_title()}</DialogTitle>
 		</DialogHeader>
@@ -595,40 +681,8 @@
 			</Button>
 			<div class="flex flex-col gap-2">
 				{#if showShop}
-					{#if lifestyleImages.length > 0}
-						<div class="flex snap-x snap-mandatory gap-2 overflow-x-auto rounded-md">
-							{#each lifestyleImages as img (img.url)}
-								<a
-									href={img.href}
-									target="_blank"
-									rel="noopener noreferrer"
-									class="w-[45%] shrink-0 snap-start"
-								>
-									<img
-										src={img.url}
-										alt={m.shop_complete_buy()}
-										class="aspect-square w-full rounded-md bg-muted"
-									/>
-								</a>
-							{/each}
-						</div>
-						<!-- Transparenzhinweis (AI Act Art. 50) und Abbildungshinweis -->
-						<p class="text-center text-xs text-muted-foreground">{m.shop_lifestyle_ai_note()}</p>
-					{:else if lifestyleLoading}
-						<div class="flex gap-2 overflow-hidden rounded-md" aria-busy="true">
-							{#each [0, 1, 2] as i (i)}
-								<div
-									class="flex aspect-square w-[45%] shrink-0 animate-pulse flex-col items-center justify-center gap-2 rounded-md bg-accent"
-								>
-									{#if i === 0}
-										<LoaderCircle class="size-5 animate-spin text-muted-foreground" />
-										<span class="px-4 text-center text-xs text-muted-foreground"
-											>{m.shop_lifestyle_loading()}</span
-										>
-									{/if}
-								</div>
-							{/each}
-						</div>
+					{#if showLifestyle}
+						{@render shopPreview('download')}
 					{/if}
 					<p class="text-center text-xs text-muted-foreground">{m.shop_complete_subtitle()}</p>
 					<a
@@ -640,7 +694,9 @@
 						shadow-xs transition-opacity hover:opacity-90"
 					>
 						<ShoppingCart class="size-4" />
-						{m.shop_complete_buy()}
+						{heroImage
+							? m.shop_complete_view({ product: heroImage.name })
+							: m.shop_complete_products()}
 						<ExternalLink class="size-3" />
 					</a>
 				{/if}
